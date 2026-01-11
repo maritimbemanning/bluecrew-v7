@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run lint)",
+      "Bash(npx @next/bundle-analyzer analyze)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(ANALYZE=true npm run build:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npm install:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create --title \"Fix critical build issues: ESLint, gitignore, missing deps\" --body \"$(cat <<''EOF''\n## Summary\n- Fix CookieConsent ESLint error by deferring setState with setTimeout\n- Resolve .gitignore merge conflict, combining patterns from both branches\n- Install missing eslint dependency\n- Remove unused Building2 import from rederi/page.tsx\n\n## Test plan\n- [x] `npm run lint` passes with 0 errors\n- [x] `npm run build` passes (56 pages generated)\n- [x] Cookie consent banner still appears on first visit\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\" --base main)",
+      "Bash(dir:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)",
+      "Bash(grep:*)",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__get_logs",
+      "mcp__supabase__list_tables",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(while read file)",
+      "Bash(do if ! grep -q \"export const metadata\" \"$file\")",
+      "Bash(then echo \"$file\")",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(ls:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
+  "enableAllProjectMcpServers": true
+}
