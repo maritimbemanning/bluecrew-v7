@@ -199,7 +199,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som ROV-operatør styrer du undervannsroboter for inspeksjon, vedlikehold og reparasjoner på undervannsinstallasjoner.",
     segment: "offshore",
     lonnRange: "700 000 - 1 200 000 kr/år",
-    turnus: "4-4 eller prosjektbasert",
+    turnus: "2-4 / 3-4 eller prosjektbasert",
     krav: {
       sertifikater: [
         "ROV Pilot/Tech-sertifisering (IMCA eller tilsvarende)",
@@ -240,7 +240,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som ETO er du ansvarlig for drift og vedlikehold av alle elektriske og elektroniske systemer om bord på skip eller flytende enheter.",
     segment: "offshore",
     lonnRange: "800 000 - 1 100 000 kr/år",
-    turnus: "4-4 eller 2-4 rotasjon",
+    turnus: "2-4 / 3-4 rotasjon",
     krav: {
       sertifikater: [
         "ETO-sertifikat (STCW Regulation III/6)",
