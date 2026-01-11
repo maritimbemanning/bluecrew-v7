@@ -4,7 +4,7 @@ import Script from 'next/script';
 import { useEffect, useState } from 'react';
 
 // Meta Pixel ID
-const META_PIXEL_ID = '1367183524887510';
+const META_PIXEL_ID = '2104566860356121';
 
 /**
  * GDPR-compliant tracking scripts loader.
