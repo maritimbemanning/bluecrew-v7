@@ -75,6 +75,13 @@ export default function ROVForm() {
       const result = await response.json();
 
       if (response.ok && result.id) {
+        // Track Lead event med Meta Pixel
+        if (typeof window !== 'undefined' && typeof (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq === 'function') {
+          (window as unknown as { fbq: (...args: unknown[]) => void }).fbq('track', 'Lead', {
+            content_name: 'ROV-Pilot Søknad',
+            content_category: 'Offshore Kampanje',
+          });
+        }
         // Redirect til Vipps verifisering med application ID
         const verifyUrl = `/kampanje/verify?id=${result.id}`;
         window.location.href = `/api/vipps/start?returnTo=${encodeURIComponent(verifyUrl)}`;
