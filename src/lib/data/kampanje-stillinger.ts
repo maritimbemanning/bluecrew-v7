@@ -32,7 +32,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som rigger er du ansvarlig for sikker løfting og flytting av tung last offshore. Du arbeider tett med kranførere og dekksmannskap for å planlegge og gjennomføre løfteoperasjoner.",
     segment: "offshore",
     lonnRange: "550 000 - 850 000 kr/år",
-    turnus: "2-4 rotasjon",
+    turnus: "2/4 rotasjon",
     krav: {
       sertifikater: [
         "G11 Anhuker/Signalgiver",
@@ -74,7 +74,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som elektriker offshore utfører du installasjon, vedlikehold og feilsøking på elektriske anlegg og utstyr. Du jobber med alt fra kraftforsyning til instrumentering.",
     segment: "offshore",
     lonnRange: "600 000 - 950 000 kr/år",
-    turnus: "2-4 rotasjon",
+    turnus: "2/4 rotasjon",
     krav: {
       sertifikater: [
         "Fagbrev som elektriker eller elektromontør",
@@ -116,7 +116,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som sveiser offshore utfører du sveisearbeid på prosessrør, strukturer og utstyr. Du arbeider etter strenge krav til kvalitet og dokumentasjon.",
     segment: "offshore",
     lonnRange: "600 000 - 900 000 kr/år",
-    turnus: "2-4 rotasjon",
+    turnus: "2/4 rotasjon",
     krav: {
       sertifikater: [
         "Fagbrev som sveiser eller platearbeider",
@@ -158,7 +158,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som mekaniker offshore utfører du vedlikehold og reparasjoner på prosessutstyr, pumper, kompressorer og annet mekanisk utstyr.",
     segment: "offshore",
     lonnRange: "550 000 - 850 000 kr/år",
-    turnus: "2-4 rotasjon",
+    turnus: "2/4 rotasjon",
     krav: {
       sertifikater: [
         "Fagbrev som industrimekaniker eller lignende",
@@ -199,7 +199,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som ROV-operatør styrer du undervannsroboter for inspeksjon, vedlikehold og reparasjoner på undervannsinstallasjoner.",
     segment: "offshore",
     lonnRange: "700 000 - 1 200 000 kr/år",
-    turnus: "2-4 / 3-4 eller prosjektbasert",
+    turnus: "2/4 eller prosjektbasert",
     krav: {
       sertifikater: [
         "ROV Pilot/Tech-sertifisering (IMCA eller tilsvarende)",
@@ -240,7 +240,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     beskrivelse: "Som ETO er du ansvarlig for drift og vedlikehold av alle elektriske og elektroniske systemer om bord på skip eller flytende enheter.",
     segment: "offshore",
     lonnRange: "800 000 - 1 100 000 kr/år",
-    turnus: "2-4 / 3-4 rotasjon",
+    turnus: "2/4 eller prosjektbasert",
     krav: {
       sertifikater: [
         "ETO-sertifikat (STCW Regulation III/6)",
