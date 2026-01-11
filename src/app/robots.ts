@@ -1,26 +1,9 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const host = process.env.VERCEL_URL || '';
+  // Always allow indexing on production (bluecrew.no)
+  // This runs at build time on Vercel, so we hardcode production behavior
   
-  // Block all preview/non-production deployments
-  const isPreview = 
-    host.includes('vercel.app') || 
-    process.env.VERCEL_ENV === 'preview' ||
-    process.env.VERCEL_ENV === 'development';
-
-  if (isPreview) {
-    return {
-      rules: [
-        {
-          userAgent: '*',
-          disallow: '/',
-        },
-      ],
-    };
-  }
-
-  // Production only
   return {
     rules: [
       {
