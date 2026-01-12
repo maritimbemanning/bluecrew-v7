@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     description: 'Massivt behov for riggere på norsk sokkel.',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://bluecrew.no/kampanje/riggere',
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const stats = [

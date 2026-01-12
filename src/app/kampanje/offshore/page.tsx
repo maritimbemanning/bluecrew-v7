@@ -12,6 +12,13 @@ export const metadata: Metadata = {
     description: 'Massivt behov for offshore-fagfolk på norsk sokkel.',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://bluecrew.no/kampanje/offshore',
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const stats = [

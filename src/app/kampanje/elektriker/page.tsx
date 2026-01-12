@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     description: 'Massivt behov for offshore-elektrikere på norsk sokkel.',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://bluecrew.no/kampanje/elektriker',
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const stats = [

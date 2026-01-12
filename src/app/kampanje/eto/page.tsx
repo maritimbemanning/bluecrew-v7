@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     description: 'Massivt behov for Electro-Technical Officers på norsk sokkel.',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://bluecrew.no/kampanje/eto',
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const stats = [

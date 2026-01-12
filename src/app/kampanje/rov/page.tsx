@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     description: 'Massivt behov for ROV-piloter på norsk sokkel.',
     type: 'website',
   },
+  alternates: {
+    canonical: 'https://bluecrew.no/kampanje/rov',
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const stats = [
