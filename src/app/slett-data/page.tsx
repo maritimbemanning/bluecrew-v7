@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import type { Metadata } from 'next';
 import { Shield, Trash2, CheckCircle2, AlertCircle } from '@/components/icons';
 import Section from '@/components/ui/Section';
 import Container from '@/components/ui/Container';
@@ -9,15 +8,6 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
 import { useCsrfToken } from '@/hooks/useCsrfToken';
-
-export const metadata: Metadata = {
-  title: 'Slett dine data | Bluecrew',
-  description: 'Be om sletting av dine personopplysninger i henhold til GDPR.',
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 export default function DataDeletionPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

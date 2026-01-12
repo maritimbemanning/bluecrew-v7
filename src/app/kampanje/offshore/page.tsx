@@ -5,19 +5,28 @@ import Container from '@/components/ui/Container';
 import OffshoreForm from '@/components/kampanje/OffshoreForm';
 
 export const metadata: Metadata = {
-  title: 'Offshore-jobber',
-  description: 'Equinor investerer 100 milliarder. 4,000 nye årsverk på norsk sokkel. Søk jobb offshore.',
+  title: 'Offshore-jobber 2026 | 4,000 nye årsverk på norsk sokkel',
+  description: 'Søk jobb offshore nå! Equinor investerer 100 milliarder. Stort behov for elektrikere, riggere, sveisere, mekanikere og ROV-piloter. 2/4-rotasjon.',
+  keywords: ['offshore jobb', 'jobb offshore', 'offshore stillinger', 'offshore Norge', 'offshore elektrikere', 'offshore sveiser', 'offshore mekaniker'],
   openGraph: {
-    title: 'Offshore-jobber',
-    description: 'Massivt behov for offshore-fagfolk på norsk sokkel.',
+    title: 'Offshore-jobber 2026 | 4,000 nye årsverk',
+    description: 'Massivt behov for offshore-fagfolk på norsk sokkel. Søk nå!',
+    url: 'https://bluecrew.no/kampanje/offshore',
+    siteName: 'Bluecrew AS',
+    locale: 'nb_NO',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Offshore-jobber 2026 | 4,000 nye årsverk',
+    description: 'Søk jobb offshore nå! Stort behov for fagfolk på norsk sokkel.',
   },
   alternates: {
     canonical: 'https://bluecrew.no/kampanje/offshore',
   },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
 };
 

@@ -61,6 +61,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/tjenester",
     // Case studies
     "/crew/zeonaqua",
+    // Campaign pages (high conversion)
+    "/kampanje/offshore",
     // Legal (note: /slett-data excluded - marked as noindex)
     "/personvern",
     "/vilkar",
@@ -163,6 +165,9 @@ function getPriority(path: string): number {
 
   // Case studies (B2B credibility)
   if (path === "/crew/zeonaqua") return 0.7;
+
+  // Campaign pages (high conversion landing pages)
+  if (path === "/kampanje/offshore") return 0.8;
 
   // Legal pages
   if (path === "/personvern" || path === "/vilkar") return 0.3;
