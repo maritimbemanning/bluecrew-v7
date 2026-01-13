@@ -280,68 +280,87 @@ export async function sendStaffingNeedsNotification(
       timeStyle: "short",
     });
 
+    // Detect if this is a simple inquiry (no specific vessel/positions)
+    const isSimpleInquiry = data.fartoytype === 'Ikke spesifisert' || 
+      (data.stillinger.length === 1 && data.stillinger[0] === 'Annet');
+    
+    const subject = isSimpleInquiry 
+      ? `💬 Ny henvendelse fra ${data.kontakt_navn}`
+      : `🚢 Bemanningsbehov: ${data.stillinger.join(', ')} (${data.antall})`;
+
+    const badgeText = isSimpleInquiry ? 'HENVENDELSE' : 'BEMANNINGSBEHOV';
+    const badgeColor = isSimpleInquiry ? '#0ea5e9' : '#f59e0b';
+
     await resend.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAILS,
-      subject: `🚢 Nytt bemanningsbehov: ${data.fartoytype} - ${data.antall} personer`,
+      subject,
       html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #0b1f3a 0%, #1e3a5f 100%); color: white; padding: 25px; border-radius: 8px 8px 0 0;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td><img src="${LOGO_URL}" alt="Bluecrew" width="120" style="display: block;" /></td>
-                <td align="right"><span style="background: #f59e0b; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; color: white;">NYTT BEHOV</span></td>
-              </tr>
-            </table>
-            <h1 style="margin: 15px 0 5px 0; font-size: 22px;">${data.fartoytype}</h1>
-            <p style="opacity: 0.8; margin: 0;">${data.antall} person${data.antall > 1 ? 'er' : ''} søkes</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: #0b1f3a; padding: 30px; text-align: center;">
+            <img src="${LOGO_URL}" alt="Bluecrew" width="140" style="display: block; margin: 0 auto 15px;" />
+            <span style="background: ${badgeColor}; color: white; padding: 8px 16px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: 1px;">${badgeText}</span>
           </div>
 
-          <div style="background: #0ea5e9; padding: 12px 25px;">
-            <a href="mailto:${data.kontakt_epost}" style="color: white; text-decoration: none; font-weight: 500; margin-right: 20px;">📧 ${data.kontakt_epost}</a>
-            ${data.kontakt_telefon ? `<a href="tel:${data.kontakt_telefon}" style="color: white; text-decoration: none; font-weight: 500;">📞 ${data.kontakt_telefon}</a>` : ''}
+          <!-- Contact Card -->
+          <div style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); padding: 25px 30px; color: white;">
+            <h2 style="margin: 0 0 5px 0; font-size: 24px; font-weight: 600;">${data.kontakt_navn}</h2>
+            ${data.bedrift ? `<p style="margin: 0 0 15px 0; opacity: 0.9; font-size: 14px;">${data.bedrift}</p>` : ''}
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+              <a href="mailto:${data.kontakt_epost}" style="color: white; text-decoration: none; font-size: 14px;">✉️ ${data.kontakt_epost}</a>
+              ${data.kontakt_telefon ? `<a href="tel:${data.kontakt_telefon}" style="color: white; text-decoration: none; font-size: 14px;">📞 ${data.kontakt_telefon}</a>` : ''}
+            </div>
           </div>
 
-          <div style="padding: 25px; border: 1px solid #e2e8f0; border-top: none;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; width: 130px;">Kontaktperson</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #0b1f3a;">${data.kontakt_navn}</td>
-              </tr>
-              ${data.bedrift ? `
-              <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b;">Bedrift</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0b1f3a;">${data.bedrift}</td>
-              </tr>
-              ` : ''}
-              <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b;">Stillinger</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0b1f3a;">${Array.isArray(data.stillinger) ? data.stillinger.join(', ') : data.stillinger}</td>
-              </tr>
-              ${data.oppstart ? `
-              <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b;">Oppstart</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0b1f3a;">${data.oppstart}</td>
-              </tr>
-              ` : ''}
-              ${data.rotasjon ? `
-              <tr>
-                <td style="padding: 10px 0; color: #64748b;">Rotasjon</td>
-                <td style="padding: 10px 0; color: #0b1f3a;">${data.rotasjon}</td>
-              </tr>
-              ` : ''}
-            </table>
+          <!-- Content -->
+          <div style="padding: 30px;">
+            ${!isSimpleInquiry ? `
+            <!-- Detailed Request -->
+            <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+              <div style="display: grid; gap: 15px;">
+                <div>
+                  <p style="margin: 0 0 5px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Stillinger</p>
+                  <p style="margin: 0; font-size: 18px; font-weight: 600; color: #0b1f3a;">${Array.isArray(data.stillinger) ? data.stillinger.join(', ') : data.stillinger}</p>
+                </div>
+                <div style="display: flex; gap: 30px;">
+                  <div>
+                    <p style="margin: 0 0 5px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Fartøy</p>
+                    <p style="margin: 0; font-size: 16px; color: #0b1f3a;">${data.fartoytype}</p>
+                  </div>
+                  <div>
+                    <p style="margin: 0 0 5px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Antall</p>
+                    <p style="margin: 0; font-size: 16px; color: #0b1f3a;">${data.antall} ${data.antall === 1 ? 'person' : 'personer'}</p>
+                  </div>
+                  ${data.rotasjon ? `
+                  <div>
+                    <p style="margin: 0 0 5px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Rotasjon</p>
+                    <p style="margin: 0; font-size: 16px; color: #0b1f3a;">${data.rotasjon}</p>
+                  </div>
+                  ` : ''}
+                </div>
+                ${data.oppstart ? `
+                <div>
+                  <p style="margin: 0 0 5px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Ønsket oppstart</p>
+                  <p style="margin: 0; font-size: 16px; color: #0b1f3a;">${data.oppstart}</p>
+                </div>
+                ` : ''}
+              </div>
+            </div>
+            ` : ''}
+
+            ${data.merknad ? `
+            <!-- Message -->
+            <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 0 12px 12px 0;">
+              <p style="margin: 0 0 10px 0; font-size: 12px; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">💬 Melding</p>
+              <p style="margin: 0; color: #78350f; line-height: 1.6; white-space: pre-wrap;">${data.merknad}</p>
+            </div>
+            ` : ''}
           </div>
 
-          ${data.merknad ? `
-          <div style="padding: 25px; background: #fafafa; border: 1px solid #e2e8f0; border-top: none;">
-            <p style="font-size: 12px; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 10px 0;">📝 Merknad</p>
-            <div style="background: white; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 4px; white-space: pre-wrap;">${data.merknad}</div>
-          </div>
-          ` : ''}
-
-          <div style="padding: 15px 25px; background: #f8fafc; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
-            <span style="color: #64748b; font-size: 13px;">Mottatt: ${timestamp}</span>
+          <!-- Footer -->
+          <div style="background: #f1f5f9; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+            <p style="margin: 0; color: #64748b; font-size: 13px;">Mottatt ${timestamp}</p>
           </div>
         </div>
       `,
@@ -622,71 +641,78 @@ export async function sendStaffingNeedsConfirmation(
   try {
     const firstName = data.kontakt_navn.split(' ')[0];
     
+    // Detect if this is a simple inquiry
+    const isSimpleInquiry = data.fartoytype === 'Ikke spesifisert' || 
+      (data.stillinger.length === 1 && data.stillinger[0] === 'Annet');
+
     await resend.emails.send({
       from: FROM_EMAIL,
       to: data.kontakt_epost,
-      subject: '✅ Bemanningsforespørsel mottatt - Bluecrew',
+      subject: '✅ Vi har mottatt henvendelsen din - Bluecrew',
       html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #0b1f3a 0%, #1e3a5f 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
-            ${LOGO_HTML}
-            <div style="width: 60px; height: 60px; background: #10b981; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 28px;">✓</div>
-            <h2 style="margin: 10px 0 0 0; font-size: 22px;">Forespørselen er mottatt!</h2>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <!-- Header -->
+          <div style="background: #0b1f3a; padding: 40px 30px; text-align: center;">
+            <img src="${LOGO_URL}" alt="Bluecrew" width="140" style="display: block; margin: 0 auto 20px;" />
+            <div style="width: 70px; height: 70px; background: #10b981; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
+              <span style="font-size: 32px; color: white;">✓</span>
+            </div>
+            <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 500;">Takk, ${firstName}!</h1>
+            <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0 0; font-size: 16px;">Vi har mottatt henvendelsen din</p>
           </div>
-          
-          <div style="background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
-            <p style="font-size: 18px; color: #0b1f3a; margin-top: 0;">Hei ${firstName}! 👋</p>
-            
-            <p style="color: #475569; line-height: 1.6;">
-              Takk for at du kontaktet Bluecrew angående bemanningsbehov. Vi har mottatt forespørselen din og vil ta kontakt innen 24 timer.
+
+          <!-- Content -->
+          <div style="padding: 40px 30px;">
+            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin: 0 0 25px 0;">
+              ${isSimpleInquiry 
+                ? 'Vi tar kontakt med deg innen 24 timer for å høre mer om hva du trenger hjelp med.'
+                : 'Vi har registrert bemanningsbehovet ditt og tar kontakt innen 24 timer.'}
             </p>
-            
-            <div style="background: white; padding: 20px; border-radius: 8px; margin: 25px 0; border: 1px solid #e2e8f0;">
-              <p style="font-weight: 500; color: #0b1f3a; margin: 0 0 15px 0;">📋 Ditt behov:</p>
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 8px 0; color: #64748b;">Fartøytype</td>
-                  <td style="padding: 8px 0; color: #0b1f3a; font-weight: 500;">${data.fartoytype}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 8px 0; color: #64748b;">Stillinger</td>
-                  <td style="padding: 8px 0; color: #0b1f3a; font-weight: 500;">${Array.isArray(data.stillinger) ? data.stillinger.join(', ') : data.stillinger}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 8px 0; color: #64748b;">Antall</td>
-                  <td style="padding: 8px 0; color: #0b1f3a; font-weight: 500;">${data.antall} ${data.antall === 1 ? 'person' : 'personer'}</td>
-                </tr>
-                ${data.oppstart ? `
-                <tr>
-                  <td style="padding: 8px 0; color: #64748b;">Oppstart</td>
-                  <td style="padding: 8px 0; color: #0b1f3a; font-weight: 500;">${data.oppstart}</td>
-                </tr>
-                ` : ''}
-              </table>
+
+            ${!isSimpleInquiry ? `
+            <!-- Summary Card -->
+            <div style="background: #f8fafc; border-radius: 16px; padding: 25px; margin-bottom: 25px;">
+              <p style="margin: 0 0 15px 0; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Oppsummering</p>
+              <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 120px;">
+                  <p style="margin: 0 0 5px 0; font-size: 12px; color: #94a3b8;">Stillinger</p>
+                  <p style="margin: 0; font-size: 15px; color: #0b1f3a; font-weight: 500;">${Array.isArray(data.stillinger) ? data.stillinger.join(', ') : data.stillinger}</p>
+                </div>
+                <div>
+                  <p style="margin: 0 0 5px 0; font-size: 12px; color: #94a3b8;">Antall</p>
+                  <p style="margin: 0; font-size: 15px; color: #0b1f3a; font-weight: 500;">${data.antall}</p>
+                </div>
+                <div>
+                  <p style="margin: 0 0 5px 0; font-size: 12px; color: #94a3b8;">Fartøy</p>
+                  <p style="margin: 0; font-size: 15px; color: #0b1f3a; font-weight: 500;">${data.fartoytype}</p>
+                </div>
+              </div>
             </div>
-            
-            <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 25px 0;">
-              <p style="font-weight: 500; color: #166534; margin: 0 0 10px 0;">🚀 Hva skjer nå?</p>
-              <ul style="color: #166534; margin: 0; padding-left: 20px; line-height: 1.8;">
-                <li>Vi gjennomgår behovet ditt</li>
-                <li>Matcher med kvalifiserte kandidater i vår database</li>
-                <li>Tar kontakt for å diskutere løsninger</li>
-              </ul>
+            ` : ''}
+
+            <!-- What happens next -->
+            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 25px;">
+              <p style="margin: 0 0 15px 0; font-size: 14px; color: #065f46; font-weight: 600;">⏱️ Hva skjer nå?</p>
+              <ol style="margin: 0; padding-left: 20px; color: #047857; line-height: 2;">
+                <li>En rådgiver gjennomgår henvendelsen din</li>
+                <li>Vi ringer eller sender e-post innen 24 timer</li>
+                <li>Sammen finner vi den beste løsningen</li>
+              </ol>
             </div>
-            
-            <p style="color: #475569; line-height: 1.6;">
-              Trenger du raskere respons? Ring oss på <strong>+47 77 02 90 00</strong>.
-            </p>
-            
-            <div style="text-align: center; padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 30px;">
-              <p style="color: #64748b; font-size: 12px; margin: 0;">
-                ✅ Godkjent bemanningsforetak · 🔒 DNV-sertifisert rekrutterer
-              </p>
+
+            <!-- Quick contact -->
+            <div style="margin-top: 30px; text-align: center; padding-top: 25px; border-top: 1px solid #e2e8f0;">
+              <p style="color: #64748b; font-size: 14px; margin: 0 0 10px 0;">Haster det? Ring oss direkte:</p>
+              <a href="tel:+4777029000" style="color: #0ea5e9; font-size: 20px; font-weight: 600; text-decoration: none;">+47 77 02 90 00</a>
             </div>
           </div>
-          
-          <div style="text-align: center; padding: 20px;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+
+          <!-- Footer -->
+          <div style="background: #f8fafc; padding: 25px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+            <p style="margin: 0 0 8px 0; color: #64748b; font-size: 12px;">
+              ✅ Godkjent bemanningsforetak &nbsp;·&nbsp; 🔒 DNV-sertifisert
+            </p>
+            <p style="margin: 0; color: #94a3b8; font-size: 11px;">
               © 2026 Bluecrew AS · Harstad & Stavanger
             </p>
           </div>
