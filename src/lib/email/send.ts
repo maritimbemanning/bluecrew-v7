@@ -369,7 +369,6 @@ export interface RegistrationData {
   cvPath?: string | null;
   certsPath?: string | null;
   melding?: string;
-  shortId?: string | null;
 }
 
 /**
@@ -463,7 +462,7 @@ export async function sendRegistrationNotification(
 
           <div style="padding: 15px 25px; background: #f8fafc; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
             <span style="color: #64748b; font-size: 13px;">Registrert: ${timestamp}</span>
-            <span style="color: #94a3b8; font-size: 11px; float: right;">${data.shortId ? `Ref: ${data.shortId}` : `ID: ${data.candidateId.substring(0, 8)}`}</span>
+            <span style="color: #94a3b8; font-size: 11px; float: right;">ID: ${data.candidateId}</span>
           </div>
         </div>
       `,
@@ -482,7 +481,7 @@ export async function sendRegistrationNotification(
  * Send confirmation email to candidate after completing registration
  */
 export async function sendRegistrationConfirmation(
-  data: { name: string; email: string; rolle: string; shortId?: string | null }
+  data: { name: string; email: string; rolle: string }
 ): Promise<EmailResult> {
   try {
     const firstName = data.name.split(' ')[0];
@@ -528,7 +527,6 @@ export async function sendRegistrationConfirmation(
               <p style="color: #64748b; font-size: 12px; margin: 0;">
                 ✅ Godkjent bemanningsforetak · 🔒 Vipps-verifisert
               </p>
-              ${data.shortId ? `<p style="color: #94a3b8; font-size: 11px; margin: 8px 0 0 0;">Din referanse: ${data.shortId}</p>` : ''}
             </div>
           </div>
 

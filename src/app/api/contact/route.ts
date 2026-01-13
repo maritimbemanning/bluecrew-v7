@@ -13,6 +13,8 @@ import {
   handleUnexpectedError,
   methodNotAllowed,
 } from "@/lib/api/middleware";
+import type { Database } from "@/types/database.types";
+
 export async function POST(request: Request) {
   const { debugLog } = createDebugLogger('CONTACT');
   debugLog('=== START CONTACT REQUEST ===');
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
 
     // Insert into Supabase
     debugLog('Inserting into database...');
-    const insertData = {
+    const insertData: Database["public"]["Tables"]["contacts"]["Insert"] = {
       navn: validatedData.navn,
       epost: validatedData.epost,
       telefon: validatedData.telefon || null,
@@ -59,17 +61,19 @@ export async function POST(request: Request) {
       },
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: insertedData, error: dbError } = await (supabaseAdmin as any)
+    const { data: insertedData, error: dbError } = (await supabaseAdmin
       .from("contacts")
-      .insert(insertData)
+      .insert(insertData as never)
       .select()
-      .single();
+      .single()) as {
+      data: Database["public"]["Tables"]["contacts"]["Row"] | null;
+      error: unknown;
+    };
 
     if (dbError) {
       return handleDbError(dbError, "Kunne ikke lagre henvendelsen. Prøv igjen senere.", debugLog);
     }
-    debugLog('Database insert OK:', { id: insertedData?.id });
+    debugLog('Database insert OK:', { id: insertedData!.id });
 
     // Send email notification (fail-safe)
     debugLog('Sending email notification...');
@@ -86,7 +90,7 @@ export async function POST(request: Request) {
 
     debugLog('=== CONTACT SUCCESS ===');
     return createSuccessResponse(
-      { id: insertedData?.id },
+      { id: insertedData!.id },
       "Takk for din henvendelse! Vi tar kontakt snart.",
       rateLimitResult
     );

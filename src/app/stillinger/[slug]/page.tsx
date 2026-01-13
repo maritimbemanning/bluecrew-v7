@@ -87,16 +87,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? `${formatCurrency(job.salary_min)} - ${formatCurrency(job.salary_max)}`
       : job.salary_text || "";
 
-  const categoryLabel = job.category ? (categoryLabels[job.category] || job.category) : "Maritim";
-
   return {
     title: job.meta_title || `${job.title} | ${job.company_name || "Bluecrew"}`,
     description:
       job.meta_description ||
-      `${job.title} i ${job.location}. ${categoryLabel} stilling. ${salaryText ? `Lønn: ${salaryText}.` : ""} Søk nå!`,
+      `${job.title} i ${job.location}. ${categoryLabels[job.category] || job.category} stilling. ${salaryText ? `Lønn: ${salaryText}.` : ""} Søk nå!`,
     openGraph: {
       title: `${job.title} – ${job.company_name || "Bluecrew"}`,
-      description: `Ledig stilling som ${categoryLabel} i ${job.location}. Søk via Bluecrew.`,
+      description: `Ledig stilling som ${categoryLabels[job.category] || job.category} i ${job.location}. Søk via Bluecrew.`,
       url: `https://bluecrew.no/stillinger/${job.slug}`,
       siteName: "Bluecrew AS",
       locale: "nb_NO",
@@ -119,8 +117,6 @@ export default async function JobDetailPage({ params }: PageProps) {
   }
 
   const similarJobs = await getSimilarJobs(job);
-
-  const categoryLabel = job.category ? (categoryLabels[job.category] || job.category) : "Maritim";
 
   const salaryText =
     job.salary_min && job.salary_max
@@ -174,7 +170,7 @@ export default async function JobDetailPage({ params }: PageProps) {
     },
     // Industry context for maritime staffing
     industry: "Maritime & Shipping",
-    occupationalCategory: categoryLabel,
+    occupationalCategory: categoryLabels[job.category] || job.category,
     // Benefits if available
     ...(job.benefits && job.benefits.length > 0 && {
       jobBenefits: job.benefits.join(", "),
@@ -258,7 +254,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                     </h1>
                     <div className="flex flex-wrap gap-2">
                       <span className="px-3 py-1 bg-gold-400/10 border border-gold-400/20 rounded-full text-gold-300 text-sm font-medium">
-                        {categoryLabel}
+                        {categoryLabels[job.category] || job.category}
                       </span>
                       <span className="px-3 py-1 bg-cream-50/5 border border-cream-50/10 rounded-full text-cream-100 text-sm">
                         {jobTypeLabels[job.job_type] || job.job_type}
@@ -427,7 +423,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                         {job.company_name || "Bluecrew AS"}
                       </p>
                       <p className="text-sm text-cream-100/60">
-                        {categoryLabel}
+                        {categoryLabels[job.category] || job.category}
                       </p>
                     </div>
                   </div>
@@ -446,7 +442,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                     <div className="flex justify-between">
                       <dt className="text-cream-100/60">Kategori</dt>
                       <dd className="font-medium text-cream-50">
-                        {categoryLabel}
+                        {categoryLabels[job.category] || job.category}
                       </dd>
                     </div>
                     <div className="flex justify-between">

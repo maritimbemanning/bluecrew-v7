@@ -13,6 +13,8 @@ import {
   handleUnexpectedError,
   methodNotAllowed,
 } from "@/lib/api/middleware";
+import type { Database } from "@/types/database.types";
+
 export async function POST(request: Request) {
   const { debugLog } = createDebugLogger('STAFFING');
   debugLog('=== START STAFFING REQUEST ===');
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
     // Insert into Supabase
     debugLog('Inserting into database...');
     debugLog('Validated data:', validatedData);
-    const insertData = {
+    const insertData: Database["public"]["Tables"]["staffing_needs"]["Insert"] = {
       fartoytype: validatedData.fartoytype,
       stillinger: validatedData.stillinger,
       antall: validatedData.antall,
@@ -65,17 +67,19 @@ export async function POST(request: Request) {
       },
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: insertedData, error: dbError } = await (supabaseAdmin as any)
+    const { data: insertedData, error: dbError } = (await supabaseAdmin
       .from("staffing_needs")
-      .insert(insertData)
+      .insert(insertData as never)
       .select()
-      .single();
+      .single()) as {
+      data: Database["public"]["Tables"]["staffing_needs"]["Row"] | null;
+      error: unknown;
+    };
 
     if (dbError) {
       return handleDbError(dbError, "Kunne ikke lagre bemanningsforespørselen. Prøv igjen senere.", debugLog);
     }
-    debugLog('Database insert OK:', { id: insertedData?.id });
+    debugLog('Database insert OK:', { id: insertedData!.id });
 
     // Send email notification (fail-safe)
     debugLog('Sending email notification...');
@@ -92,7 +96,7 @@ export async function POST(request: Request) {
 
     debugLog('=== STAFFING SUCCESS ===');
     return createSuccessResponse(
-      { id: insertedData?.id },
+      { id: insertedData!.id },
       "Takk for din forespørsel! Vi tar kontakt innen 24 timer.",
       rateLimitResult
     );

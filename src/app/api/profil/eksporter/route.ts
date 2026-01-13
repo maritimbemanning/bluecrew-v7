@@ -35,11 +35,18 @@ export async function GET() {
       .eq("email", user.email.toLowerCase())
       .order("created_at", { ascending: false });
 
-    // Fetch campaign applications by email
-    const { data: campaignApplications } = await supabaseAdmin
-      .from("campaign_applications")
-      .select("id, name, email, phone, position, segment, status, created_at")
-      .eq("email", user.email.toLowerCase())
+    // Fetch contact form submissions by email
+    const { data: contacts } = await supabaseAdmin
+      .from("contacts")
+      .select("id, navn, epost, telefon, melding, created_at")
+      .eq("epost", user.email.toLowerCase())
+      .order("created_at", { ascending: false });
+
+    // Fetch interest lead submissions by email
+    const { data: interestLeads } = await supabaseAdmin
+      .from("interest_leads")
+      .select("id, navn, epost, telefon, type, melding, created_at")
+      .eq("epost", user.email.toLowerCase())
       .order("created_at", { ascending: false });
 
     // Compile all data
@@ -51,7 +58,8 @@ export async function GET() {
       vippsVerified: user.vippsVerified,
       profile: profile || null,
       applications: applications || [],
-      campaignApplications: campaignApplications || [],
+      contactSubmissions: contacts || [],
+      interestSubmissions: interestLeads || [],
       metadata: {
         dataController: "Bluecrew AS",
         orgNumber: "936 463 843",

@@ -217,71 +217,11 @@ export async function POST(request: NextRequest) {
       debugLog(requestId, "Email error (non-blocking):", emailError);
     }
 
-    // Create BlueCrew profile (source of truth) if we have CV
-    let shortId: string | null = null;
-    const cvKey = updateData.cv_url as string | undefined;
-    if (cvKey && candidateId) {
-      try {
-        // Get candidate data for profile
-        const { data: candidate } = await supabaseAdmin
-          .from('candidates')
-          .select('first_name, last_name, email, phone, national_id_number, vipps_verified_at')
-          .eq('id', candidateId)
-          .single();
-
-        if (candidate) {
-          // Check if profile already exists for this candidate
-          const { data: existingProfile } = await supabaseAdmin
-            .from('bluecrew_profiles')
-            .select('short_id')
-            .eq('candidate_id', candidateId)
-            .single();
-
-          if (existingProfile) {
-            shortId = existingProfile.short_id;
-            debugLog(requestId, "Profile already exists:", shortId);
-          } else {
-            // Create new profile
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data: profile, error: profileError } = await (supabaseAdmin as any)
-              .from('bluecrew_profiles')
-              .insert({
-                candidate_id: candidateId,
-                first_name: candidate.first_name || application.name.split(' ')[0] || 'Ukjent',
-                last_name: candidate.last_name || application.name.split(' ').slice(1).join(' ') || '',
-                email: candidate.email || application.email,
-                phone: candidate.phone || application.phone || '',
-                primary_role: application.position,
-                experience_years: applicationFormData.erfaring ? parseInt(applicationFormData.erfaring) || 0 : 0,
-                cv_key: cvKey,
-                cv_uploaded_at: new Date().toISOString(),
-                gdpr_consent: true,
-                gdpr_consent_date: new Date().toISOString(),
-                national_id_number: candidate.national_id_number || null,
-                verified_at: candidate.vipps_verified_at || new Date().toISOString(),
-              })
-              .select('short_id')
-              .single();
-
-            if (profileError) {
-              debugLog(requestId, "Profile create error (non-blocking):", profileError);
-            } else {
-              shortId = profile?.short_id || null;
-              debugLog(requestId, "BlueCrew profile created:", shortId);
-            }
-          }
-        }
-      } catch (profileErr) {
-        debugLog(requestId, "Profile create exception (non-blocking):", profileErr);
-      }
-    }
-
     debugLog(requestId, "=== CAMPAIGN COMPLETE SUCCESS ===");
 
     return NextResponse.json({
       success: true,
       message: "Søknad fullført!",
-      shortId: shortId,
     });
   } catch (error) {
     debugLog(requestId, "Unexpected error:", error);
