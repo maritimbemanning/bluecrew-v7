@@ -223,7 +223,8 @@ export async function POST(request: NextRequest) {
     if (cvKey && candidateId) {
       try {
         // Get candidate data for profile
-        const { data: candidate } = await supabaseAdmin
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: candidate } = await (supabaseAdmin as any)
           .from('candidates')
           .select('first_name, last_name, email, phone, national_id_number, vipps_verified_at')
           .eq('id', candidateId)
