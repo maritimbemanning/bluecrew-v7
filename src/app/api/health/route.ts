@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   try {
     // Test 1: Basic connectivity - count from a known table
     const { count, error: countError } = await supabaseAdmin
-      .from("interest_leads")
+      .from("candidates")
       .select("*", { count: "exact", head: true });
 
     if (countError) {
@@ -34,15 +34,12 @@ export async function GET(request: Request) {
 
     // Test 2: Verify we can read from all critical tables
     const tableChecks = await Promise.all([
-      supabaseAdmin.from("interest_leads").select("id").limit(1),
-      supabaseAdmin.from("staffing_needs").select("id").limit(1),
-      supabaseAdmin.from("contacts").select("id").limit(1),
+      supabaseAdmin.from("candidates").select("id").limit(1),
       supabaseAdmin.from("job_postings").select("id").limit(1),
-      supabaseAdmin.from("job_applications").select("id").limit(1),
-      supabaseAdmin.from("candidates").select("id").limit(1), // Critical for Vipps login
+      supabaseAdmin.from("bluecrew_profiles").select("id").limit(1),
     ]);
 
-    const tableNames = ["interest_leads", "staffing_needs", "contacts", "job_postings", "job_applications", "candidates"];
+    const tableNames = ["candidates", "job_postings", "bluecrew_profiles"];
     const tableStatuses = tableNames.map((name, i) => ({
       table: name,
       accessible: !tableChecks[i].error,
@@ -78,7 +75,7 @@ export async function GET(request: Request) {
         foundBuckets: bucketNames.filter((b) => requiredBuckets.includes(b)),
         error: bucketsError?.message,
       };
-      response.interestLeadsCount = count;
+      response.candidatesCount = count;
     }
 
     return NextResponse.json(response, {
