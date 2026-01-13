@@ -214,6 +214,7 @@ export const OFFSHORE_STILLINGER: Record<string, StillingsInfo> = {
     },
     kvalifikasjoner: {
       onsket: [
+        "Erfaring med WROV: Perry XLX, Schilling UHD, Argus, Kystdesign o.l.",
         "Erfaring med Schilling, Oceaneering eller Forum ROV",
         "Norsk- eller skandinavisk-talende",
         "Elektromekanisk bakgrunn",

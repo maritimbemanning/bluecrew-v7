@@ -132,10 +132,22 @@ export default function BehovPage() {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('/api/meld-interesse', {
+      // Convert simple form data to staffing needs format
+      const staffingData = {
+        fartoytype: 'Ikke spesifisert',
+        stillinger: ['Annet'],
+        antall: 1,
+        kontakt_navn: data.navn,
+        kontakt_epost: data.epost,
+        kontakt_telefon: data.telefon || '',
+        merknad: data.melding || '',
+        godtarVilkar: data.godtarVilkar,
+      };
+
+      const response = await fetch('/api/rederi/behov', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
-        body: JSON.stringify({ ...data, type: 'rederi' }),
+        body: JSON.stringify(staffingData),
       });
       const result = await response.json();
 
