@@ -242,7 +242,8 @@ export async function POST(request: NextRequest) {
             debugLog(requestId, "Profile already exists:", shortId);
           } else {
             // Create new profile
-            const { data: profile, error: profileError } = await supabaseAdmin
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: profile, error: profileError } = await (supabaseAdmin as any)
               .from('bluecrew_profiles')
               .insert({
                 candidate_id: candidateId,

@@ -283,7 +283,8 @@ export async function POST(request: NextRequest) {
         const firstName = nameParts[0] || 'Ukjent';
         const lastName = nameParts.slice(1).join(' ') || '';
 
-        const { data: profile, error: profileError } = await supabaseAdmin
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: profile, error: profileError } = await (supabaseAdmin as any)
           .from('bluecrew_profiles')
           .insert({
             candidate_id: candidateId,
@@ -299,7 +300,7 @@ export async function POST(request: NextRequest) {
             gdpr_consent_date: gdprConsent ? now : null,
             stcw_consent: stcwConsent,
             stcw_consent_date: stcwConsent ? now : null,
-            national_id_number: user.nationalIdNumber || null,
+            national_id_number: typeof user.nationalIdNumber === 'string' ? user.nationalIdNumber : null,
           })
           .select('short_id')
           .single();
