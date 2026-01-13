@@ -274,6 +274,47 @@ export async function POST(request: NextRequest) {
 
     debugLog(requestId, '=== REGISTRATION SUCCESS ===');
 
+    // Create BlueCrew profile (source of truth for verified candidates)
+    let shortId: string | null = null;
+    if (cvPath) {
+      try {
+        // Parse name into first and last name
+        const nameParts = (user.name || 'Ukjent').split(' ');
+        const firstName = nameParts[0] || 'Ukjent';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        const { data: profile, error: profileError } = await supabaseAdmin
+          .from('bluecrew_profiles')
+          .insert({
+            candidate_id: candidateId,
+            first_name: firstName,
+            last_name: lastName,
+            email: user.email || '',
+            phone: user.phone || '',
+            primary_role: rolle,
+            experience_years: parseExperienceToYears(erfaring),
+            cv_key: cvPath,
+            cv_uploaded_at: now,
+            gdpr_consent: gdprConsent,
+            gdpr_consent_date: gdprConsent ? now : null,
+            stcw_consent: stcwConsent,
+            stcw_consent_date: stcwConsent ? now : null,
+            national_id_number: user.nationalIdNumber || null,
+          })
+          .select('short_id')
+          .single();
+
+        if (profileError) {
+          debugLog(requestId, 'PROFILE CREATE ERROR (non-blocking):', profileError);
+        } else {
+          shortId = profile?.short_id || null;
+          debugLog(requestId, 'BlueCrew profile created:', { shortId });
+        }
+      } catch (profileErr) {
+        debugLog(requestId, 'PROFILE CREATE EXCEPTION (non-blocking):', profileErr);
+      }
+    }
+
     // Send email notifications (don't block on failure)
     try {
       // Send notification to team
@@ -287,6 +328,7 @@ export async function POST(request: NextRequest) {
         cvPath: cvPath,
         certsPath: certsPath,
         melding: melding,
+        shortId: shortId,
       });
       debugLog(requestId, 'Team notification sent:', notificationResult);
 
@@ -296,6 +338,7 @@ export async function POST(request: NextRequest) {
           name: user.name || 'Kandidat',
           email: user.email,
           rolle: rolle,
+          shortId: shortId,
         });
         debugLog(requestId, 'Candidate confirmation sent:', confirmationResult);
       }
@@ -307,6 +350,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Profilen din er fullført!",
+      shortId: shortId,
     });
   } catch (error) {
     debugLog(requestId, 'UNCAUGHT ERROR:', error);
