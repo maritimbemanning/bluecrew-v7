@@ -87,14 +87,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? `${formatCurrency(job.salary_min)} - ${formatCurrency(job.salary_max)}`
       : job.salary_text || "";
 
+  const categoryLabel = job.category ? (categoryLabels[job.category] || job.category) : "Maritim";
+
   return {
     title: job.meta_title || `${job.title} | ${job.company_name || "Bluecrew"}`,
     description:
       job.meta_description ||
-      `${job.title} i ${job.location}. ${categoryLabels[job.category] || job.category} stilling. ${salaryText ? `Lønn: ${salaryText}.` : ""} Søk nå!`,
+      `${job.title} i ${job.location}. ${categoryLabel} stilling. ${salaryText ? `Lønn: ${salaryText}.` : ""} Søk nå!`,
     openGraph: {
       title: `${job.title} – ${job.company_name || "Bluecrew"}`,
-      description: `Ledig stilling som ${categoryLabels[job.category] || job.category} i ${job.location}. Søk via Bluecrew.`,
+      description: `Ledig stilling som ${categoryLabel} i ${job.location}. Søk via Bluecrew.`,
       url: `https://bluecrew.no/stillinger/${job.slug}`,
       siteName: "Bluecrew AS",
       locale: "nb_NO",
