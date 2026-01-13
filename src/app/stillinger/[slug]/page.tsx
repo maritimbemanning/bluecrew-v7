@@ -120,6 +120,8 @@ export default async function JobDetailPage({ params }: PageProps) {
 
   const similarJobs = await getSimilarJobs(job);
 
+  const categoryLabel = job.category ? (categoryLabels[job.category] || job.category) : "Maritim";
+
   const salaryText =
     job.salary_min && job.salary_max
       ? `${formatCurrency(job.salary_min)} - ${formatCurrency(job.salary_max)}`
