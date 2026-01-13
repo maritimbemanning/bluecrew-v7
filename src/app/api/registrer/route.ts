@@ -97,7 +97,8 @@ export async function POST(request: NextRequest) {
     const stcwConsent = formData.get("stcwConsent") === "true";
     const gdprConsent = formData.get("gdprConsent") === "true";
     const cvFile = formData.get("cv") as File | null;
-    const certsFile = formData.get("sertifikater") as File | null;
+    // Get all certificate files (multiple)
+    const certsFiles = formData.getAll("sertifikater") as File[];
 
     debugLog(requestId, 'Form data:', {
       candidateId,
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
       stcwConsent,
       gdprConsent,
       hasCv: !!cvFile,
-      hasCerts: !!certsFile
+      certsCount: certsFiles.filter(f => f.size > 0).length
     });
 
     // Validate required fields
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
 
     // Upload files if provided
     let cvPath: string | null = null;
-    let certsPath: string | null = null;
+    const certsPaths: string[] = [];
 
     if (cvFile && cvFile.size > 0) {
       debugLog(requestId, 'Uploading CV:', { name: cvFile.name, size: cvFile.size, type: cvFile.type });
@@ -182,47 +183,52 @@ export async function POST(request: NextRequest) {
       debugLog(requestId, 'CV uploaded:', cvPath);
     }
 
-    if (certsFile && certsFile.size > 0) {
-      debugLog(requestId, 'Uploading certificates:', { name: certsFile.name, size: certsFile.size, type: certsFile.type });
+    // Upload multiple certificate files
+    const validCertsFiles = certsFiles.filter(f => f.size > 0);
+    if (validCertsFiles.length > 0) {
+      debugLog(requestId, 'Uploading certificates:', validCertsFiles.map(f => ({ name: f.name, size: f.size })));
 
-      if (certsFile.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          { error: "Sertifikat-filen er for stor. Maks 10MB." },
-          { status: 400 }
-        );
+      for (const certFile of validCertsFiles) {
+        if (certFile.size > MAX_FILE_SIZE) {
+          return NextResponse.json(
+            { error: `"${certFile.name}" er for stor. Maks 10MB per fil.` },
+            { status: 400 }
+          );
+        }
+
+        if (!ALLOWED_TYPES.includes(certFile.type)) {
+          return NextResponse.json(
+            { error: `Ugyldig filtype for "${certFile.name}". Tillatte typer: PDF, Word, JPG, PNG` },
+            { status: 400 }
+          );
+        }
+
+        const timestamp = Date.now();
+        const randomId = Math.random().toString(36).substring(7);
+        const safeFileName = certFile.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const fileName = `${timestamp}-${randomId}-${safeFileName}`;
+        const certPath = `registrations/${candidateId}/${fileName}`;
+
+        const arrayBuffer = await certFile.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from("candidate-certificates")
+          .upload(certPath, buffer, {
+            contentType: certFile.type,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          debugLog(requestId, 'CERT UPLOAD ERROR:', uploadError);
+          return NextResponse.json(
+            { error: `Kunne ikke laste opp "${certFile.name}". Prøv igjen.` },
+            { status: 500 }
+          );
+        }
+        certsPaths.push(certPath);
       }
-
-      if (!ALLOWED_TYPES.includes(certsFile.type)) {
-        return NextResponse.json(
-          { error: "Ugyldig filtype for sertifikater. Tillatte typer: PDF, Word, JPG, PNG" },
-          { status: 400 }
-        );
-      }
-
-      const timestamp = Date.now();
-      const randomId = Math.random().toString(36).substring(7);
-      const safeFileName = certsFile.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const fileName = `${timestamp}-${randomId}-${safeFileName}`;
-      certsPath = `registrations/${candidateId}/${fileName}`;
-
-      const arrayBuffer = await certsFile.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from("candidate-certificates")
-        .upload(certsPath, buffer, {
-          contentType: certsFile.type,
-          upsert: false,
-        });
-
-      if (uploadError) {
-        debugLog(requestId, 'CERTS UPLOAD ERROR:', uploadError);
-        return NextResponse.json(
-          { error: "Kunne ikke laste opp sertifikater. Prøv igjen." },
-          { status: 500 }
-        );
-      }
-      debugLog(requestId, 'Certificates uploaded:', certsPath);
+      debugLog(requestId, 'All certificates uploaded:', certsPaths);
     }
 
     // Build update object with CORRECT column names from candidates table
@@ -285,7 +291,7 @@ export async function POST(request: NextRequest) {
         rolle: rolle,
         erfaring: erfaring,
         cvPath: cvPath,
-        certsPath: certsPath,
+        certsPath: certsPaths.length > 0 ? certsPaths.join(', ') : null,
         melding: melding,
       });
       debugLog(requestId, 'Team notification sent:', notificationResult);

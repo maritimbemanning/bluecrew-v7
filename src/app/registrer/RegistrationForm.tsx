@@ -92,7 +92,7 @@ export default function RegistrationForm({
 
   // File state
   const [cvFile, setCvFile] = useState<File | null>(null);
-  const [certsFile, setCertsFile] = useState<File | null>(null);
+  const [certsFiles, setCertsFiles] = useState<File[]>([]);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const certsInputRef = useRef<HTMLInputElement>(null);
 
@@ -186,6 +186,42 @@ export default function RegistrationForm({
     }
   };
 
+  const handleCertsFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg',
+        'image/png',
+      ];
+      
+      const newFiles: File[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!allowedTypes.includes(file.type)) {
+          setErrorMessage(`Ugyldig filtype for "${file.name}". Kun PDF, Word og bilder er tillatt.`);
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          setErrorMessage(`"${file.name}" er for stor. Maks 10MB per fil.`);
+          return;
+        }
+        newFiles.push(file);
+      }
+      
+      setCertsFiles(prev => [...prev, ...newFiles]);
+      setErrorMessage('');
+    }
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  };
+
+  const removeCertFile = (index: number) => {
+    setCertsFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const onSubmit = async (data: RegistrationFormData) => {
     const token = csrfToken ?? (await refreshCsrfToken());
     if (!token) {
@@ -219,9 +255,10 @@ export default function RegistrationForm({
       if (cvFile) {
         formData.append('cv', cvFile);
       }
-      if (certsFile) {
-        formData.append('sertifikater', certsFile);
-      }
+      // Append multiple certificate files
+      certsFiles.forEach((file) => {
+        formData.append('sertifikater', file);
+      });
 
       const response = await fetch('/api/registrer', {
         method: 'POST',
@@ -447,50 +484,60 @@ export default function RegistrationForm({
           )}
         </div>
 
-        {/* Sertifikater Upload */}
+        {/* Sertifikater Upload - Multiple files */}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
-            Last opp sertifikater (valgfritt)
+            Last opp sertifikater (valgfritt) - du kan legge til flere filer
           </label>
           <input
             type="file"
             ref={certsInputRef}
-            onChange={(e) => handleFileChange(e, setCertsFile)}
+            onChange={handleCertsFileChange}
             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            multiple
             className="hidden"
             aria-label="Last opp sertifikater"
           />
-          {certsFile ? (
-            <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
-              <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-sky" />
-                <span className="text-sm text-slate-700 truncate max-w-[200px]">
-                  {certsFile.name}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCertsFile(null)}
-                className="text-slate-400 hover:text-red-500"
-                aria-label="Fjern sertifikater"
-              >
-                <X className="w-5 h-5" />
-              </button>
+          
+          {/* List of uploaded certificate files */}
+          {certsFiles.length > 0 && (
+            <div className="space-y-2 mb-3">
+              {certsFiles.map((file, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-sky" />
+                    <span className="text-sm text-slate-700 truncate max-w-[200px]">
+                      {file.name}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeCertFile(index)}
+                    className="text-slate-400 hover:text-red-500"
+                    aria-label={`Fjern ${file.name}`}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              ))}
             </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => certsInputRef.current?.click()}
-              className="w-full p-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky hover:bg-slate-50 transition-colors"
-            >
-              <div className="flex flex-col items-center gap-2">
-                <Upload className="w-6 h-6 text-slate-400" />
-                <span className="text-sm text-slate-600">
-                  Klikk for å laste opp sertifikater (PDF, Word eller bilde)
-                </span>
-              </div>
-            </button>
           )}
+          
+          {/* Add more files button */}
+          <button
+            type="button"
+            onClick={() => certsInputRef.current?.click()}
+            className="w-full p-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex flex-col items-center gap-2">
+              <Upload className="w-6 h-6 text-slate-400" />
+              <span className="text-sm text-slate-600">
+                {certsFiles.length > 0 
+                  ? 'Klikk for å legge til flere sertifikater'
+                  : 'Klikk for å laste opp sertifikater (PDF, Word eller bilde)'}
+              </span>
+            </div>
+          </button>
         </div>
 
         {/* Melding/Fritekst */}
