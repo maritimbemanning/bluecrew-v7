@@ -223,8 +223,7 @@ export async function POST(request: NextRequest) {
     if (cvKey && candidateId) {
       try {
         // Get candidate data for profile
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: candidate } = await (supabaseAdmin as any)
+        const { data: candidate } = await supabaseAdmin
           .from('candidates')
           .select('first_name, last_name, email, phone, national_id_number, vipps_verified_at')
           .eq('id', candidateId)
@@ -232,8 +231,7 @@ export async function POST(request: NextRequest) {
 
         if (candidate) {
           // Check if profile already exists for this candidate
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { data: existingProfile } = await (supabaseAdmin as any)
+          const { data: existingProfile } = await supabaseAdmin
             .from('bluecrew_profiles')
             .select('short_id')
             .eq('candidate_id', candidateId)
@@ -244,8 +242,7 @@ export async function POST(request: NextRequest) {
             debugLog(requestId, "Profile already exists:", shortId);
           } else {
             // Create new profile
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { data: profile, error: profileError } = await (supabaseAdmin as any)
+            const { data: profile, error: profileError } = await supabaseAdmin
               .from('bluecrew_profiles')
               .insert({
                 candidate_id: candidateId,

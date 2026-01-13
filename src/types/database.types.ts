@@ -14,137 +14,19 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_profiles: {
-        Row: {
-          active: boolean | null
-          created_at: string | null
-          full_name: string
-          id: string
-          role: string
-          updated_at: string | null
-          username: string
-        }
-        Insert: {
-          active?: boolean | null
-          created_at?: string | null
-          full_name: string
-          id: string
-          role?: string
-          updated_at?: string | null
-          username: string
-        }
-        Update: {
-          active?: boolean | null
-          created_at?: string | null
-          full_name?: string
-          id?: string
-          role?: string
-          updated_at?: string | null
-          username?: string
-        }
-        Relationships: []
-      }
-      assignments: {
-        Row: {
-          archived_at: string | null
-          candidate_id: string | null
-          contract_months: number | null
-          contract_url: string | null
-          created_at: string
-          currency: string | null
-          customer_id: string | null
-          disembarkation_date: string | null
-          disembarkation_port: string | null
-          embarkation_date: string | null
-          embarkation_port: string | null
-          hourly_rate: number | null
-          hours_worked: number | null
-          id: number
-          invoice_number: string | null
-          invoice_status: string | null
-          location: string | null
-          monthly_salary: number | null
-          overtime_rate: number | null
-          period: string | null
-          role: string | null
-          shipping_company: string | null
-          status: string | null
-          tripletex_invoice_id: number | null
-          vessel_flag_state: string | null
-          vessel_imo: string | null
-          vessel_name: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          candidate_id?: string | null
-          contract_months?: number | null
-          contract_url?: string | null
-          created_at?: string
-          currency?: string | null
-          customer_id?: string | null
-          disembarkation_date?: string | null
-          disembarkation_port?: string | null
-          embarkation_date?: string | null
-          embarkation_port?: string | null
-          hourly_rate?: number | null
-          hours_worked?: number | null
-          id?: number
-          invoice_number?: string | null
-          invoice_status?: string | null
-          location?: string | null
-          monthly_salary?: number | null
-          overtime_rate?: number | null
-          period?: string | null
-          role?: string | null
-          shipping_company?: string | null
-          status?: string | null
-          tripletex_invoice_id?: number | null
-          vessel_flag_state?: string | null
-          vessel_imo?: string | null
-          vessel_name?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          candidate_id?: string | null
-          contract_months?: number | null
-          contract_url?: string | null
-          created_at?: string
-          currency?: string | null
-          customer_id?: string | null
-          disembarkation_date?: string | null
-          disembarkation_port?: string | null
-          embarkation_date?: string | null
-          embarkation_port?: string | null
-          hourly_rate?: number | null
-          hours_worked?: number | null
-          id?: number
-          invoice_number?: string | null
-          invoice_status?: string | null
-          location?: string | null
-          monthly_salary?: number | null
-          overtime_rate?: number | null
-          period?: string | null
-          role?: string | null
-          shipping_company?: string | null
-          status?: string | null
-          tripletex_invoice_id?: number | null
-          vessel_flag_state?: string | null
-          vessel_imo?: string | null
-          vessel_name?: string | null
-        }
-        Relationships: []
-      }
-      audit_log: {
+      activity_log: {
         Row: {
           action: string
+          changes: Json | null
           created_at: string | null
-          entity_id: string
+          description: string | null
+          entity_id: string | null
+          entity_name: string | null
           entity_type: string
           id: string
           ip_address: string | null
           metadata: Json | null
-          new_values: Json | null
-          old_values: Json | null
+          request_id: string | null
           user_agent: string | null
           user_email: string | null
           user_id: string | null
@@ -152,14 +34,16 @@ export type Database = {
         }
         Insert: {
           action: string
+          changes?: Json | null
           created_at?: string | null
-          entity_id: string
+          description?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
           entity_type: string
           id?: string
           ip_address?: string | null
           metadata?: Json | null
-          new_values?: Json | null
-          old_values?: Json | null
+          request_id?: string | null
           user_agent?: string | null
           user_email?: string | null
           user_id?: string | null
@@ -167,61 +51,447 @@ export type Database = {
         }
         Update: {
           action?: string
+          changes?: Json | null
           created_at?: string | null
-          entity_id?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
           entity_type?: string
           id?: string
           ip_address?: string | null
           metadata?: Json | null
-          new_values?: Json | null
-          old_values?: Json | null
+          request_id?: string | null
           user_agent?: string | null
           user_email?: string | null
           user_id?: string | null
           user_name?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "activity_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      candidate_activity_log: {
+      assignment_timesheets: {
         Row: {
-          action: string
-          candidate_interest_id: string
-          details: Json | null
+          approval_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          assignment_id: string
+          calculated_billing_nok: number | null
+          calculated_employee_cost_nok: number | null
+          calculated_margin_nok: number | null
+          created_at: string | null
+          entries: Json | null
           id: string
-          new_value: string | null
-          old_value: string | null
-          performed_at: string | null
-          performed_by: string | null
-          performed_by_email: string | null
+          invoice_id: string | null
+          period_end: string
+          period_start: string
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["timesheet_status"] | null
+          submitted_at: string | null
+          submitted_by: string | null
+          total_days: number | null
+          total_hours: number | null
+          total_hours_overtime: number | null
+          updated_at: string | null
         }
         Insert: {
-          action: string
-          candidate_interest_id: string
-          details?: Json | null
+          approval_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          assignment_id: string
+          calculated_billing_nok?: number | null
+          calculated_employee_cost_nok?: number | null
+          calculated_margin_nok?: number | null
+          created_at?: string | null
+          entries?: Json | null
           id?: string
-          new_value?: string | null
-          old_value?: string | null
-          performed_at?: string | null
-          performed_by?: string | null
-          performed_by_email?: string | null
+          invoice_id?: string | null
+          period_end: string
+          period_start: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["timesheet_status"] | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          total_days?: number | null
+          total_hours?: number | null
+          total_hours_overtime?: number | null
+          updated_at?: string | null
         }
         Update: {
-          action?: string
-          candidate_interest_id?: string
-          details?: Json | null
+          approval_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          assignment_id?: string
+          calculated_billing_nok?: number | null
+          calculated_employee_cost_nok?: number | null
+          calculated_margin_nok?: number | null
+          created_at?: string | null
+          entries?: Json | null
           id?: string
-          new_value?: string | null
-          old_value?: string | null
-          performed_at?: string | null
-          performed_by?: string | null
-          performed_by_email?: string | null
+          invoice_id?: string | null
+          period_end?: string
+          period_start?: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["timesheet_status"] | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          total_days?: number | null
+          total_hours?: number | null
+          total_hours_overtime?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "candidate_activity_log_candidate_interest_id_fkey"
-            columns: ["candidate_interest_id"]
+            foreignKeyName: "assignment_timesheets_approved_by_fkey"
+            columns: ["approved_by"]
             isOneToOne: false
-            referencedRelation: "candidate_interest"
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_timesheets_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_timesheets_rejected_by_fkey"
+            columns: ["rejected_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_timesheets_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_timesheets_invoice"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assignments: {
+        Row: {
+          actual_end_date: string | null
+          actual_start_date: string | null
+          archived_at: string | null
+          assignment_number: string
+          billing_rate_amount_nok: number | null
+          billing_rate_type: string | null
+          candidate_id: string
+          client_notes: string | null
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          employee_rate_amount_nok: number | null
+          employee_rate_type: string | null
+          id: string
+          internal_notes: string | null
+          organization_id: string
+          overtime_rate_multiplier: number | null
+          owner_id: string | null
+          planned_end_date: string | null
+          planned_start_date: string
+          release_checklist: Json | null
+          request_id: string | null
+          role: string
+          status: Database["public"]["Enums"]["assignment_status"] | null
+          title: string
+          updated_at: string | null
+          updated_by: string | null
+          vessel_imo: string | null
+          vessel_name: string | null
+          work_location: string | null
+        }
+        Insert: {
+          actual_end_date?: string | null
+          actual_start_date?: string | null
+          archived_at?: string | null
+          assignment_number: string
+          billing_rate_amount_nok?: number | null
+          billing_rate_type?: string | null
+          candidate_id: string
+          client_notes?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          employee_rate_amount_nok?: number | null
+          employee_rate_type?: string | null
+          id?: string
+          internal_notes?: string | null
+          organization_id: string
+          overtime_rate_multiplier?: number | null
+          owner_id?: string | null
+          planned_end_date?: string | null
+          planned_start_date: string
+          release_checklist?: Json | null
+          request_id?: string | null
+          role: string
+          status?: Database["public"]["Enums"]["assignment_status"] | null
+          title: string
+          updated_at?: string | null
+          updated_by?: string | null
+          vessel_imo?: string | null
+          vessel_name?: string | null
+          work_location?: string | null
+        }
+        Update: {
+          actual_end_date?: string | null
+          actual_start_date?: string | null
+          archived_at?: string | null
+          assignment_number?: string
+          billing_rate_amount_nok?: number | null
+          billing_rate_type?: string | null
+          candidate_id?: string
+          client_notes?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          employee_rate_amount_nok?: number | null
+          employee_rate_type?: string | null
+          id?: string
+          internal_notes?: string | null
+          organization_id?: string
+          overtime_rate_multiplier?: number | null
+          owner_id?: string | null
+          planned_end_date?: string | null
+          planned_start_date?: string
+          release_checklist?: Json | null
+          request_id?: string | null
+          role?: string
+          status?: Database["public"]["Enums"]["assignment_status"] | null
+          title?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          vessel_imo?: string | null
+          vessel_name?: string | null
+          work_location?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "crm_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "customer_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bluecrew_profiles: {
+        Row: {
+          candidate_id: string | null
+          created_at: string | null
+          cv_key: string
+          cv_uploaded_at: string | null
+          date_of_birth: string | null
+          email: string
+          experience_years: number | null
+          first_name: string
+          gdpr_consent: boolean
+          gdpr_consent_date: string | null
+          id: string
+          last_name: string
+          national_id_number: string | null
+          phone: string
+          primary_role: string
+          secondary_roles: string[] | null
+          short_id: string | null
+          status: string | null
+          stcw_consent: boolean | null
+          stcw_consent_date: string | null
+          updated_at: string | null
+          verified_at: string
+        }
+        Insert: {
+          candidate_id?: string | null
+          created_at?: string | null
+          cv_key: string
+          cv_uploaded_at?: string | null
+          date_of_birth?: string | null
+          email: string
+          experience_years?: number | null
+          first_name: string
+          gdpr_consent?: boolean
+          gdpr_consent_date?: string | null
+          id?: string
+          last_name: string
+          national_id_number?: string | null
+          phone: string
+          primary_role: string
+          secondary_roles?: string[] | null
+          short_id?: string | null
+          status?: string | null
+          stcw_consent?: boolean | null
+          stcw_consent_date?: string | null
+          updated_at?: string | null
+          verified_at?: string
+        }
+        Update: {
+          candidate_id?: string | null
+          created_at?: string | null
+          cv_key?: string
+          cv_uploaded_at?: string | null
+          date_of_birth?: string | null
+          email?: string
+          experience_years?: number | null
+          first_name?: string
+          gdpr_consent?: boolean
+          gdpr_consent_date?: string | null
+          id?: string
+          last_name?: string
+          national_id_number?: string | null
+          phone?: string
+          primary_role?: string
+          secondary_roles?: string[] | null
+          short_id?: string | null
+          status?: string | null
+          stcw_consent?: boolean | null
+          stcw_consent_date?: string | null
+          updated_at?: string | null
+          verified_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bluecrew_profiles_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_applications: {
+        Row: {
+          campaign: string | null
+          candidate_id: string | null
+          created_at: string
+          cv_filename: string | null
+          cv_url: string | null
+          email: string
+          gdpr_consent: boolean
+          gdpr_consent_date: string | null
+          id: string
+          marketing_consent: boolean | null
+          name: string
+          notes: string | null
+          phone: string
+          position: string
+          segment: string
+          source_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          campaign?: string | null
+          candidate_id?: string | null
+          created_at?: string
+          cv_filename?: string | null
+          cv_url?: string | null
+          email: string
+          gdpr_consent?: boolean
+          gdpr_consent_date?: string | null
+          id?: string
+          marketing_consent?: boolean | null
+          name: string
+          notes?: string | null
+          phone: string
+          position: string
+          segment: string
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          campaign?: string | null
+          candidate_id?: string | null
+          created_at?: string
+          cv_filename?: string | null
+          cv_url?: string | null
+          email?: string
+          gdpr_consent?: boolean
+          gdpr_consent_date?: string | null
+          id?: string
+          marketing_consent?: boolean | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          position?: string
+          segment?: string
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_applications_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
         ]
@@ -229,46 +499,64 @@ export type Database = {
       candidate_certifications: {
         Row: {
           candidate_id: string
-          cert_class: string | null
-          cert_name: string | null
-          cert_type: string
+          category: Database["public"]["Enums"]["certification_category"]
+          certificate_number: string | null
+          code: string
           created_at: string | null
-          expires_at: string | null
+          document_path: string | null
+          document_verified: boolean | null
+          expiry_date: string | null
           id: string
-          issued_date: string | null
+          is_permanent: boolean | null
+          issue_date: string | null
+          issuer: string | null
+          issuer_country: string | null
+          name: string
+          notes: string | null
+          status: string | null
           updated_at: string | null
-          verification_notes: string | null
-          verified: boolean | null
           verified_at: string | null
           verified_by: string | null
         }
         Insert: {
           candidate_id: string
-          cert_class?: string | null
-          cert_name?: string | null
-          cert_type: string
+          category: Database["public"]["Enums"]["certification_category"]
+          certificate_number?: string | null
+          code: string
           created_at?: string | null
-          expires_at?: string | null
+          document_path?: string | null
+          document_verified?: boolean | null
+          expiry_date?: string | null
           id?: string
-          issued_date?: string | null
+          is_permanent?: boolean | null
+          issue_date?: string | null
+          issuer?: string | null
+          issuer_country?: string | null
+          name: string
+          notes?: string | null
+          status?: string | null
           updated_at?: string | null
-          verification_notes?: string | null
-          verified?: boolean | null
           verified_at?: string | null
           verified_by?: string | null
         }
         Update: {
           candidate_id?: string
-          cert_class?: string | null
-          cert_name?: string | null
-          cert_type?: string
+          category?: Database["public"]["Enums"]["certification_category"]
+          certificate_number?: string | null
+          code?: string
           created_at?: string | null
-          expires_at?: string | null
+          document_path?: string | null
+          document_verified?: boolean | null
+          expiry_date?: string | null
           id?: string
-          issued_date?: string | null
+          is_permanent?: boolean | null
+          issue_date?: string | null
+          issuer?: string | null
+          issuer_country?: string | null
+          name?: string
+          notes?: string | null
+          status?: string | null
           updated_at?: string | null
-          verification_notes?: string | null
-          verified?: boolean | null
           verified_at?: string | null
           verified_by?: string | null
         }
@@ -277,643 +565,678 @@ export type Database = {
             foreignKeyName: "candidate_certifications_candidate_id_fkey"
             columns: ["candidate_id"]
             isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_certifications_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_certifications_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
             referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_certifications_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "candidate_certifications_verified_by_fkey"
+            columns: ["verified_by"]
             isOneToOne: false
-            referencedRelation: "candidates_secure"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
         ]
       }
       candidate_documents: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           candidate_id: string
-          candidate_name: string
-          created_at: string | null
-          document_type: string
+          description: string | null
+          document_number: string | null
           expiry_date: string | null
-          file_name: string | null
-          file_url: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
           id: string
+          is_current: boolean | null
           issue_date: string | null
-          notes: string | null
-          updated_at: string | null
+          mime_type: string | null
+          name: string
+          previous_version_id: string | null
+          type: Database["public"]["Enums"]["document_type"]
+          uploaded_at: string | null
           uploaded_by: string | null
-          verification_method: string | null
           verified: boolean | null
           verified_at: string | null
           verified_by: string | null
+          version: number | null
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           candidate_id: string
-          candidate_name: string
-          created_at?: string | null
-          document_type: string
+          description?: string | null
+          document_number?: string | null
           expiry_date?: string | null
-          file_name?: string | null
-          file_url?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
           id?: string
+          is_current?: boolean | null
           issue_date?: string | null
-          notes?: string | null
-          updated_at?: string | null
+          mime_type?: string | null
+          name: string
+          previous_version_id?: string | null
+          type: Database["public"]["Enums"]["document_type"]
+          uploaded_at?: string | null
           uploaded_by?: string | null
-          verification_method?: string | null
           verified?: boolean | null
           verified_at?: string | null
           verified_by?: string | null
+          version?: number | null
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           candidate_id?: string
-          candidate_name?: string
-          created_at?: string | null
-          document_type?: string
+          description?: string | null
+          document_number?: string | null
           expiry_date?: string | null
-          file_name?: string | null
-          file_url?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
           id?: string
+          is_current?: boolean | null
           issue_date?: string | null
-          notes?: string | null
-          updated_at?: string | null
-          uploaded_by?: string | null
-          verification_method?: string | null
-          verified?: boolean | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: []
-      }
-      candidate_interest: {
-        Row: {
-          archived_at: string | null
-          assigned_to: string | null
-          available_date: string | null
-          certificates: string | null
-          consent: boolean
-          created_at: string
-          cv_url: string | null
-          email: string
-          experience: number | null
-          fylke: string | null
-          honey: string | null
-          id: string
-          ip: string | null
-          kommune: string | null
-          last_contacted: string | null
-          name: string
-          next_followup: string | null
-          notes: string | null
-          phone: string | null
-          pipeline_status: string | null
-          priority: string | null
-          rating: number | null
-          region: string | null
-          role: string
-          salary_expectation: number | null
-          source: string | null
-          start_from: string | null
-          status: string | null
-          tags: string[] | null
-          user_agent: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          assigned_to?: string | null
-          available_date?: string | null
-          certificates?: string | null
-          consent?: boolean
-          created_at?: string
-          cv_url?: string | null
-          email: string
-          experience?: number | null
-          fylke?: string | null
-          honey?: string | null
-          id?: string
-          ip?: string | null
-          kommune?: string | null
-          last_contacted?: string | null
-          name: string
-          next_followup?: string | null
-          notes?: string | null
-          phone?: string | null
-          pipeline_status?: string | null
-          priority?: string | null
-          rating?: number | null
-          region?: string | null
-          role: string
-          salary_expectation?: number | null
-          source?: string | null
-          start_from?: string | null
-          status?: string | null
-          tags?: string[] | null
-          user_agent?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          assigned_to?: string | null
-          available_date?: string | null
-          certificates?: string | null
-          consent?: boolean
-          created_at?: string
-          cv_url?: string | null
-          email?: string
-          experience?: number | null
-          fylke?: string | null
-          honey?: string | null
-          id?: string
-          ip?: string | null
-          kommune?: string | null
-          last_contacted?: string | null
+          mime_type?: string | null
           name?: string
-          next_followup?: string | null
-          notes?: string | null
-          phone?: string | null
-          pipeline_status?: string | null
-          priority?: string | null
-          rating?: number | null
-          region?: string | null
-          role?: string
-          salary_expectation?: number | null
-          source?: string | null
-          start_from?: string | null
-          status?: string | null
-          tags?: string[] | null
-          user_agent?: string | null
-        }
-        Relationships: []
-      }
-      candidate_matches: {
-        Row: {
-          assignment_id: number
-          blockers: string[] | null
-          can_assign: boolean
-          candidate_id: string
-          created_at: string
-          id: number
-          matched_at: string
-          reasons: string[] | null
-          score: number
-          warnings: string[] | null
-        }
-        Insert: {
-          assignment_id: number
-          blockers?: string[] | null
-          can_assign?: boolean
-          candidate_id: string
-          created_at?: string
-          id?: number
-          matched_at?: string
-          reasons?: string[] | null
-          score: number
-          warnings?: string[] | null
-        }
-        Update: {
-          assignment_id?: number
-          blockers?: string[] | null
-          can_assign?: boolean
-          candidate_id?: string
-          created_at?: string
-          id?: number
-          matched_at?: string
-          reasons?: string[] | null
-          score?: number
-          warnings?: string[] | null
+          previous_version_id?: string | null
+          type?: Database["public"]["Enums"]["document_type"]
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
+          version?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "candidate_matches_assignment_id_fkey"
-            columns: ["assignment_id"]
+            foreignKeyName: "candidate_documents_archived_by_fkey"
+            columns: ["archived_by"]
             isOneToOne: false
-            referencedRelation: "active_assignments"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_assignment_id_fkey"
-            columns: ["assignment_id"]
-            isOneToOne: false
-            referencedRelation: "archived_assignments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_assignment_id_fkey"
-            columns: ["assignment_id"]
-            isOneToOne: false
-            referencedRelation: "assignments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
+            foreignKeyName: "candidate_documents_candidate_id_fkey"
             columns: ["candidate_id"]
             isOneToOne: false
             referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "candidate_documents_previous_version_id_fkey"
+            columns: ["previous_version_id"]
             isOneToOne: false
-            referencedRelation: "candidates_secure"
+            referencedRelation: "candidate_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_documents_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      candidate_shortlists: {
+      candidate_pool_memberships: {
         Row: {
-          can_assign: boolean | null
+          added_at: string | null
+          added_by: string | null
           candidate_id: string
-          candidate_name: string
-          contacted_at: string | null
-          created_at: string | null
           id: string
-          job_requirement_id: string | null
-          match_blockers: string[] | null
-          match_reasons: string[] | null
-          match_score: number | null
-          match_warnings: string[] | null
           notes: string | null
-          rank: number | null
-          responded_at: string | null
-          status: string | null
+          pool_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          added_by?: string | null
+          candidate_id: string
+          id?: string
+          notes?: string | null
+          pool_id: string
+        }
+        Update: {
+          added_at?: string | null
+          added_by?: string | null
+          candidate_id?: string
+          id?: string
+          notes?: string | null
+          pool_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_pool_memberships_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_pool_memberships_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_pool_memberships_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_pools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_pools: {
+        Row: {
+          archived_at: string | null
+          candidate_count: number | null
+          color: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          filter_criteria: Json | null
+          icon: string | null
+          id: string
+          is_system: boolean | null
+          is_visible: boolean | null
+          last_calculated_at: string | null
+          name: string
+          pool_type: string
+          slug: string
+          sort_order: number | null
           updated_at: string | null
         }
         Insert: {
-          can_assign?: boolean | null
-          candidate_id: string
-          candidate_name: string
-          contacted_at?: string | null
+          archived_at?: string | null
+          candidate_count?: number | null
+          color?: string | null
           created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filter_criteria?: Json | null
+          icon?: string | null
           id?: string
-          job_requirement_id?: string | null
-          match_blockers?: string[] | null
-          match_reasons?: string[] | null
-          match_score?: number | null
-          match_warnings?: string[] | null
-          notes?: string | null
-          rank?: number | null
-          responded_at?: string | null
-          status?: string | null
+          is_system?: boolean | null
+          is_visible?: boolean | null
+          last_calculated_at?: string | null
+          name: string
+          pool_type?: string
+          slug: string
+          sort_order?: number | null
           updated_at?: string | null
         }
         Update: {
-          can_assign?: boolean | null
-          candidate_id?: string
-          candidate_name?: string
-          contacted_at?: string | null
+          archived_at?: string | null
+          candidate_count?: number | null
+          color?: string | null
           created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filter_criteria?: Json | null
+          icon?: string | null
           id?: string
-          job_requirement_id?: string | null
-          match_blockers?: string[] | null
-          match_reasons?: string[] | null
-          match_score?: number | null
-          match_warnings?: string[] | null
-          notes?: string | null
-          rank?: number | null
-          responded_at?: string | null
-          status?: string | null
+          is_system?: boolean | null
+          is_visible?: boolean | null
+          last_calculated_at?: string | null
+          name?: string
+          pool_type?: string
+          slug?: string
+          sort_order?: number | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "candidate_shortlists_job_requirement_id_fkey"
-            columns: ["job_requirement_id"]
+            foreignKeyName: "candidate_pools_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "job_requirements"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      candidate_search_index: {
+        Row: {
+          active_certifications: string[] | null
+          availability_date: string | null
+          availability_status:
+            | Database["public"]["Enums"]["availability_status"]
+            | null
+          candidate_id: string
+          certification_codes: string[] | null
+          certification_expiry_map: Json | null
+          compliance_status:
+            | Database["public"]["Enums"]["compliance_status"]
+            | null
+          email: string
+          experience_years: number | null
+          full_name: string
+          fylke: string | null
+          indexed_at: string | null
+          internal_rating: number | null
+          kommune: string | null
+          languages: string[] | null
+          next_cert_expiry: string | null
+          phone: string | null
+          pool_ids: string[] | null
+          profile_completeness: number | null
+          roles: string[]
+          searchable_text: unknown
+          sectors: string[] | null
+          tags: string[] | null
+        }
+        Insert: {
+          active_certifications?: string[] | null
+          availability_date?: string | null
+          availability_status?:
+            | Database["public"]["Enums"]["availability_status"]
+            | null
+          candidate_id: string
+          certification_codes?: string[] | null
+          certification_expiry_map?: Json | null
+          compliance_status?:
+            | Database["public"]["Enums"]["compliance_status"]
+            | null
+          email: string
+          experience_years?: number | null
+          full_name: string
+          fylke?: string | null
+          indexed_at?: string | null
+          internal_rating?: number | null
+          kommune?: string | null
+          languages?: string[] | null
+          next_cert_expiry?: string | null
+          phone?: string | null
+          pool_ids?: string[] | null
+          profile_completeness?: number | null
+          roles?: string[]
+          searchable_text?: unknown
+          sectors?: string[] | null
+          tags?: string[] | null
+        }
+        Update: {
+          active_certifications?: string[] | null
+          availability_date?: string | null
+          availability_status?:
+            | Database["public"]["Enums"]["availability_status"]
+            | null
+          candidate_id?: string
+          certification_codes?: string[] | null
+          certification_expiry_map?: Json | null
+          compliance_status?:
+            | Database["public"]["Enums"]["compliance_status"]
+            | null
+          email?: string
+          experience_years?: number | null
+          full_name?: string
+          fylke?: string | null
+          indexed_at?: string | null
+          internal_rating?: number | null
+          kommune?: string | null
+          languages?: string[] | null
+          next_cert_expiry?: string | null
+          phone?: string | null
+          pool_ids?: string[] | null
+          profile_completeness?: number | null
+          roles?: string[]
+          searchable_text?: unknown
+          sectors?: string[] | null
+          tags?: string[] | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "candidate_shortlists_job_requirement_id_fkey"
-            columns: ["job_requirement_id"]
-            isOneToOne: false
-            referencedRelation: "jobs_needing_candidates"
+            foreignKeyName: "candidate_search_index_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: true
+            referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
         ]
       }
       candidates: {
         Row: {
+          address_city: string | null
           archived_at: string | null
-          available_from: string | null
-          available_to: string | null
-          bankid_verified_at: string | null
-          certs_key: string | null
-          clerk_user_id: string | null
-          county: string | null
-          created_at: string
-          cv_key: string | null
-          deck_class: string | null
-          deck_has: string | null
-          email: string
-          email_encrypted: string | null
-          flagged_reason: string | null
-          fylke: string | null
-          gdpr_consent: boolean | null
-          id: string
-          is_encrypted: boolean | null
-          kommune: string | null
-          municipality: string | null
-          name: string
-          name_encrypted: string | null
-          national_id_hash: string | null
-          ocr_confidence_score: number | null
-          other_comp: string | null
-          phone: string
-          phone_encrypted: string | null
-          skills: string | null
-          source_ip: string | null
-          source_ip_encrypted: string | null
-          status: string | null
-          stcw_confirm: boolean | null
-          stcw_confirmed: boolean | null
-          stcw_has: string | null
-          stcw_mod: string[] | null
-          submitted_at: string | null
-          verification_status: string | null
-          verified_at: string | null
-          verified_by: string | null
-          wants_temporary: string | null
-          work_main: string[] | null
-        }
-        Insert: {
-          archived_at?: string | null
-          available_from?: string | null
-          available_to?: string | null
-          bankid_verified_at?: string | null
-          certs_key?: string | null
-          clerk_user_id?: string | null
-          county?: string | null
-          created_at?: string
-          cv_key?: string | null
-          deck_class?: string | null
-          deck_has?: string | null
-          email: string
-          email_encrypted?: string | null
-          flagged_reason?: string | null
-          fylke?: string | null
-          gdpr_consent?: boolean | null
-          id?: string
-          is_encrypted?: boolean | null
-          kommune?: string | null
-          municipality?: string | null
-          name: string
-          name_encrypted?: string | null
-          national_id_hash?: string | null
-          ocr_confidence_score?: number | null
-          other_comp?: string | null
-          phone: string
-          phone_encrypted?: string | null
-          skills?: string | null
-          source_ip?: string | null
-          source_ip_encrypted?: string | null
-          status?: string | null
-          stcw_confirm?: boolean | null
-          stcw_confirmed?: boolean | null
-          stcw_has?: string | null
-          stcw_mod?: string[] | null
-          submitted_at?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Update: {
-          archived_at?: string | null
-          available_from?: string | null
-          available_to?: string | null
-          bankid_verified_at?: string | null
-          certs_key?: string | null
-          clerk_user_id?: string | null
-          county?: string | null
-          created_at?: string
-          cv_key?: string | null
-          deck_class?: string | null
-          deck_has?: string | null
-          email?: string
-          email_encrypted?: string | null
-          flagged_reason?: string | null
-          fylke?: string | null
-          gdpr_consent?: boolean | null
-          id?: string
-          is_encrypted?: boolean | null
-          kommune?: string | null
-          municipality?: string | null
-          name?: string
-          name_encrypted?: string | null
-          national_id_hash?: string | null
-          ocr_confidence_score?: number | null
-          other_comp?: string | null
-          phone?: string
-          phone_encrypted?: string | null
-          skills?: string | null
-          source_ip?: string | null
-          source_ip_encrypted?: string | null
-          status?: string | null
-          stcw_confirm?: boolean | null
-          stcw_confirmed?: boolean | null
-          stcw_has?: string | null
-          stcw_mod?: string[] | null
-          submitted_at?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Relationships: []
-      }
-      capa_action_log: {
-        Row: {
-          action_number: number
-          completed_at: string | null
-          completion_notes: string | null
+          archived_by: string | null
+          archived_reason: string | null
+          availability_date: string | null
+          availability_notes: string | null
+          availability_status:
+            | Database["public"]["Enums"]["availability_status"]
+            | null
+          availability_updated_at: string | null
+          avatar_url: string | null
+          compliance_checked_at: string | null
+          compliance_checked_by: string | null
+          compliance_expires_at: string | null
+          compliance_notes: string | null
+          compliance_status:
+            | Database["public"]["Enums"]["compliance_status"]
+            | null
           created_at: string | null
-          description: string
-          due_date: string | null
+          created_by: string | null
+          cv_file_path: string | null
+          cv_key: string | null
+          cv_summary: string | null
+          display_name: string | null
+          email: string
+          experience_details: Json | null
+          experience_years: number | null
+          first_name: string | null
+          gdpr_consent: boolean | null
+          gdpr_consent_date: string | null
           id: string
-          nc_id: string | null
-          reminder_sent_1d: boolean | null
-          reminder_sent_7d: boolean | null
-          responsible_user: string | null
+          internal_notes: string | null
+          internal_rating: number | null
+          languages: Json | null
+          last_name: string | null
+          legacy_id: string | null
+          legacy_source: string | null
+          location_preferred_regions: string[] | null
+          location_willing_to_relocate: boolean | null
+          name: string | null
+          national_id_number: string | null
+          phone: string | null
+          pipeline_stage: string | null
+          primary_role: string | null
+          profile_completeness: number | null
+          referred_by: string | null
+          rotation_flexible: boolean | null
+          rotation_max_weeks_on: number | null
+          rotation_min_weeks_off: number | null
+          rotation_preferred: string[] | null
+          salary_min_monthly_nok: number | null
+          salary_negotiable: boolean | null
+          salary_preferred_monthly_nok: number | null
+          secondary_roles: string[] | null
+          sectors: string[] | null
+          source: string | null
+          source_details: Json | null
           status: string | null
+          stcw_consent: boolean | null
+          stcw_consent_date: string | null
+          tags: string[] | null
           updated_at: string | null
+          updated_by: string | null
+          user_id: string | null
+          vipps_sub: string | null
+          vipps_verified: boolean | null
+          vipps_verified_at: string | null
         }
         Insert: {
-          action_number: number
-          completed_at?: string | null
-          completion_notes?: string | null
+          address_city?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          archived_reason?: string | null
+          availability_date?: string | null
+          availability_notes?: string | null
+          availability_status?:
+            | Database["public"]["Enums"]["availability_status"]
+            | null
+          availability_updated_at?: string | null
+          avatar_url?: string | null
+          compliance_checked_at?: string | null
+          compliance_checked_by?: string | null
+          compliance_expires_at?: string | null
+          compliance_notes?: string | null
+          compliance_status?:
+            | Database["public"]["Enums"]["compliance_status"]
+            | null
           created_at?: string | null
-          description: string
-          due_date?: string | null
+          created_by?: string | null
+          cv_file_path?: string | null
+          cv_key?: string | null
+          cv_summary?: string | null
+          display_name?: string | null
+          email: string
+          experience_details?: Json | null
+          experience_years?: number | null
+          first_name?: string | null
+          gdpr_consent?: boolean | null
+          gdpr_consent_date?: string | null
           id?: string
-          nc_id?: string | null
-          reminder_sent_1d?: boolean | null
-          reminder_sent_7d?: boolean | null
-          responsible_user?: string | null
+          internal_notes?: string | null
+          internal_rating?: number | null
+          languages?: Json | null
+          last_name?: string | null
+          legacy_id?: string | null
+          legacy_source?: string | null
+          location_preferred_regions?: string[] | null
+          location_willing_to_relocate?: boolean | null
+          name?: string | null
+          national_id_number?: string | null
+          phone?: string | null
+          pipeline_stage?: string | null
+          primary_role?: string | null
+          profile_completeness?: number | null
+          referred_by?: string | null
+          rotation_flexible?: boolean | null
+          rotation_max_weeks_on?: number | null
+          rotation_min_weeks_off?: number | null
+          rotation_preferred?: string[] | null
+          salary_min_monthly_nok?: number | null
+          salary_negotiable?: boolean | null
+          salary_preferred_monthly_nok?: number | null
+          secondary_roles?: string[] | null
+          sectors?: string[] | null
+          source?: string | null
+          source_details?: Json | null
           status?: string | null
+          stcw_consent?: boolean | null
+          stcw_consent_date?: string | null
+          tags?: string[] | null
           updated_at?: string | null
+          updated_by?: string | null
+          user_id?: string | null
+          vipps_sub?: string | null
+          vipps_verified?: boolean | null
+          vipps_verified_at?: string | null
         }
         Update: {
-          action_number?: number
-          completed_at?: string | null
-          completion_notes?: string | null
+          address_city?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          archived_reason?: string | null
+          availability_date?: string | null
+          availability_notes?: string | null
+          availability_status?:
+            | Database["public"]["Enums"]["availability_status"]
+            | null
+          availability_updated_at?: string | null
+          avatar_url?: string | null
+          compliance_checked_at?: string | null
+          compliance_checked_by?: string | null
+          compliance_expires_at?: string | null
+          compliance_notes?: string | null
+          compliance_status?:
+            | Database["public"]["Enums"]["compliance_status"]
+            | null
           created_at?: string | null
-          description?: string
-          due_date?: string | null
+          created_by?: string | null
+          cv_file_path?: string | null
+          cv_key?: string | null
+          cv_summary?: string | null
+          display_name?: string | null
+          email?: string
+          experience_details?: Json | null
+          experience_years?: number | null
+          first_name?: string | null
+          gdpr_consent?: boolean | null
+          gdpr_consent_date?: string | null
           id?: string
-          nc_id?: string | null
-          reminder_sent_1d?: boolean | null
-          reminder_sent_7d?: boolean | null
-          responsible_user?: string | null
+          internal_notes?: string | null
+          internal_rating?: number | null
+          languages?: Json | null
+          last_name?: string | null
+          legacy_id?: string | null
+          legacy_source?: string | null
+          location_preferred_regions?: string[] | null
+          location_willing_to_relocate?: boolean | null
+          name?: string | null
+          national_id_number?: string | null
+          phone?: string | null
+          pipeline_stage?: string | null
+          primary_role?: string | null
+          profile_completeness?: number | null
+          referred_by?: string | null
+          rotation_flexible?: boolean | null
+          rotation_max_weeks_on?: number | null
+          rotation_min_weeks_off?: number | null
+          rotation_preferred?: string[] | null
+          salary_min_monthly_nok?: number | null
+          salary_negotiable?: boolean | null
+          salary_preferred_monthly_nok?: number | null
+          secondary_roles?: string[] | null
+          sectors?: string[] | null
+          source?: string | null
+          source_details?: Json | null
           status?: string | null
+          stcw_consent?: boolean | null
+          stcw_consent_date?: string | null
+          tags?: string[] | null
           updated_at?: string | null
+          updated_by?: string | null
+          user_id?: string | null
+          vipps_sub?: string | null
+          vipps_verified?: boolean | null
+          vipps_verified_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "capa_action_log_nc_id_fkey"
-            columns: ["nc_id"]
+            foreignKeyName: "candidates_archived_by_fkey"
+            columns: ["archived_by"]
             isOneToOne: false
-            referencedRelation: "nonconformities"
-            referencedColumns: ["nc_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_compliance_checked_by_fkey"
+            columns: ["compliance_checked_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
-      clerk_users: {
+      contacts: {
         Row: {
-          candidate_registered: boolean | null
-          clerk_user_id: string
           created_at: string | null
-          deleted_at: string | null
-          email: string | null
-          first_name: string | null
-          full_name: string | null
+          epost: string
           id: string
-          is_admin: boolean | null
-          last_name: string | null
-          updated_at: string | null
-          vipps_verified: boolean | null
+          melding: string
+          metadata: Json | null
+          navn: string
+          status: string | null
+          telefon: string | null
         }
         Insert: {
-          candidate_registered?: boolean | null
-          clerk_user_id: string
           created_at?: string | null
-          deleted_at?: string | null
-          email?: string | null
-          first_name?: string | null
-          full_name?: string | null
+          epost: string
           id?: string
-          is_admin?: boolean | null
-          last_name?: string | null
-          updated_at?: string | null
-          vipps_verified?: boolean | null
+          melding: string
+          metadata?: Json | null
+          navn: string
+          status?: string | null
+          telefon?: string | null
         }
         Update: {
-          candidate_registered?: boolean | null
-          clerk_user_id?: string
           created_at?: string | null
-          deleted_at?: string | null
-          email?: string | null
-          first_name?: string | null
-          full_name?: string | null
+          epost?: string
           id?: string
-          is_admin?: boolean | null
-          last_name?: string | null
-          updated_at?: string | null
-          vipps_verified?: boolean | null
+          melding?: string
+          metadata?: Json | null
+          navn?: string
+          status?: string | null
+          telefon?: string | null
         }
         Relationships: []
       }
-      contract_signing_parties: {
+      contract_parties: {
         Row: {
           contract_id: string
-          created_at: string
+          created_at: string | null
           email: string
-          has_signed: boolean | null
           id: string
           name: string
-          org_number: string | null
-          organization: string | null
+          national_id: string | null
+          organization_name: string | null
+          organization_number: string | null
           party_type: string
           phone: string | null
-          signature_reference: string | null
+          signature_ip: string | null
+          signature_method: string | null
           signed_at: string | null
-          signed_ip: string | null
-          signed_user_agent: string | null
-          signing_method: string | null
-          signing_order: number
-          updated_at: string
+          signing_order: number | null
+          status: string | null
         }
         Insert: {
           contract_id: string
-          created_at?: string
+          created_at?: string | null
           email: string
-          has_signed?: boolean | null
           id?: string
           name: string
-          org_number?: string | null
-          organization?: string | null
+          national_id?: string | null
+          organization_name?: string | null
+          organization_number?: string | null
           party_type: string
           phone?: string | null
-          signature_reference?: string | null
+          signature_ip?: string | null
+          signature_method?: string | null
           signed_at?: string | null
-          signed_ip?: string | null
-          signed_user_agent?: string | null
-          signing_method?: string | null
-          signing_order?: number
-          updated_at?: string
+          signing_order?: number | null
+          status?: string | null
         }
         Update: {
           contract_id?: string
-          created_at?: string
+          created_at?: string | null
           email?: string
-          has_signed?: boolean | null
           id?: string
           name?: string
-          org_number?: string | null
-          organization?: string | null
+          national_id?: string | null
+          organization_name?: string | null
+          organization_number?: string | null
           party_type?: string
           phone?: string | null
-          signature_reference?: string | null
+          signature_ip?: string | null
+          signature_method?: string | null
           signed_at?: string | null
-          signed_ip?: string | null
-          signed_user_agent?: string | null
-          signing_method?: string | null
-          signing_order?: number
-          updated_at?: string
+          signing_order?: number | null
+          status?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "contract_signing_parties_contract_id_fkey"
+            foreignKeyName: "contract_parties_contract_id_fkey"
             columns: ["contract_id"]
             isOneToOne: false
             referencedRelation: "contracts"
@@ -923,114 +1246,104 @@ export type Database = {
       }
       contracts: {
         Row: {
-          activated_at: string | null
           archived_at: string | null
-          audit_trail: Json | null
-          auto_renewal: boolean | null
+          assignment_id: string | null
           candidate_id: string | null
-          compliance_flags: Json | null
+          content_html: string | null
           contract_number: string
-          contract_type: string
-          created_at: string
-          created_by: string
-          customer_id: string | null
+          created_at: string | null
+          created_by: string | null
           description: string | null
-          document_url: string | null
-          effective_date: string
-          expiry_date: string | null
+          draft_pdf_path: string | null
+          esign_expires_at: string | null
+          esign_provider: string | null
+          esign_request_id: string | null
+          esign_status: string | null
+          esign_url: string | null
           id: string
-          notice_period_days: number | null
-          parent_contract_id: string | null
-          sent_at: string | null
+          internal_notes: string | null
+          organization_id: string | null
           signed_at: string | null
-          signed_document_url: string | null
-          signing_method: string
-          signing_request_id: string | null
-          status: string
+          signed_pdf_path: string | null
+          status: Database["public"]["Enums"]["contract_status"] | null
           template_id: string | null
-          terminated_at: string | null
+          template_version: number | null
           title: string
-          updated_at: string
-          version: number
-          vessel_id: string | null
+          type: Database["public"]["Enums"]["contract_type"]
+          updated_at: string | null
+          updated_by: string | null
+          valid_from: string | null
+          valid_until: string | null
+          variables: Json | null
         }
         Insert: {
-          activated_at?: string | null
           archived_at?: string | null
-          audit_trail?: Json | null
-          auto_renewal?: boolean | null
+          assignment_id?: string | null
           candidate_id?: string | null
-          compliance_flags?: Json | null
+          content_html?: string | null
           contract_number: string
-          contract_type: string
-          created_at?: string
-          created_by: string
-          customer_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
           description?: string | null
-          document_url?: string | null
-          effective_date: string
-          expiry_date?: string | null
+          draft_pdf_path?: string | null
+          esign_expires_at?: string | null
+          esign_provider?: string | null
+          esign_request_id?: string | null
+          esign_status?: string | null
+          esign_url?: string | null
           id?: string
-          notice_period_days?: number | null
-          parent_contract_id?: string | null
-          sent_at?: string | null
+          internal_notes?: string | null
+          organization_id?: string | null
           signed_at?: string | null
-          signed_document_url?: string | null
-          signing_method?: string
-          signing_request_id?: string | null
-          status?: string
+          signed_pdf_path?: string | null
+          status?: Database["public"]["Enums"]["contract_status"] | null
           template_id?: string | null
-          terminated_at?: string | null
+          template_version?: number | null
           title: string
-          updated_at?: string
-          version?: number
-          vessel_id?: string | null
+          type: Database["public"]["Enums"]["contract_type"]
+          updated_at?: string | null
+          updated_by?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+          variables?: Json | null
         }
         Update: {
-          activated_at?: string | null
           archived_at?: string | null
-          audit_trail?: Json | null
-          auto_renewal?: boolean | null
+          assignment_id?: string | null
           candidate_id?: string | null
-          compliance_flags?: Json | null
+          content_html?: string | null
           contract_number?: string
-          contract_type?: string
-          created_at?: string
-          created_by?: string
-          customer_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
           description?: string | null
-          document_url?: string | null
-          effective_date?: string
-          expiry_date?: string | null
+          draft_pdf_path?: string | null
+          esign_expires_at?: string | null
+          esign_provider?: string | null
+          esign_request_id?: string | null
+          esign_status?: string | null
+          esign_url?: string | null
           id?: string
-          notice_period_days?: number | null
-          parent_contract_id?: string | null
-          sent_at?: string | null
+          internal_notes?: string | null
+          organization_id?: string | null
           signed_at?: string | null
-          signed_document_url?: string | null
-          signing_method?: string
-          signing_request_id?: string | null
-          status?: string
+          signed_pdf_path?: string | null
+          status?: Database["public"]["Enums"]["contract_status"] | null
           template_id?: string | null
-          terminated_at?: string | null
+          template_version?: number | null
           title?: string
-          updated_at?: string
-          version?: number
-          vessel_id?: string | null
+          type?: Database["public"]["Enums"]["contract_type"]
+          updated_at?: string | null
+          updated_by?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+          variables?: Json | null
         }
         Relationships: [
           {
-            foreignKeyName: "contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "contracts_assignment_id_fkey"
+            columns: ["assignment_id"]
             isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
+            referencedRelation: "assignments"
             referencedColumns: ["id"]
           },
           {
@@ -1041,158 +1354,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "contracts_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "candidates_secure"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "contracts_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "contracts_organization_id_fkey"
+            columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "leads"
+            referencedRelation: "crm_organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "contracts_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "contracts_updated_by_fkey"
+            columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "leads_secure"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contracts_parent_contract_id_fkey"
-            columns: ["parent_contract_id"]
-            isOneToOne: false
-            referencedRelation: "contracts"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
         ]
-      }
-      contacts: {
-        Row: {
-          id: string
-          navn: string
-          epost: string
-          telefon: string | null
-          melding: string
-          created_at: string
-          status: string
-          metadata: Json | null
-        }
-        Insert: {
-          id?: string
-          navn: string
-          epost: string
-          telefon?: string | null
-          melding: string
-          created_at?: string
-          status?: string
-          metadata?: Json | null
-        }
-        Update: {
-          id?: string
-          navn?: string
-          epost?: string
-          telefon?: string | null
-          melding?: string
-          status?: string
-          metadata?: Json | null
-        }
-        Relationships: []
       }
       crm_activities: {
         Row: {
-          call_duration_minutes: number | null
-          call_outcome: string | null
+          assignment_id: string | null
           contact_id: string | null
           created_at: string | null
-          created_by: string | null
-          created_by_name: string | null
-          date: string | null
+          deal_id: string | null
           description: string | null
-          email_cc: string[] | null
-          email_from: string | null
+          duration_minutes: number | null
           email_message_id: string | null
-          email_thread_id: string | null
-          email_to: string | null
-          hubspot_engagement_id: string | null
-          hubspot_synced_at: string | null
           id: string
-          meeting_attendees: string[] | null
-          meeting_location: string | null
-          meeting_recording_url: string | null
-          next_activity: string | null
-          next_follow_up_date: string | null
+          organization_id: string | null
+          outcome: string | null
+          participants: string[] | null
+          performed_at: string | null
+          performed_by: string | null
+          request_id: string | null
           subject: string | null
-          type: string
+          type: Database["public"]["Enums"]["activity_type"]
         }
         Insert: {
-          call_duration_minutes?: number | null
-          call_outcome?: string | null
+          assignment_id?: string | null
           contact_id?: string | null
           created_at?: string | null
-          created_by?: string | null
-          created_by_name?: string | null
-          date?: string | null
+          deal_id?: string | null
           description?: string | null
-          email_cc?: string[] | null
-          email_from?: string | null
+          duration_minutes?: number | null
           email_message_id?: string | null
-          email_thread_id?: string | null
-          email_to?: string | null
-          hubspot_engagement_id?: string | null
-          hubspot_synced_at?: string | null
           id?: string
-          meeting_attendees?: string[] | null
-          meeting_location?: string | null
-          meeting_recording_url?: string | null
-          next_activity?: string | null
-          next_follow_up_date?: string | null
+          organization_id?: string | null
+          outcome?: string | null
+          participants?: string[] | null
+          performed_at?: string | null
+          performed_by?: string | null
+          request_id?: string | null
           subject?: string | null
-          type: string
+          type: Database["public"]["Enums"]["activity_type"]
         }
         Update: {
-          call_duration_minutes?: number | null
-          call_outcome?: string | null
+          assignment_id?: string | null
           contact_id?: string | null
           created_at?: string | null
-          created_by?: string | null
-          created_by_name?: string | null
-          date?: string | null
+          deal_id?: string | null
           description?: string | null
-          email_cc?: string[] | null
-          email_from?: string | null
+          duration_minutes?: number | null
           email_message_id?: string | null
-          email_thread_id?: string | null
-          email_to?: string | null
-          hubspot_engagement_id?: string | null
-          hubspot_synced_at?: string | null
           id?: string
-          meeting_attendees?: string[] | null
-          meeting_location?: string | null
-          meeting_recording_url?: string | null
-          next_activity?: string | null
-          next_follow_up_date?: string | null
+          organization_id?: string | null
+          outcome?: string | null
+          participants?: string[] | null
+          performed_at?: string | null
+          performed_by?: string | null
+          request_id?: string | null
           subject?: string | null
-          type?: string
+          type?: Database["public"]["Enums"]["activity_type"]
         }
         Relationships: [
-          {
-            foreignKeyName: "crm_activities_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_activities_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "crm_activities_contact_id_fkey"
             columns: ["contact_id"]
@@ -1201,510 +1440,223 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_activities_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_activities_deal_id_fkey"
+            columns: ["deal_id"]
             isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
+            referencedRelation: "crm_deals"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_activities_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_activities_organization_id_fkey"
+            columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
+            referencedRelation: "crm_organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_activities_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_activities_performed_by_fkey"
+            columns: ["performed_by"]
             isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_activities_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "fk_activities_assignment"
+            columns: ["assignment_id"]
             isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_activities_request"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "customer_requests"
+            referencedColumns: ["id"]
           },
         ]
-      }
-      crm_approval_requests: {
-        Row: {
-          approver_id: string | null
-          approver_name: string | null
-          confirmation_token: string | null
-          created_at: string
-          decision_at: string | null
-          decision_note: string | null
-          description: string | null
-          dry_run_preview: Json | null
-          entity_ids: string[]
-          entity_type: string
-          executed_at: string | null
-          execution_result: Json | null
-          expires_at: string | null
-          id: string
-          impact_summary: string | null
-          requested_at: string
-          requested_by: string
-          requested_by_name: string | null
-          status: string
-          title: string
-          type: string
-        }
-        Insert: {
-          approver_id?: string | null
-          approver_name?: string | null
-          confirmation_token?: string | null
-          created_at?: string
-          decision_at?: string | null
-          decision_note?: string | null
-          description?: string | null
-          dry_run_preview?: Json | null
-          entity_ids: string[]
-          entity_type: string
-          executed_at?: string | null
-          execution_result?: Json | null
-          expires_at?: string | null
-          id?: string
-          impact_summary?: string | null
-          requested_at?: string
-          requested_by: string
-          requested_by_name?: string | null
-          status?: string
-          title: string
-          type: string
-        }
-        Update: {
-          approver_id?: string | null
-          approver_name?: string | null
-          confirmation_token?: string | null
-          created_at?: string
-          decision_at?: string | null
-          decision_note?: string | null
-          description?: string | null
-          dry_run_preview?: Json | null
-          entity_ids?: string[]
-          entity_type?: string
-          executed_at?: string | null
-          execution_result?: Json | null
-          expires_at?: string | null
-          id?: string
-          impact_summary?: string | null
-          requested_at?: string
-          requested_by?: string
-          requested_by_name?: string | null
-          status?: string
-          title?: string
-          type?: string
-        }
-        Relationships: []
-      }
-      crm_audit_log: {
-        Row: {
-          action: string
-          changes: Json | null
-          created_at: string
-          entity_id: string | null
-          entity_type: string
-          id: string
-          ip_address: unknown
-          metadata: Json | null
-          user_email: string | null
-          user_id: string
-        }
-        Insert: {
-          action: string
-          changes?: Json | null
-          created_at?: string
-          entity_id?: string | null
-          entity_type: string
-          id?: string
-          ip_address?: unknown
-          metadata?: Json | null
-          user_email?: string | null
-          user_id: string
-        }
-        Update: {
-          action?: string
-          changes?: Json | null
-          created_at?: string
-          entity_id?: string | null
-          entity_type?: string
-          id?: string
-          ip_address?: unknown
-          metadata?: Json | null
-          user_email?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      crm_automation_log: {
-        Row: {
-          actions_executed: string[] | null
-          contact_id: string
-          duration_ms: number | null
-          error_message: string | null
-          executed_at: string
-          executed_by: string | null
-          id: string
-          rule_id: string | null
-          rule_name: string
-          status: string
-          trigger: string
-          trigger_data: Json | null
-        }
-        Insert: {
-          actions_executed?: string[] | null
-          contact_id: string
-          duration_ms?: number | null
-          error_message?: string | null
-          executed_at?: string
-          executed_by?: string | null
-          id?: string
-          rule_id?: string | null
-          rule_name: string
-          status: string
-          trigger: string
-          trigger_data?: Json | null
-        }
-        Update: {
-          actions_executed?: string[] | null
-          contact_id?: string
-          duration_ms?: number | null
-          error_message?: string | null
-          executed_at?: string
-          executed_by?: string | null
-          id?: string
-          rule_id?: string | null
-          rule_name?: string
-          status?: string
-          trigger?: string
-          trigger_data?: Json | null
-        }
-        Relationships: []
-      }
-      crm_automation_rules: {
-        Row: {
-          actions: Json
-          created_at: string
-          created_by: string
-          description: string | null
-          editable_by: string[] | null
-          id: string
-          is_active: boolean | null
-          last_triggered_at: string | null
-          name: string
-          order_index: number | null
-          trigger: string
-          trigger_condition: Json | null
-          trigger_count: number | null
-          updated_at: string
-        }
-        Insert: {
-          actions: Json
-          created_at?: string
-          created_by: string
-          description?: string | null
-          editable_by?: string[] | null
-          id?: string
-          is_active?: boolean | null
-          last_triggered_at?: string | null
-          name: string
-          order_index?: number | null
-          trigger: string
-          trigger_condition?: Json | null
-          trigger_count?: number | null
-          updated_at?: string
-        }
-        Update: {
-          actions?: Json
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          editable_by?: string[] | null
-          id?: string
-          is_active?: boolean | null
-          last_triggered_at?: string | null
-          name?: string
-          order_index?: number | null
-          trigger?: string
-          trigger_condition?: Json | null
-          trigger_count?: number | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      crm_contact_audit_log: {
-        Row: {
-          action: string
-          backup_reference: string | null
-          can_rollback: boolean | null
-          changes: Json | null
-          contact_id: string
-          created_at: string
-          created_by: string
-          created_by_email: string | null
-          created_by_name: string | null
-          field_changed: string | null
-          id: string
-          ip_address: unknown
-          is_sensitive: boolean | null
-          new_value: string | null
-          note: string | null
-          old_value: string | null
-          reason: string | null
-          rollback_data: Json | null
-          rolled_back_at: string | null
-          rolled_back_by: string | null
-          user_agent: string | null
-        }
-        Insert: {
-          action: string
-          backup_reference?: string | null
-          can_rollback?: boolean | null
-          changes?: Json | null
-          contact_id: string
-          created_at?: string
-          created_by: string
-          created_by_email?: string | null
-          created_by_name?: string | null
-          field_changed?: string | null
-          id?: string
-          ip_address?: unknown
-          is_sensitive?: boolean | null
-          new_value?: string | null
-          note?: string | null
-          old_value?: string | null
-          reason?: string | null
-          rollback_data?: Json | null
-          rolled_back_at?: string | null
-          rolled_back_by?: string | null
-          user_agent?: string | null
-        }
-        Update: {
-          action?: string
-          backup_reference?: string | null
-          can_rollback?: boolean | null
-          changes?: Json | null
-          contact_id?: string
-          created_at?: string
-          created_by?: string
-          created_by_email?: string | null
-          created_by_name?: string | null
-          field_changed?: string | null
-          id?: string
-          ip_address?: unknown
-          is_sensitive?: boolean | null
-          new_value?: string | null
-          note?: string | null
-          old_value?: string | null
-          reason?: string | null
-          rollback_data?: Json | null
-          rolled_back_at?: string | null
-          rolled_back_by?: string | null
-          user_agent?: string | null
-        }
-        Relationships: []
       }
       crm_contacts: {
         Row: {
-          activity_count_30d: number | null
-          address: string | null
           archived_at: string | null
-          archived_reason: string | null
-          assigned_to: string | null
-          campaign_tag: string | null
-          company: string | null
-          contact_status: string | null
+          archived_by: string | null
+          avatar_url: string | null
           created_at: string | null
-          deal_value: number | null
+          created_by: string | null
+          department: string | null
           email: string | null
-          follow_up_date: string | null
-          hubspot_id: string | null
-          hubspot_owner_id: string | null
-          hubspot_synced_at: string | null
+          first_name: string
           id: string
-          industry: string | null
-          interest_level: number | null
-          last_contact_at: string | null
-          last_quote_sent_at: string | null
+          is_billing_contact: boolean | null
+          is_decision_maker: boolean | null
+          is_operational_contact: boolean | null
+          is_primary: boolean | null
+          job_title: string | null
+          language: string | null
+          last_name: string
           linkedin_url: string | null
-          location: string | null
-          manual_entry: boolean | null
-          merged_from: Json | null
-          merged_into: string | null
-          name: string
-          next_activity: string | null
+          mobile: string | null
           notes: string | null
-          notes_updated_at: string | null
-          notes_updated_by: string | null
-          org_number: string | null
-          owner_id: string | null
+          organization_id: string
           phone: string | null
-          pinned_note: string | null
-          position: string | null
-          priority: string | null
-          probability: number | null
-          source: string | null
-          status: string | null
-          tags: string[] | null
-          title: string | null
+          preferred_contact_method: string | null
           updated_at: string | null
-          website: string | null
+          updated_by: string | null
         }
         Insert: {
-          activity_count_30d?: number | null
-          address?: string | null
           archived_at?: string | null
-          archived_reason?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
+          archived_by?: string | null
+          avatar_url?: string | null
           created_at?: string | null
-          deal_value?: number | null
+          created_by?: string | null
+          department?: string | null
           email?: string | null
-          follow_up_date?: string | null
-          hubspot_id?: string | null
-          hubspot_owner_id?: string | null
-          hubspot_synced_at?: string | null
+          first_name: string
           id?: string
-          industry?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          last_quote_sent_at?: string | null
+          is_billing_contact?: boolean | null
+          is_decision_maker?: boolean | null
+          is_operational_contact?: boolean | null
+          is_primary?: boolean | null
+          job_title?: string | null
+          language?: string | null
+          last_name: string
           linkedin_url?: string | null
-          location?: string | null
-          manual_entry?: boolean | null
-          merged_from?: Json | null
-          merged_into?: string | null
-          name: string
-          next_activity?: string | null
+          mobile?: string | null
           notes?: string | null
-          notes_updated_at?: string | null
-          notes_updated_by?: string | null
-          org_number?: string | null
-          owner_id?: string | null
+          organization_id: string
           phone?: string | null
-          pinned_note?: string | null
-          position?: string | null
-          priority?: string | null
-          probability?: number | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string | null
+          preferred_contact_method?: string | null
           updated_at?: string | null
-          website?: string | null
+          updated_by?: string | null
         }
         Update: {
-          activity_count_30d?: number | null
-          address?: string | null
           archived_at?: string | null
-          archived_reason?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
+          archived_by?: string | null
+          avatar_url?: string | null
           created_at?: string | null
-          deal_value?: number | null
+          created_by?: string | null
+          department?: string | null
           email?: string | null
-          follow_up_date?: string | null
-          hubspot_id?: string | null
-          hubspot_owner_id?: string | null
-          hubspot_synced_at?: string | null
+          first_name?: string
           id?: string
-          industry?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          last_quote_sent_at?: string | null
+          is_billing_contact?: boolean | null
+          is_decision_maker?: boolean | null
+          is_operational_contact?: boolean | null
+          is_primary?: boolean | null
+          job_title?: string | null
+          language?: string | null
+          last_name?: string
           linkedin_url?: string | null
-          location?: string | null
-          manual_entry?: boolean | null
-          merged_from?: Json | null
-          merged_into?: string | null
-          name?: string
-          next_activity?: string | null
+          mobile?: string | null
           notes?: string | null
-          notes_updated_at?: string | null
-          notes_updated_by?: string | null
-          org_number?: string | null
-          owner_id?: string | null
+          organization_id?: string
           phone?: string | null
-          pinned_note?: string | null
-          position?: string | null
-          priority?: string | null
-          probability?: number | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string | null
+          preferred_contact_method?: string | null
           updated_at?: string | null
-          website?: string | null
+          updated_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "crm_contacts_archived_by_fkey"
+            columns: ["archived_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "crm_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       crm_deals: {
         Row: {
-          assigned_to: string | null
-          closed_at: string | null
+          actual_close_date: string | null
+          archived_at: string | null
           contact_id: string | null
           created_at: string | null
+          created_by: string | null
+          currency: string | null
+          description: string | null
           expected_close_date: string | null
           id: string
+          lost_at: string | null
+          lost_reason: string | null
           notes: string | null
+          organization_id: string
+          owner_id: string | null
           probability: number | null
-          stage: string | null
+          stage: Database["public"]["Enums"]["deal_stage"] | null
           title: string
           updated_at: string | null
-          value: number | null
+          updated_by: string | null
+          value_nok: number | null
+          won_at: string | null
         }
         Insert: {
-          assigned_to?: string | null
-          closed_at?: string | null
+          actual_close_date?: string | null
+          archived_at?: string | null
           contact_id?: string | null
           created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
           expected_close_date?: string | null
           id?: string
+          lost_at?: string | null
+          lost_reason?: string | null
           notes?: string | null
+          organization_id: string
+          owner_id?: string | null
           probability?: number | null
-          stage?: string | null
+          stage?: Database["public"]["Enums"]["deal_stage"] | null
           title: string
           updated_at?: string | null
-          value?: number | null
+          updated_by?: string | null
+          value_nok?: number | null
+          won_at?: string | null
         }
         Update: {
-          assigned_to?: string | null
-          closed_at?: string | null
+          actual_close_date?: string | null
+          archived_at?: string | null
           contact_id?: string | null
           created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
           expected_close_date?: string | null
           id?: string
+          lost_at?: string | null
+          lost_reason?: string | null
           notes?: string | null
+          organization_id?: string
+          owner_id?: string | null
           probability?: number | null
-          stage?: string | null
+          stage?: Database["public"]["Enums"]["deal_stage"] | null
           title?: string
           updated_at?: string | null
-          value?: number | null
+          updated_by?: string | null
+          value_nok?: number | null
+          won_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "crm_deals_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_deals_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "crm_deals_contact_id_fkey"
             columns: ["contact_id"]
@@ -1713,908 +1665,246 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_deals_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_deals_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_deals_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_deals_organization_id_fkey"
+            columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
+            referencedRelation: "crm_organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_deals_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_deals_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_deals_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_deals_updated_by_fkey"
+            columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
-      crm_documents: {
+      crm_organizations: {
         Row: {
-          contact_id: string
-          created_at: string
-          file_size: number | null
-          file_url: string
+          address_city: string | null
+          address_country: string | null
+          address_postal_code: string | null
+          address_street: string | null
+          archived_at: string | null
+          archived_by: string | null
+          company_size: string | null
+          created_at: string | null
+          created_by: string | null
+          customer_type: string | null
+          email: string | null
+          estimated_annual_value_nok: number | null
           id: string
-          is_latest: boolean | null
-          mime_type: string | null
+          industry: string | null
+          lifetime_value_nok: number | null
+          logo_url: string | null
           name: string
           notes: string | null
-          parent_id: string | null
-          signature_envelope_id: string | null
-          signature_provider: string | null
-          signature_request_id: string | null
-          signature_status: string | null
-          signature_url: string | null
-          signed_at: string | null
-          signed_by: string | null
-          signed_by_email: string | null
-          status: string
-          storage_path: string | null
-          type: string
-          updated_at: string
-          uploaded_by: string | null
-          uploaded_by_name: string | null
-          version: number | null
-        }
-        Insert: {
-          contact_id: string
-          created_at?: string
-          file_size?: number | null
-          file_url: string
-          id?: string
-          is_latest?: boolean | null
-          mime_type?: string | null
-          name: string
-          notes?: string | null
-          parent_id?: string | null
-          signature_envelope_id?: string | null
-          signature_provider?: string | null
-          signature_request_id?: string | null
-          signature_status?: string | null
-          signature_url?: string | null
-          signed_at?: string | null
-          signed_by?: string | null
-          signed_by_email?: string | null
-          status?: string
-          storage_path?: string | null
-          type: string
-          updated_at?: string
-          uploaded_by?: string | null
-          uploaded_by_name?: string | null
-          version?: number | null
-        }
-        Update: {
-          contact_id?: string
-          created_at?: string
-          file_size?: number | null
-          file_url?: string
-          id?: string
-          is_latest?: boolean | null
-          mime_type?: string | null
-          name?: string
-          notes?: string | null
-          parent_id?: string | null
-          signature_envelope_id?: string | null
-          signature_provider?: string | null
-          signature_request_id?: string | null
-          signature_status?: string | null
-          signature_url?: string | null
-          signed_at?: string | null
-          signed_by?: string | null
-          signed_by_email?: string | null
-          status?: string
-          storage_path?: string | null
-          type?: string
-          updated_at?: string
-          uploaded_by?: string | null
-          uploaded_by_name?: string | null
-          version?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_documents_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      crm_email_summaries: {
-        Row: {
-          action_items: Json | null
-          activity_id: string | null
-          analyzed_at: string | null
-          contact_id: string | null
-          created_at: string | null
-          decision_makers: string[] | null
-          email_id: string | null
-          email_subject: string | null
-          email_thread_id: string | null
-          follow_up_date: string | null
-          follow_up_reason: string | null
-          follow_up_suggested: boolean | null
-          id: string
-          is_redacted: boolean | null
-          key_topics: Json | null
-          llm_confidence: number | null
-          llm_model: string | null
-          llm_processed_at: string | null
-          next_steps: string | null
-          redacted_at: string | null
-          redacted_by: string | null
-          redaction_reason: string | null
-          sentiment: string | null
-          short_summary: string | null
-          subject: string | null
-          summary: string | null
-        }
-        Insert: {
-          action_items?: Json | null
-          activity_id?: string | null
-          analyzed_at?: string | null
-          contact_id?: string | null
-          created_at?: string | null
-          decision_makers?: string[] | null
-          email_id?: string | null
-          email_subject?: string | null
-          email_thread_id?: string | null
-          follow_up_date?: string | null
-          follow_up_reason?: string | null
-          follow_up_suggested?: boolean | null
-          id?: string
-          is_redacted?: boolean | null
-          key_topics?: Json | null
-          llm_confidence?: number | null
-          llm_model?: string | null
-          llm_processed_at?: string | null
-          next_steps?: string | null
-          redacted_at?: string | null
-          redacted_by?: string | null
-          redaction_reason?: string | null
-          sentiment?: string | null
-          short_summary?: string | null
-          subject?: string | null
-          summary?: string | null
-        }
-        Update: {
-          action_items?: Json | null
-          activity_id?: string | null
-          analyzed_at?: string | null
-          contact_id?: string | null
-          created_at?: string | null
-          decision_makers?: string[] | null
-          email_id?: string | null
-          email_subject?: string | null
-          email_thread_id?: string | null
-          follow_up_date?: string | null
-          follow_up_reason?: string | null
-          follow_up_suggested?: boolean | null
-          id?: string
-          is_redacted?: boolean | null
-          key_topics?: Json | null
-          llm_confidence?: number | null
-          llm_model?: string | null
-          llm_processed_at?: string | null
-          next_steps?: string | null
-          redacted_at?: string | null
-          redacted_by?: string | null
-          redaction_reason?: string | null
-          sentiment?: string | null
-          short_summary?: string | null
-          subject?: string | null
-          summary?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_email_summaries_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      crm_general_files: {
-        Row: {
-          category: string | null
-          contact_id: string
-          created_at: string | null
-          description: string | null
-          file_size: number | null
-          file_url: string
-          id: string
-          mime_type: string | null
-          name: string
-          parent_id: string | null
+          org_number: string | null
+          outstanding_amount_nok: number | null
+          owner_id: string | null
+          phone: string | null
+          pipeline_entered_at: string | null
+          pipeline_lost_at: string | null
+          pipeline_lost_reason: string | null
+          pipeline_stage: Database["public"]["Enums"]["pipeline_stage"] | null
+          pipeline_won_at: string | null
+          preferences: Json | null
+          stats: Json | null
           tags: string[] | null
           updated_at: string | null
-          uploaded_by: string
-          uploaded_by_user_id: string | null
-          version: number | null
+          updated_by: string | null
+          website: string | null
         }
         Insert: {
-          category?: string | null
-          contact_id: string
+          address_city?: string | null
+          address_country?: string | null
+          address_postal_code?: string | null
+          address_street?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          company_size?: string | null
           created_at?: string | null
-          description?: string | null
-          file_size?: number | null
-          file_url: string
+          created_by?: string | null
+          customer_type?: string | null
+          email?: string | null
+          estimated_annual_value_nok?: number | null
           id?: string
-          mime_type?: string | null
+          industry?: string | null
+          lifetime_value_nok?: number | null
+          logo_url?: string | null
           name: string
-          parent_id?: string | null
+          notes?: string | null
+          org_number?: string | null
+          outstanding_amount_nok?: number | null
+          owner_id?: string | null
+          phone?: string | null
+          pipeline_entered_at?: string | null
+          pipeline_lost_at?: string | null
+          pipeline_lost_reason?: string | null
+          pipeline_stage?: Database["public"]["Enums"]["pipeline_stage"] | null
+          pipeline_won_at?: string | null
+          preferences?: Json | null
+          stats?: Json | null
           tags?: string[] | null
           updated_at?: string | null
-          uploaded_by: string
-          uploaded_by_user_id?: string | null
-          version?: number | null
+          updated_by?: string | null
+          website?: string | null
         }
         Update: {
-          category?: string | null
-          contact_id?: string
+          address_city?: string | null
+          address_country?: string | null
+          address_postal_code?: string | null
+          address_street?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          company_size?: string | null
           created_at?: string | null
-          description?: string | null
-          file_size?: number | null
-          file_url?: string
+          created_by?: string | null
+          customer_type?: string | null
+          email?: string | null
+          estimated_annual_value_nok?: number | null
           id?: string
-          mime_type?: string | null
+          industry?: string | null
+          lifetime_value_nok?: number | null
+          logo_url?: string | null
           name?: string
-          parent_id?: string | null
+          notes?: string | null
+          org_number?: string | null
+          outstanding_amount_nok?: number | null
+          owner_id?: string | null
+          phone?: string | null
+          pipeline_entered_at?: string | null
+          pipeline_lost_at?: string | null
+          pipeline_lost_reason?: string | null
+          pipeline_stage?: Database["public"]["Enums"]["pipeline_stage"] | null
+          pipeline_won_at?: string | null
+          preferences?: Json | null
+          stats?: Json | null
           tags?: string[] | null
           updated_at?: string | null
-          uploaded_by?: string
-          uploaded_by_user_id?: string | null
-          version?: number | null
+          updated_by?: string | null
+          website?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_organizations_archived_by_fkey"
+            columns: ["archived_by"]
             isOneToOne: false
-            referencedRelation: "active_crm_contacts"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_organizations_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_organizations_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
-            referencedRelation: "crm_contacts"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_organizations_updated_by_fkey"
+            columns: ["updated_by"]
             isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_general_files_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-          {
-            foreignKeyName: "crm_general_files_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "crm_general_files"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      crm_hubspot_sync_log: {
-        Row: {
-          changes: Json | null
-          conflicts: Json | null
-          contact_id: string
-          direction: string
-          error_code: string | null
-          error_message: string | null
-          fields_updated: string[] | null
-          hubspot_contact_id: string | null
-          hubspot_portal_id: string | null
-          id: string
-          resolutions: Json | null
-          status: string
-          synced_at: string
-          synced_by: string | null
-        }
-        Insert: {
-          changes?: Json | null
-          conflicts?: Json | null
-          contact_id: string
-          direction: string
-          error_code?: string | null
-          error_message?: string | null
-          fields_updated?: string[] | null
-          hubspot_contact_id?: string | null
-          hubspot_portal_id?: string | null
-          id?: string
-          resolutions?: Json | null
-          status: string
-          synced_at?: string
-          synced_by?: string | null
-        }
-        Update: {
-          changes?: Json | null
-          conflicts?: Json | null
-          contact_id?: string
-          direction?: string
-          error_code?: string | null
-          error_message?: string | null
-          fields_updated?: string[] | null
-          hubspot_contact_id?: string | null
-          hubspot_portal_id?: string | null
-          id?: string
-          resolutions?: Json | null
-          status?: string
-          synced_at?: string
-          synced_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_hubspot_sync_log_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      crm_meetings: {
-        Row: {
-          attendees: Json | null
-          calendar_event_id: string | null
-          calendar_link: string | null
-          calendar_synced_at: string | null
-          completed_at: string | null
-          contact_id: string
-          created_at: string
-          created_by: string | null
-          date: string
-          description: string | null
-          duration_minutes: number | null
-          id: string
-          location: string | null
-          meeting_provider: string | null
-          meeting_url: string | null
-          notes: string | null
-          organizer: string | null
-          recording_url: string | null
-          status: string | null
-          time: string
-          timezone: string | null
-          title: string
-          transcript_url: string | null
-          updated_at: string
-        }
-        Insert: {
-          attendees?: Json | null
-          calendar_event_id?: string | null
-          calendar_link?: string | null
-          calendar_synced_at?: string | null
-          completed_at?: string | null
-          contact_id: string
-          created_at?: string
-          created_by?: string | null
-          date: string
-          description?: string | null
-          duration_minutes?: number | null
-          id?: string
-          location?: string | null
-          meeting_provider?: string | null
-          meeting_url?: string | null
-          notes?: string | null
-          organizer?: string | null
-          recording_url?: string | null
-          status?: string | null
-          time: string
-          timezone?: string | null
-          title: string
-          transcript_url?: string | null
-          updated_at?: string
-        }
-        Update: {
-          attendees?: Json | null
-          calendar_event_id?: string | null
-          calendar_link?: string | null
-          calendar_synced_at?: string | null
-          completed_at?: string | null
-          contact_id?: string
-          created_at?: string
-          created_by?: string | null
-          date?: string
-          description?: string | null
-          duration_minutes?: number | null
-          id?: string
-          location?: string | null
-          meeting_provider?: string | null
-          meeting_url?: string | null
-          notes?: string | null
-          organizer?: string | null
-          recording_url?: string | null
-          status?: string | null
-          time?: string
-          timezone?: string | null
-          title?: string
-          transcript_url?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      crm_merge_log: {
-        Row: {
-          activities_moved: number | null
-          approval_note: string | null
-          approval_status: string | null
-          approved_at: string | null
-          approved_by: string | null
-          can_rollback: boolean | null
-          canonical_id: string
-          canonical_name: string | null
-          confirmation_token: string | null
-          created_at: string
-          documents_moved: number | null
-          dry_run_preview: Json | null
-          fields_merged: Json | null
-          id: string
-          is_dry_run: boolean | null
-          match_type: string | null
-          merged_by: string
-          merged_by_name: string | null
-          requires_approval: boolean | null
-          rollback_data: Json | null
-          rolled_back_at: string | null
-          rolled_back_by: string | null
-          secondary_ids: string[]
-          secondary_names: string[] | null
-          tasks_moved: number | null
-        }
-        Insert: {
-          activities_moved?: number | null
-          approval_note?: string | null
-          approval_status?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
-          can_rollback?: boolean | null
-          canonical_id: string
-          canonical_name?: string | null
-          confirmation_token?: string | null
-          created_at?: string
-          documents_moved?: number | null
-          dry_run_preview?: Json | null
-          fields_merged?: Json | null
-          id?: string
-          is_dry_run?: boolean | null
-          match_type?: string | null
-          merged_by: string
-          merged_by_name?: string | null
-          requires_approval?: boolean | null
-          rollback_data?: Json | null
-          rolled_back_at?: string | null
-          rolled_back_by?: string | null
-          secondary_ids: string[]
-          secondary_names?: string[] | null
-          tasks_moved?: number | null
-        }
-        Update: {
-          activities_moved?: number | null
-          approval_note?: string | null
-          approval_status?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
-          can_rollback?: boolean | null
-          canonical_id?: string
-          canonical_name?: string | null
-          confirmation_token?: string | null
-          created_at?: string
-          documents_moved?: number | null
-          dry_run_preview?: Json | null
-          fields_merged?: Json | null
-          id?: string
-          is_dry_run?: boolean | null
-          match_type?: string | null
-          merged_by?: string
-          merged_by_name?: string | null
-          requires_approval?: boolean | null
-          rollback_data?: Json | null
-          rolled_back_at?: string | null
-          rolled_back_by?: string | null
-          secondary_ids?: string[]
-          secondary_names?: string[] | null
-          tasks_moved?: number | null
-        }
-        Relationships: []
-      }
-      crm_scheduled_reminders: {
-        Row: {
-          automation_rule_id: string | null
-          channels: string[] | null
-          contact_id: string
-          created_at: string
-          created_by: string | null
-          error_message: string | null
-          id: string
-          message: string
-          scheduled_for: string
-          sent: boolean | null
-          sent_at: string | null
-          type: string
-        }
-        Insert: {
-          automation_rule_id?: string | null
-          channels?: string[] | null
-          contact_id: string
-          created_at?: string
-          created_by?: string | null
-          error_message?: string | null
-          id?: string
-          message: string
-          scheduled_for: string
-          sent?: boolean | null
-          sent_at?: string | null
-          type: string
-        }
-        Update: {
-          automation_rule_id?: string | null
-          channels?: string[] | null
-          contact_id?: string
-          created_at?: string
-          created_by?: string | null
-          error_message?: string | null
-          id?: string
-          message?: string
-          scheduled_for?: string
-          sent?: boolean | null
-          sent_at?: string | null
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_scheduled_reminders_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
           },
         ]
       }
       crm_tasks: {
         Row: {
           assigned_to: string | null
-          automation_rule_id: string | null
-          category: string | null
           completed_at: string | null
           completed_by: string | null
+          completion_notes: string | null
           contact_id: string | null
           created_at: string | null
           created_by: string | null
           deal_id: string | null
-          deleted_at: string | null
-          deleted_by: string | null
           description: string | null
           due_date: string | null
+          due_time: string | null
           id: string
-          owner: string | null
-          owner_name: string | null
+          organization_id: string | null
           priority: string | null
-          source: string | null
+          reminder_at: string | null
           status: string | null
           title: string
+          updated_at: string | null
         }
         Insert: {
           assigned_to?: string | null
-          automation_rule_id?: string | null
-          category?: string | null
           completed_at?: string | null
           completed_by?: string | null
+          completion_notes?: string | null
           contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
           deal_id?: string | null
-          deleted_at?: string | null
-          deleted_by?: string | null
           description?: string | null
           due_date?: string | null
+          due_time?: string | null
           id?: string
-          owner?: string | null
-          owner_name?: string | null
+          organization_id?: string | null
           priority?: string | null
-          source?: string | null
+          reminder_at?: string | null
           status?: string | null
           title: string
+          updated_at?: string | null
         }
         Update: {
           assigned_to?: string | null
-          automation_rule_id?: string | null
-          category?: string | null
           completed_at?: string | null
           completed_by?: string | null
+          completion_notes?: string | null
           contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
           deal_id?: string | null
-          deleted_at?: string | null
-          deleted_by?: string | null
           description?: string | null
           due_date?: string | null
+          due_time?: string | null
           id?: string
-          owner?: string | null
-          owner_name?: string | null
+          organization_id?: string | null
           priority?: string | null
-          source?: string | null
+          reminder_at?: string | null
           status?: string | null
           title?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
             isOneToOne: false
-            referencedRelation: "active_crm_contacts"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_tasks_completed_by_fkey"
+            columns: ["completed_by"]
             isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -2625,32 +1915,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
+            foreignKeyName: "crm_tasks_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
           },
           {
             foreignKeyName: "crm_tasks_deal_id_fkey"
@@ -2659,1478 +1928,426 @@ export type Database = {
             referencedRelation: "crm_deals"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "crm_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "crm_organizations"
+            referencedColumns: ["id"]
+          },
         ]
       }
-      customers: {
+      customer_requests: {
         Row: {
           archived_at: string | null
-          contact_person: string | null
+          budget_max_daily_nok: number | null
+          budget_max_monthly_nok: number | null
+          contact_id: string | null
           created_at: string | null
-          email: string | null
+          created_by: string | null
+          description: string | null
+          duration_type: string | null
+          end_date: string | null
+          estimated_value_nok: number | null
           id: string
-          location: string | null
-          name: string
-          org_number: string | null
-          phone: string | null
-          projects: number | null
-          status: string | null
-          tripletex_id: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          contact_person?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          location?: string | null
-          name: string
-          org_number?: string | null
-          phone?: string | null
-          projects?: number | null
-          status?: string | null
-          tripletex_id?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          contact_person?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          location?: string | null
-          name?: string
-          org_number?: string | null
-          phone?: string | null
-          projects?: number | null
-          status?: string | null
-          tripletex_id?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      data_sync_history: {
-        Row: {
-          action: string
-          changes_made: Json | null
-          id: string
+          match_count: number | null
+          matched_at: string | null
+          matched_by: string | null
           notes: string | null
-          prod_id: string | null
-          raw_id: string | null
-          synced_at: string | null
-          synced_by: string | null
-          table_name: string
-        }
-        Insert: {
-          action: string
-          changes_made?: Json | null
-          id?: string
-          notes?: string | null
-          prod_id?: string | null
-          raw_id?: string | null
-          synced_at?: string | null
-          synced_by?: string | null
-          table_name: string
-        }
-        Update: {
-          action?: string
-          changes_made?: Json | null
-          id?: string
-          notes?: string | null
-          prod_id?: string | null
-          raw_id?: string | null
-          synced_at?: string | null
-          synced_by?: string | null
-          table_name?: string
-        }
-        Relationships: []
-      }
-      document_expiry_warnings: {
-        Row: {
-          acknowledged: boolean | null
-          acknowledged_at: string | null
-          acknowledged_by: string | null
-          candidate_name: string
-          created_at: string | null
-          days_until_expiry: number
-          document_id: string | null
-          document_type: string
-          email_subject: string | null
-          expiry_date: string
-          id: string
-          sent_at: string | null
-          sent_to: string[] | null
-          warning_type: string
-        }
-        Insert: {
-          acknowledged?: boolean | null
-          acknowledged_at?: string | null
-          acknowledged_by?: string | null
-          candidate_name: string
-          created_at?: string | null
-          days_until_expiry: number
-          document_id?: string | null
-          document_type: string
-          email_subject?: string | null
-          expiry_date: string
-          id?: string
-          sent_at?: string | null
-          sent_to?: string[] | null
-          warning_type: string
-        }
-        Update: {
-          acknowledged?: boolean | null
-          acknowledged_at?: string | null
-          acknowledged_by?: string | null
-          candidate_name?: string
-          created_at?: string | null
-          days_until_expiry?: number
-          document_id?: string | null
-          document_type?: string
-          email_subject?: string | null
-          expiry_date?: string
-          id?: string
-          sent_at?: string | null
-          sent_to?: string[] | null
-          warning_type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "document_expiry_warnings_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_documents"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "document_expiry_warnings_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "documents_expiring_soon"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      document_reviews: {
-        Row: {
-          created_at: string | null
-          id: string
-          kommentar: string | null
-          reviewed_at: string | null
-          reviewer_id: string | null
-          status: string
-          version_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          kommentar?: string | null
-          reviewed_at?: string | null
-          reviewer_id?: string | null
-          status: string
-          version_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          kommentar?: string | null
-          reviewed_at?: string | null
-          reviewer_id?: string | null
-          status?: string
-          version_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "document_reviews_version_id_fkey"
-            columns: ["version_id"]
-            isOneToOne: false
-            referencedRelation: "document_versions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      document_versions: {
-        Row: {
-          approved_at: string | null
-          approved_by: string | null
-          change_note: string | null
-          document_id: string | null
-          file_key: string
-          id: string
-          uploaded_at: string | null
-          uploaded_by: string | null
-          version_number: number
-        }
-        Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
-          change_note?: string | null
-          document_id?: string | null
-          file_key: string
-          id?: string
-          uploaded_at?: string | null
-          uploaded_by?: string | null
-          version_number: number
-        }
-        Update: {
-          approved_at?: string | null
-          approved_by?: string | null
-          change_note?: string | null
-          document_id?: string | null
-          file_key?: string
-          id?: string
-          uploaded_at?: string | null
-          uploaded_by?: string | null
-          version_number?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "document_versions_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "documents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      documents: {
-        Row: {
-          category: string | null
-          created_at: string | null
-          created_by: string | null
-          current_version: number | null
-          doc_number: string
-          id: string
-          status: string | null
+          organization_id: string
+          owner_id: string | null
+          priority: Database["public"]["Enums"]["priority_level"] | null
+          quantity: number | null
+          request_number: string
+          requirements: Json | null
+          role_needed: string
+          start_date: string
+          status: Database["public"]["Enums"]["request_status"] | null
           title: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          current_version?: number | null
-          doc_number: string
-          id?: string
-          status?: string | null
-          title: string
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          current_version?: number | null
-          doc_number?: string
-          id?: string
-          status?: string | null
-          title?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      email_notifications: {
-        Row: {
-          email_type: string
-          error_message: string | null
-          id: string
-          metadata: Json | null
-          recipient_email: string
-          recipient_name: string | null
-          sent_at: string | null
-          status: string | null
-          subject: string
-          success: boolean | null
-        }
-        Insert: {
-          email_type: string
-          error_message?: string | null
-          id?: string
-          metadata?: Json | null
-          recipient_email: string
-          recipient_name?: string | null
-          sent_at?: string | null
-          status?: string | null
-          subject: string
-          success?: boolean | null
-        }
-        Update: {
-          email_type?: string
-          error_message?: string | null
-          id?: string
-          metadata?: Json | null
-          recipient_email?: string
-          recipient_name?: string | null
-          sent_at?: string | null
-          status?: string | null
-          subject?: string
-          success?: boolean | null
-        }
-        Relationships: []
-      }
-      email_templates: {
-        Row: {
-          available_tokens: string[] | null
-          body: string
-          category: string
-          created_at: string | null
-          created_by: string | null
-          id: string
-          is_active: boolean | null
-          last_used_at: string | null
-          name: string
-          subject: string
-          updated_at: string | null
-          usage_count: number | null
-        }
-        Insert: {
-          available_tokens?: string[] | null
-          body: string
-          category: string
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          last_used_at?: string | null
-          name: string
-          subject: string
-          updated_at?: string | null
-          usage_count?: number | null
-        }
-        Update: {
-          available_tokens?: string[] | null
-          body?: string
-          category?: string
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          last_used_at?: string | null
-          name?: string
-          subject?: string
-          updated_at?: string | null
-          usage_count?: number | null
-        }
-        Relationships: []
-      }
-      employee_audit_log: {
-        Row: {
-          action: string
-          changed_fields: string[] | null
-          entity_id: string
-          entity_type: string
-          id: string
-          ip_address: string | null
-          new_values: Json | null
-          notes: string | null
-          old_values: Json | null
-          performed_at: string | null
-          performed_by: string
-          performed_by_email: string | null
-          user_agent: string | null
-        }
-        Insert: {
-          action: string
-          changed_fields?: string[] | null
-          entity_id: string
-          entity_type: string
-          id?: string
-          ip_address?: string | null
-          new_values?: Json | null
-          notes?: string | null
-          old_values?: Json | null
-          performed_at?: string | null
-          performed_by: string
-          performed_by_email?: string | null
-          user_agent?: string | null
-        }
-        Update: {
-          action?: string
-          changed_fields?: string[] | null
-          entity_id?: string
-          entity_type?: string
-          id?: string
-          ip_address?: string | null
-          new_values?: Json | null
-          notes?: string | null
-          old_values?: Json | null
-          performed_at?: string | null
-          performed_by?: string
-          performed_by_email?: string | null
-          user_agent?: string | null
-        }
-        Relationships: []
-      }
-      employee_certificates: {
-        Row: {
-          archived_at: string | null
-          cert_class: string | null
-          cert_name: string | null
-          cert_number: string | null
-          cert_type: string
-          created_at: string | null
-          created_by: string | null
-          employee_id: string
-          expires_at: string | null
-          external_verification_id: string | null
-          external_verified_at: string | null
-          file_key: string | null
-          id: string
-          issued_date: string | null
-          issuing_authority: string | null
-          issuing_country: string | null
           updated_at: string | null
           updated_by: string | null
-          verification_notes: string | null
-          verification_status: string | null
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          cert_class?: string | null
-          cert_name?: string | null
-          cert_number?: string | null
-          cert_type: string
-          created_at?: string | null
-          created_by?: string | null
-          employee_id: string
-          expires_at?: string | null
-          external_verification_id?: string | null
-          external_verified_at?: string | null
-          file_key?: string | null
-          id?: string
-          issued_date?: string | null
-          issuing_authority?: string | null
-          issuing_country?: string | null
-          updated_at?: string | null
-          updated_by?: string | null
-          verification_notes?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          cert_class?: string | null
-          cert_name?: string | null
-          cert_number?: string | null
-          cert_type?: string
-          created_at?: string | null
-          created_by?: string | null
-          employee_id?: string
-          expires_at?: string | null
-          external_verification_id?: string | null
-          external_verified_at?: string | null
-          file_key?: string | null
-          id?: string
-          issued_date?: string | null
-          issuing_authority?: string | null
-          issuing_country?: string | null
-          updated_at?: string | null
-          updated_by?: string | null
-          verification_notes?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "employee_certificates_employee_id_fkey"
-            columns: ["employee_id"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      employee_documents: {
-        Row: {
-          archived_at: string | null
-          description: string | null
-          document_name: string
-          document_type: string
-          employee_id: string
-          file_key: string
-          file_name: string
-          file_size: number | null
-          id: string
-          is_current: boolean | null
-          mime_type: string | null
-          previous_version_id: string | null
-          uploaded_at: string | null
-          uploaded_by: string | null
-          valid_from: string | null
-          valid_to: string | null
-          verification_notes: string | null
-          verification_status: string | null
-          verified_at: string | null
-          verified_by: string | null
-          version: number | null
-        }
-        Insert: {
-          archived_at?: string | null
-          description?: string | null
-          document_name: string
-          document_type: string
-          employee_id: string
-          file_key: string
-          file_name: string
-          file_size?: number | null
-          id?: string
-          is_current?: boolean | null
-          mime_type?: string | null
-          previous_version_id?: string | null
-          uploaded_at?: string | null
-          uploaded_by?: string | null
-          valid_from?: string | null
-          valid_to?: string | null
-          verification_notes?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          version?: number | null
-        }
-        Update: {
-          archived_at?: string | null
-          description?: string | null
-          document_name?: string
-          document_type?: string
-          employee_id?: string
-          file_key?: string
-          file_name?: string
-          file_size?: number | null
-          id?: string
-          is_current?: boolean | null
-          mime_type?: string | null
-          previous_version_id?: string | null
-          uploaded_at?: string | null
-          uploaded_by?: string | null
-          valid_from?: string | null
-          valid_to?: string | null
-          verification_notes?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          version?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "employee_documents_employee_id_fkey"
-            columns: ["employee_id"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employee_documents_previous_version_id_fkey"
-            columns: ["previous_version_id"]
-            isOneToOne: false
-            referencedRelation: "employee_documents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      employee_timesheets: {
-        Row: {
-          approved_at: string | null
-          approved_by: string | null
-          assignment_id: number | null
-          client_name: string | null
-          created_at: string | null
-          created_by: string | null
-          employee_id: string
-          end_time: string | null
-          id: string
-          night_hours: number | null
-          overtime_hours: number | null
-          regular_hours: number | null
-          rejection_reason: string | null
-          start_time: string | null
-          status: string | null
-          submitted_at: string | null
-          updated_at: string | null
           vessel_name: string | null
-          work_date: string
-          work_description: string | null
+          vessel_type: string | null
+          work_location: string | null
         }
         Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
-          assignment_id?: number | null
-          client_name?: string | null
+          archived_at?: string | null
+          budget_max_daily_nok?: number | null
+          budget_max_monthly_nok?: number | null
+          contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
-          employee_id: string
-          end_time?: string | null
+          description?: string | null
+          duration_type?: string | null
+          end_date?: string | null
+          estimated_value_nok?: number | null
           id?: string
-          night_hours?: number | null
-          overtime_hours?: number | null
-          regular_hours?: number | null
-          rejection_reason?: string | null
-          start_time?: string | null
-          status?: string | null
-          submitted_at?: string | null
+          match_count?: number | null
+          matched_at?: string | null
+          matched_by?: string | null
+          notes?: string | null
+          organization_id: string
+          owner_id?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"] | null
+          quantity?: number | null
+          request_number: string
+          requirements?: Json | null
+          role_needed: string
+          start_date: string
+          status?: Database["public"]["Enums"]["request_status"] | null
+          title: string
           updated_at?: string | null
+          updated_by?: string | null
           vessel_name?: string | null
-          work_date: string
-          work_description?: string | null
+          vessel_type?: string | null
+          work_location?: string | null
         }
         Update: {
-          approved_at?: string | null
-          approved_by?: string | null
-          assignment_id?: number | null
-          client_name?: string | null
+          archived_at?: string | null
+          budget_max_daily_nok?: number | null
+          budget_max_monthly_nok?: number | null
+          contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
-          employee_id?: string
-          end_time?: string | null
+          description?: string | null
+          duration_type?: string | null
+          end_date?: string | null
+          estimated_value_nok?: number | null
           id?: string
-          night_hours?: number | null
-          overtime_hours?: number | null
-          regular_hours?: number | null
-          rejection_reason?: string | null
-          start_time?: string | null
-          status?: string | null
-          submitted_at?: string | null
+          match_count?: number | null
+          matched_at?: string | null
+          matched_by?: string | null
+          notes?: string | null
+          organization_id?: string
+          owner_id?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"] | null
+          quantity?: number | null
+          request_number?: string
+          requirements?: Json | null
+          role_needed?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["request_status"] | null
+          title?: string
           updated_at?: string | null
+          updated_by?: string | null
           vessel_name?: string | null
-          work_date?: string
-          work_description?: string | null
+          vessel_type?: string | null
+          work_location?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "employee_timesheets_assignment_id_fkey"
-            columns: ["assignment_id"]
+            foreignKeyName: "customer_requests_contact_id_fkey"
+            columns: ["contact_id"]
             isOneToOne: false
-            referencedRelation: "active_assignments"
+            referencedRelation: "crm_contacts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "employee_timesheets_assignment_id_fkey"
-            columns: ["assignment_id"]
+            foreignKeyName: "customer_requests_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "archived_assignments"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "employee_timesheets_assignment_id_fkey"
+            foreignKeyName: "customer_requests_matched_by_fkey"
+            columns: ["matched_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "crm_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_requests_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_requests_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_lines: {
+        Row: {
+          amount_nok: number
+          assignment_id: string | null
+          created_at: string | null
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          sort_order: number | null
+          timesheet_id: string | null
+          unit: string | null
+          unit_price_nok: number
+        }
+        Insert: {
+          amount_nok: number
+          assignment_id?: string | null
+          created_at?: string | null
+          description: string
+          id?: string
+          invoice_id: string
+          quantity: number
+          sort_order?: number | null
+          timesheet_id?: string | null
+          unit?: string | null
+          unit_price_nok: number
+        }
+        Update: {
+          amount_nok?: number
+          assignment_id?: string | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          sort_order?: number | null
+          timesheet_id?: string | null
+          unit?: string | null
+          unit_price_nok?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lines_assignment_id_fkey"
             columns: ["assignment_id"]
             isOneToOne: false
             referencedRelation: "assignments"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "employee_timesheets_employee_id_fkey"
-            columns: ["employee_id"]
+            foreignKeyName: "invoice_lines_invoice_id_fkey"
+            columns: ["invoice_id"]
             isOneToOne: false
-            referencedRelation: "employees"
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_lines_timesheet_id_fkey"
+            columns: ["timesheet_id"]
+            isOneToOne: false
+            referencedRelation: "assignment_timesheets"
             referencedColumns: ["id"]
           },
         ]
       }
-      employees: {
+      invoices: {
         Row: {
-          archive_reason: string | null
-          archived_at: string | null
-          archived_by: string | null
-          bank_account: string | null
-          candidate_id: string | null
-          clerk_user_id: string | null
-          country: string | null
+          contact_id: string | null
           created_at: string | null
           created_by: string | null
-          date_of_birth: string | null
-          default_work_arrangement: string | null
-          email: string
-          employee_number: string | null
-          employment_type: string | null
-          end_date: string | null
-          first_name: string
-          hourly_rate: number | null
-          id: string
-          last_name: string
-          national_id: string | null
-          nationality: string | null
-          next_of_kin_name: string | null
-          next_of_kin_phone: string | null
-          next_of_kin_relation: string | null
-          phone: string | null
-          postal_city: string | null
-          postal_code: string | null
-          seaman_book_expires: string | null
-          seaman_book_issued: string | null
-          seaman_book_number: string | null
-          start_date: string | null
-          status: string | null
-          street_address: string | null
-          tax_municipality: string | null
-          updated_at: string | null
-          updated_by: string | null
-        }
-        Insert: {
-          archive_reason?: string | null
-          archived_at?: string | null
-          archived_by?: string | null
-          bank_account?: string | null
-          candidate_id?: string | null
-          clerk_user_id?: string | null
-          country?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          date_of_birth?: string | null
-          default_work_arrangement?: string | null
-          email: string
-          employee_number?: string | null
-          employment_type?: string | null
-          end_date?: string | null
-          first_name: string
-          hourly_rate?: number | null
-          id?: string
-          last_name: string
-          national_id?: string | null
-          nationality?: string | null
-          next_of_kin_name?: string | null
-          next_of_kin_phone?: string | null
-          next_of_kin_relation?: string | null
-          phone?: string | null
-          postal_city?: string | null
-          postal_code?: string | null
-          seaman_book_expires?: string | null
-          seaman_book_issued?: string | null
-          seaman_book_number?: string | null
-          start_date?: string | null
-          status?: string | null
-          street_address?: string | null
-          tax_municipality?: string | null
-          updated_at?: string | null
-          updated_by?: string | null
-        }
-        Update: {
-          archive_reason?: string | null
-          archived_at?: string | null
-          archived_by?: string | null
-          bank_account?: string | null
-          candidate_id?: string | null
-          clerk_user_id?: string | null
-          country?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          date_of_birth?: string | null
-          default_work_arrangement?: string | null
-          email?: string
-          employee_number?: string | null
-          employment_type?: string | null
-          end_date?: string | null
-          first_name?: string
-          hourly_rate?: number | null
-          id?: string
-          last_name?: string
-          national_id?: string | null
-          nationality?: string | null
-          next_of_kin_name?: string | null
-          next_of_kin_phone?: string | null
-          next_of_kin_relation?: string | null
-          phone?: string | null
-          postal_city?: string | null
-          postal_code?: string | null
-          seaman_book_expires?: string | null
-          seaman_book_issued?: string | null
-          seaman_book_number?: string | null
-          start_date?: string | null
-          status?: string | null
-          street_address?: string | null
-          tax_municipality?: string | null
-          updated_at?: string | null
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "employees_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employees_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employees_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employees_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      employment_contracts: {
-        Row: {
-          assignment_id: number | null
-          candidate_id: string | null
-          contract_number: string | null
-          contract_template_used: string | null
-          contract_type: string
-          created_at: string | null
-          created_by: string
+          credit_for_invoice_id: string | null
           currency: string | null
-          customer_id: string | null
-          end_date: string | null
-          generated_pdf_key: string | null
-          hourly_rate: number | null
+          due_date: string
           id: string
-          monthly_salary: number | null
-          notice_period_weeks: number | null
-          position_title: string
-          probation_period_months: number | null
+          internal_notes: string | null
+          invoice_date: string
+          invoice_number: string
+          invoice_type: string | null
+          notes: string | null
+          organization_id: string
+          paid_amount_nok: number | null
+          paid_at: string | null
+          payment_reference: string | null
+          pdf_path: string | null
+          period_end: string | null
+          period_start: string | null
           sent_at: string | null
-          signed_at: string | null
-          signed_by_candidate: boolean | null
-          signed_by_employer: boolean | null
-          signed_pdf_key: string | null
-          start_date: string
+          sent_by: string | null
           status: string | null
-          terminated_at: string | null
-          termination_reason: string | null
+          subtotal_nok: number
+          total_nok: number
+          tripletex_id: string | null
+          tripletex_synced_at: string | null
           updated_at: string | null
-          weekly_hours: number | null
+          vat_amount_nok: number | null
+          vat_rate: number | null
         }
         Insert: {
-          assignment_id?: number | null
-          candidate_id?: string | null
-          contract_number?: string | null
-          contract_template_used?: string | null
-          contract_type: string
-          created_at?: string | null
-          created_by: string
-          currency?: string | null
-          customer_id?: string | null
-          end_date?: string | null
-          generated_pdf_key?: string | null
-          hourly_rate?: number | null
-          id?: string
-          monthly_salary?: number | null
-          notice_period_weeks?: number | null
-          position_title: string
-          probation_period_months?: number | null
-          sent_at?: string | null
-          signed_at?: string | null
-          signed_by_candidate?: boolean | null
-          signed_by_employer?: boolean | null
-          signed_pdf_key?: string | null
-          start_date: string
-          status?: string | null
-          terminated_at?: string | null
-          termination_reason?: string | null
-          updated_at?: string | null
-          weekly_hours?: number | null
-        }
-        Update: {
-          assignment_id?: number | null
-          candidate_id?: string | null
-          contract_number?: string | null
-          contract_template_used?: string | null
-          contract_type?: string
-          created_at?: string | null
-          created_by?: string
-          currency?: string | null
-          customer_id?: string | null
-          end_date?: string | null
-          generated_pdf_key?: string | null
-          hourly_rate?: number | null
-          id?: string
-          monthly_salary?: number | null
-          notice_period_weeks?: number | null
-          position_title?: string
-          probation_period_months?: number | null
-          sent_at?: string | null
-          signed_at?: string | null
-          signed_by_candidate?: boolean | null
-          signed_by_employer?: boolean | null
-          signed_pdf_key?: string | null
-          start_date?: string
-          status?: string | null
-          terminated_at?: string | null
-          termination_reason?: string | null
-          updated_at?: string | null
-          weekly_hours?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "employment_contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employment_contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employment_contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employment_contracts_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employment_contracts_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employment_contracts_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      expenses: {
-        Row: {
-          amount: number
-          category: string
-          created_at: string
-          date: string
-          description: string
-          id: string
-          receipt_url: string | null
-          updated_at: string
-          vendor: string | null
-        }
-        Insert: {
-          amount: number
-          category: string
-          created_at?: string
-          date: string
-          description: string
-          id?: string
-          receipt_url?: string | null
-          updated_at?: string
-          vendor?: string | null
-        }
-        Update: {
-          amount?: number
-          category?: string
-          created_at?: string
-          date?: string
-          description?: string
-          id?: string
-          receipt_url?: string | null
-          updated_at?: string
-          vendor?: string | null
-        }
-        Relationships: []
-      }
-      gdpr_audit_log: {
-        Row: {
-          created_at: string | null
-          details: Json | null
-          id: string
-          notes: string | null
-          processed_at: string | null
-          processed_by: string | null
-          request_id: string
-          request_type: string | null
-          requested_at: string | null
-          status: string | null
-          user_identifier: string
-        }
-        Insert: {
-          created_at?: string | null
-          details?: Json | null
-          id?: string
-          notes?: string | null
-          processed_at?: string | null
-          processed_by?: string | null
-          request_id: string
-          request_type?: string | null
-          requested_at?: string | null
-          status?: string | null
-          user_identifier: string
-        }
-        Update: {
-          created_at?: string | null
-          details?: Json | null
-          id?: string
-          notes?: string | null
-          processed_at?: string | null
-          processed_by?: string | null
-          request_id?: string
-          request_type?: string | null
-          requested_at?: string | null
-          status?: string | null
-          user_identifier?: string
-        }
-        Relationships: []
-      }
-      hms_incident_actions: {
-        Row: {
-          action_description: string
-          completed_at: string | null
-          completion_notes: string | null
-          created_at: string | null
-          created_by: string
-          due_date: string | null
-          id: string
-          incident_id: string | null
-          responsible_person: string
-          status: string | null
-        }
-        Insert: {
-          action_description: string
-          completed_at?: string | null
-          completion_notes?: string | null
-          created_at?: string | null
-          created_by: string
-          due_date?: string | null
-          id?: string
-          incident_id?: string | null
-          responsible_person: string
-          status?: string | null
-        }
-        Update: {
-          action_description?: string
-          completed_at?: string | null
-          completion_notes?: string | null
-          created_at?: string | null
-          created_by?: string
-          due_date?: string | null
-          id?: string
-          incident_id?: string | null
-          responsible_person?: string
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "hms_incident_actions_incident_id_fkey"
-            columns: ["incident_id"]
-            isOneToOne: false
-            referencedRelation: "hms_incidents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      hms_incidents: {
-        Row: {
-          arbeidstilsynet_case_number: string | null
-          arbeidstilsynet_report_date: string | null
-          assignment_id: number | null
-          attachment_keys: string[] | null
-          candidate_id: string | null
-          category: string
-          closed_at: string | null
-          closed_by: string | null
-          created_at: string | null
-          customer_id: string | null
-          description: string
-          id: string
-          immediate_action: string | null
-          incident_date: string
-          incident_number: string | null
-          involved_persons: string[] | null
-          location: string | null
-          preventive_measures: string | null
-          reported_by: string
-          reported_to_arbeidstilsynet: boolean | null
-          root_cause: string | null
-          severity: string
-          status: string | null
-          title: string
-          updated_at: string | null
-          witness_names: string[] | null
-        }
-        Insert: {
-          arbeidstilsynet_case_number?: string | null
-          arbeidstilsynet_report_date?: string | null
-          assignment_id?: number | null
-          attachment_keys?: string[] | null
-          candidate_id?: string | null
-          category: string
-          closed_at?: string | null
-          closed_by?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          description: string
-          id?: string
-          immediate_action?: string | null
-          incident_date: string
-          incident_number?: string | null
-          involved_persons?: string[] | null
-          location?: string | null
-          preventive_measures?: string | null
-          reported_by: string
-          reported_to_arbeidstilsynet?: boolean | null
-          root_cause?: string | null
-          severity: string
-          status?: string | null
-          title: string
-          updated_at?: string | null
-          witness_names?: string[] | null
-        }
-        Update: {
-          arbeidstilsynet_case_number?: string | null
-          arbeidstilsynet_report_date?: string | null
-          assignment_id?: number | null
-          attachment_keys?: string[] | null
-          candidate_id?: string | null
-          category?: string
-          closed_at?: string | null
-          closed_by?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          description?: string
-          id?: string
-          immediate_action?: string | null
-          incident_date?: string
-          incident_number?: string | null
-          involved_persons?: string[] | null
-          location?: string | null
-          preventive_measures?: string | null
-          reported_by?: string
-          reported_to_arbeidstilsynet?: boolean | null
-          root_cause?: string | null
-          severity?: string
-          status?: string | null
-          title?: string
-          updated_at?: string | null
-          witness_names?: string[] | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "hms_incidents_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hms_incidents_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hms_incidents_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hms_incidents_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hms_incidents_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hms_incidents_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      hms_kpi: {
-        Row: {
-          antall_hms_avvik: number | null
-          antall_nestenulykker: number | null
-          antall_skader: number | null
-          arbeidstimer: number | null
-          avvik_lukket_i_tid_prosent: number | null
-          created_at: string | null
-          created_by: string | null
-          gjennomsnittlig_lukketid_dager: number | null
-          h_verdi: number | null
-          hms_opplæring_fullført_prosent: number | null
-          id: string
-          kundetilfredshet_hms_score: number | null
-          langtidssykefravær_antall: number | null
-          måned: string
-          sykefravær_prosent: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          antall_hms_avvik?: number | null
-          antall_nestenulykker?: number | null
-          antall_skader?: number | null
-          arbeidstimer?: number | null
-          avvik_lukket_i_tid_prosent?: number | null
+          contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
-          gjennomsnittlig_lukketid_dager?: number | null
-          h_verdi?: number | null
-          hms_opplæring_fullført_prosent?: number | null
+          credit_for_invoice_id?: string | null
+          currency?: string | null
+          due_date: string
           id?: string
-          kundetilfredshet_hms_score?: number | null
-          langtidssykefravær_antall?: number | null
-          måned: string
-          sykefravær_prosent?: number | null
+          internal_notes?: string | null
+          invoice_date?: string
+          invoice_number: string
+          invoice_type?: string | null
+          notes?: string | null
+          organization_id: string
+          paid_amount_nok?: number | null
+          paid_at?: string | null
+          payment_reference?: string | null
+          pdf_path?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string | null
+          subtotal_nok: number
+          total_nok: number
+          tripletex_id?: string | null
+          tripletex_synced_at?: string | null
           updated_at?: string | null
+          vat_amount_nok?: number | null
+          vat_rate?: number | null
         }
         Update: {
-          antall_hms_avvik?: number | null
-          antall_nestenulykker?: number | null
-          antall_skader?: number | null
-          arbeidstimer?: number | null
-          avvik_lukket_i_tid_prosent?: number | null
+          contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
-          gjennomsnittlig_lukketid_dager?: number | null
-          h_verdi?: number | null
-          hms_opplæring_fullført_prosent?: number | null
+          credit_for_invoice_id?: string | null
+          currency?: string | null
+          due_date?: string
           id?: string
-          kundetilfredshet_hms_score?: number | null
-          langtidssykefravær_antall?: number | null
-          måned?: string
-          sykefravær_prosent?: number | null
+          internal_notes?: string | null
+          invoice_date?: string
+          invoice_number?: string
+          invoice_type?: string | null
+          notes?: string | null
+          organization_id?: string
+          paid_amount_nok?: number | null
+          paid_at?: string | null
+          payment_reference?: string | null
+          pdf_path?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string | null
+          subtotal_nok?: number
+          total_nok?: number
+          tripletex_id?: string | null
+          tripletex_synced_at?: string | null
           updated_at?: string | null
+          vat_amount_nok?: number | null
+          vat_rate?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "hms_kpi_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "invoices_contact_id_fkey"
+            columns: ["contact_id"]
             isOneToOne: false
-            referencedRelation: "user_access"
+            referencedRelation: "crm_contacts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "hms_kpi_created_by_fkey"
+            foreignKeyName: "invoices_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      hms_training: {
-        Row: {
-          certificate_url: string | null
-          completed_date: string
-          created_at: string | null
-          expires_date: string | null
-          id: string
-          notes: string | null
-          training_provider: string | null
-          training_type: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          certificate_url?: string | null
-          completed_date: string
-          created_at?: string | null
-          expires_date?: string | null
-          id?: string
-          notes?: string | null
-          training_provider?: string | null
-          training_type: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          certificate_url?: string | null
-          completed_date?: string
-          created_at?: string | null
-          expires_date?: string | null
-          id?: string
-          notes?: string | null
-          training_provider?: string | null
-          training_type?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
           {
-            foreignKeyName: "hms_training_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "invoices_credit_for_invoice_id_fkey"
+            columns: ["credit_for_invoice_id"]
             isOneToOne: false
-            referencedRelation: "user_access"
+            referencedRelation: "invoices"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "hms_training_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "invoices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "crm_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_sent_by_fkey"
+            columns: ["sent_by"]
             isOneToOne: false
             referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
         ]
-      }
-      interest_leads: {
-        Row: {
-          id: string
-          navn: string
-          epost: string
-          telefon: string | null
-          type: string
-          melding: string | null
-          created_at: string
-          status: string
-          metadata: Json | null
-        }
-        Insert: {
-          id?: string
-          navn: string
-          epost: string
-          telefon?: string | null
-          type: string
-          melding?: string | null
-          created_at?: string
-          status?: string
-          metadata?: Json | null
-        }
-        Update: {
-          id?: string
-          navn?: string
-          epost?: string
-          telefon?: string | null
-          type?: string
-          melding?: string | null
-          status?: string
-          metadata?: Json | null
-        }
-        Relationships: []
       }
       job_applications: {
         Row: {
-          id: string
-          job_posting_id: string | null
           candidate_id: string | null
-          name: string
-          email: string
-          phone: string | null
-          cover_letter: string | null
-          cv_key: string | null
           certificates_key: string | null
+          cover_letter: string | null
+          created_at: string | null
+          cv_key: string | null
+          email: string
+          id: string
           ip_address: string | null
-          user_agent: string | null
+          job_posting_id: string | null
+          name: string
+          phone: string | null
           source: string | null
           status: string | null
-          vipps_verified: boolean | null
+          updated_at: string | null
+          user_agent: string | null
           vipps_name: string | null
           vipps_phone: string | null
           vipps_sub: string | null
+          vipps_verified: boolean | null
           vipps_verified_at: string | null
-          created_at: string | null
-          updated_at: string | null
         }
         Insert: {
-          id?: string
-          job_posting_id?: string | null
           candidate_id?: string | null
-          name: string
-          email: string
-          phone?: string | null
-          cover_letter?: string | null
-          cv_key?: string | null
           certificates_key?: string | null
+          cover_letter?: string | null
+          created_at?: string | null
+          cv_key?: string | null
+          email: string
+          id?: string
           ip_address?: string | null
-          user_agent?: string | null
+          job_posting_id?: string | null
+          name: string
+          phone?: string | null
           source?: string | null
           status?: string | null
-          vipps_verified?: boolean | null
+          updated_at?: string | null
+          user_agent?: string | null
           vipps_name?: string | null
           vipps_phone?: string | null
           vipps_sub?: string | null
+          vipps_verified?: boolean | null
           vipps_verified_at?: string | null
-          created_at?: string | null
-          updated_at?: string | null
         }
         Update: {
-          id?: string
-          job_posting_id?: string | null
           candidate_id?: string | null
-          name?: string
-          email?: string
-          phone?: string | null
-          cover_letter?: string | null
-          cv_key?: string | null
           certificates_key?: string | null
+          cover_letter?: string | null
+          created_at?: string | null
+          cv_key?: string | null
+          email?: string
+          id?: string
           ip_address?: string | null
-          user_agent?: string | null
+          job_posting_id?: string | null
+          name?: string
+          phone?: string | null
           source?: string | null
           status?: string | null
-          vipps_verified?: boolean | null
+          updated_at?: string | null
+          user_agent?: string | null
           vipps_name?: string | null
           vipps_phone?: string | null
           vipps_sub?: string | null
+          vipps_verified?: boolean | null
           vipps_verified_at?: string | null
-          created_at?: string | null
-          updated_at?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "job_applications_candidate_id_fkey"
             columns: ["candidate_id"]
             isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "job_applications_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "job_applications_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
             referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "job_applications_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "job_applications_job_posting_id_fkey"
-            columns: ["job_posting_id"]
-            isOneToOne: false
-            referencedRelation: "active_job_postings_with_stats"
             referencedColumns: ["id"]
           },
           {
@@ -4144,3706 +2361,920 @@ export type Database = {
       }
       job_postings: {
         Row: {
-          application_count: number | null
           application_deadline: string | null
-          benefits: string[] | null
-          category: string
-          company_name: string | null
-          contact_email: string | null
-          contact_person: string | null
-          contact_phone: string | null
-          created_at: string | null
-          created_by: string | null
-          customer_id: string | null
-          description: string
-          duration_days: number | null
-          end_date: string | null
-          expires_at: string | null
-          fylke: string
-          id: string
-          job_type: string
-          kommune: string
-          location: string
-          meta_description: string | null
-          meta_title: string | null
-          published_at: string | null
-          region: string | null
-          requirements: string[] | null
-          responsibilities: string[] | null
-          salary_max: number | null
-          salary_min: number | null
-          salary_text: string | null
-          short_description: string | null
-          slug: string
-          start_date: string | null
-          status: string | null
-          title: string
-          updated_at: string | null
-          vessel_name: string | null
-          view_count: number | null
-        }
-        Insert: {
-          application_count?: number | null
-          application_deadline?: string | null
-          benefits?: string[] | null
-          category: string
-          company_name?: string | null
-          contact_email?: string | null
-          contact_person?: string | null
-          contact_phone?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          customer_id?: string | null
-          description: string
-          duration_days?: number | null
-          end_date?: string | null
-          expires_at?: string | null
-          fylke: string
-          id?: string
-          job_type: string
-          kommune: string
-          location: string
-          meta_description?: string | null
-          meta_title?: string | null
-          published_at?: string | null
-          region?: string | null
-          requirements?: string[] | null
-          responsibilities?: string[] | null
-          salary_max?: number | null
-          salary_min?: number | null
-          salary_text?: string | null
-          short_description?: string | null
-          slug: string
-          start_date?: string | null
-          status?: string | null
-          title: string
-          updated_at?: string | null
-          vessel_name?: string | null
-          view_count?: number | null
-        }
-        Update: {
-          application_count?: number | null
-          application_deadline?: string | null
-          benefits?: string[] | null
-          category?: string
-          company_name?: string | null
-          contact_email?: string | null
-          contact_person?: string | null
-          contact_phone?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          customer_id?: string | null
-          description?: string
-          duration_days?: number | null
-          end_date?: string | null
-          expires_at?: string | null
-          fylke?: string
-          id?: string
-          job_type?: string
-          kommune?: string
-          location?: string
-          meta_description?: string | null
-          meta_title?: string | null
-          published_at?: string | null
-          region?: string | null
-          requirements?: string[] | null
-          responsibilities?: string[] | null
-          salary_max?: number | null
-          salary_min?: number | null
-          salary_text?: string | null
-          short_description?: string | null
-          slug?: string
-          start_date?: string | null
-          status?: string | null
-          title?: string
-          updated_at?: string | null
-          vessel_name?: string | null
-          view_count?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "job_postings_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "job_postings_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      job_requirements: {
-        Row: {
-          assigned_to: string | null
-          assignment_id: string | null
-          created_at: string | null
-          created_by: string | null
-          customer_name: string
-          customer_special_requirements: string | null
-          end_date: string | null
-          experience_level: string | null
-          id: string
-          language_requirements: string | null
-          location: string | null
-          period: string | null
-          required_certifications: string[] | null
-          required_skills: string[] | null
-          role: string
-          start_date: string | null
-          status: string | null
-          updated_at: string | null
-          urgency: string | null
-        }
-        Insert: {
-          assigned_to?: string | null
-          assignment_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          customer_name: string
-          customer_special_requirements?: string | null
-          end_date?: string | null
-          experience_level?: string | null
-          id?: string
-          language_requirements?: string | null
-          location?: string | null
-          period?: string | null
-          required_certifications?: string[] | null
-          required_skills?: string[] | null
-          role: string
-          start_date?: string | null
-          status?: string | null
-          updated_at?: string | null
-          urgency?: string | null
-        }
-        Update: {
-          assigned_to?: string | null
-          assignment_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          customer_name?: string
-          customer_special_requirements?: string | null
-          end_date?: string | null
-          experience_level?: string | null
-          id?: string
-          language_requirements?: string | null
-          location?: string | null
-          period?: string | null
-          required_certifications?: string[] | null
-          required_skills?: string[] | null
-          role?: string
-          start_date?: string | null
-          status?: string | null
-          updated_at?: string | null
-          urgency?: string | null
-        }
-        Relationships: []
-      }
-      kpi_snapshots: {
-        Row: {
-          active_jobs: number | null
-          candidates_registered_this_period: number | null
-          created_at: string | null
-          csat_score: number | null
-          documents_expiring_30days: number | null
-          documents_expiring_7days: number | null
-          expired_documents_count: number | null
-          filled_jobs_this_period: number | null
-          id: string
-          incidents_per_100_jobs: number | null
-          nps_score: number | null
-          open_capa_actions: number | null
-          perfect_releases_count: number | null
-          releases_with_issues_count: number | null
-          releases_without_deficiencies_pct: number | null
-          snapshot_date: string
-          time_to_fill_median_days: number | null
-          time_to_fill_p90_days: number | null
-        }
-        Insert: {
-          active_jobs?: number | null
-          candidates_registered_this_period?: number | null
-          created_at?: string | null
-          csat_score?: number | null
-          documents_expiring_30days?: number | null
-          documents_expiring_7days?: number | null
-          expired_documents_count?: number | null
-          filled_jobs_this_period?: number | null
-          id?: string
-          incidents_per_100_jobs?: number | null
-          nps_score?: number | null
-          open_capa_actions?: number | null
-          perfect_releases_count?: number | null
-          releases_with_issues_count?: number | null
-          releases_without_deficiencies_pct?: number | null
-          snapshot_date?: string
-          time_to_fill_median_days?: number | null
-          time_to_fill_p90_days?: number | null
-        }
-        Update: {
-          active_jobs?: number | null
-          candidates_registered_this_period?: number | null
-          created_at?: string | null
-          csat_score?: number | null
-          documents_expiring_30days?: number | null
-          documents_expiring_7days?: number | null
-          expired_documents_count?: number | null
-          filled_jobs_this_period?: number | null
-          id?: string
-          incidents_per_100_jobs?: number | null
-          nps_score?: number | null
-          open_capa_actions?: number | null
-          perfect_releases_count?: number | null
-          releases_with_issues_count?: number | null
-          releases_without_deficiencies_pct?: number | null
-          snapshot_date?: string
-          time_to_fill_median_days?: number | null
-          time_to_fill_p90_days?: number | null
-        }
-        Relationships: []
-      }
-      leads: {
-        Row: {
-          clerk_user_id: string | null
-          company: string
-          contact: string
-          county: string
-          created_at: string
-          description: string | null
-          email: string
-          email_encrypted: string | null
-          gdpr_client_consent: boolean
-          id: string
-          is_encrypted: boolean | null
-          municipality: string | null
-          name_encrypted: string | null
-          need_duration: string
-          need_type: string
-          num_people: string | null
-          org_number: string | null
-          phone: string
-          phone_encrypted: string | null
-          source_ip: string | null
-          start_date: string | null
-          submitted_at: string | null
-          urgency: string | null
-          work_location: string | null
-        }
-        Insert: {
-          clerk_user_id?: string | null
-          company: string
-          contact: string
-          county: string
-          created_at?: string
-          description?: string | null
-          email: string
-          email_encrypted?: string | null
-          gdpr_client_consent?: boolean
-          id?: string
-          is_encrypted?: boolean | null
-          municipality?: string | null
-          name_encrypted?: string | null
-          need_duration: string
-          need_type: string
-          num_people?: string | null
-          org_number?: string | null
-          phone: string
-          phone_encrypted?: string | null
-          source_ip?: string | null
-          start_date?: string | null
-          submitted_at?: string | null
-          urgency?: string | null
-          work_location?: string | null
-        }
-        Update: {
-          clerk_user_id?: string | null
-          company?: string
-          contact?: string
-          county?: string
-          created_at?: string
-          description?: string | null
-          email?: string
-          email_encrypted?: string | null
-          gdpr_client_consent?: boolean
-          id?: string
-          is_encrypted?: boolean | null
-          municipality?: string | null
-          name_encrypted?: string | null
-          need_duration?: string
-          need_type?: string
-          num_people?: string | null
-          org_number?: string | null
-          phone?: string
-          phone_encrypted?: string | null
-          source_ip?: string | null
-          start_date?: string | null
-          submitted_at?: string | null
-          urgency?: string | null
-          work_location?: string | null
-        }
-        Relationships: []
-      }
-      messages: {
-        Row: {
-          clerk_user_id: string
-          content: string
-          created_at: string | null
-          id: string
-          read: boolean | null
-          read_at: string | null
-          sender: string
-          sender_name: string | null
-        }
-        Insert: {
-          clerk_user_id: string
-          content: string
-          created_at?: string | null
-          id?: string
-          read?: boolean | null
-          read_at?: string | null
-          sender: string
-          sender_name?: string | null
-        }
-        Update: {
-          clerk_user_id?: string
-          content?: string
-          created_at?: string | null
-          id?: string
-          read?: boolean | null
-          read_at?: string | null
-          sender?: string
-          sender_name?: string | null
-        }
-        Relationships: []
-      }
-      nc_routing_rules: {
-        Row: {
-          created_at: string | null
-          id: string
-          nc_type: string
-          priority: number | null
-          target_role: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          nc_type: string
-          priority?: number | null
-          target_role: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          nc_type?: string
-          priority?: number | null
-          target_role?: string
-        }
-        Relationships: []
-      }
-      nonconformities: {
-        Row: {
-          assigned_at: string | null
-          assigned_by: string | null
-          assigned_department: string | null
-          assigned_to: string | null
-          assignment_id: number | null
-          attachment_keys: string[] | null
-          authority_case_number: string | null
-          candidate_id: string | null
-          capa_actions: Json | null
-          capa_completed_date: string | null
-          capa_implementation_notes: string | null
-          capa_plan_approved_by: string | null
-          capa_plan_approved_date: string | null
-          closed_at: string | null
-          closed_by: string | null
-          closure_notes: string | null
-          correction_by: string | null
-          correction_date: string | null
-          correction_text: string | null
-          created_at: string | null
-          created_by: string | null
-          customer_id: string | null
-          description: string
-          detected_by: string | null
-          detected_date: string
-          doc_change: Json | null
-          effectiveness_method: string | null
-          effectiveness_notes: string | null
-          effectiveness_result: string | null
-          effectiveness_verification_date: string | null
-          effectiveness_verified_by: string | null
-          escalated_at: string | null
-          escalated_to: string | null
-          escalation_reason: string | null
-          is_recurrence: boolean | null
-          location: string | null
-          nc_id: string
-          nc_number: string
-          nc_type: string
-          planned_rca_date: string | null
-          rca_5whys_plaintext: string | null
-          rca_5whys_richtext: Json | null
-          rca_category: string | null
-          rca_completed_by: string | null
-          rca_completed_date: string | null
-          recurrence_of: string | null
-          related_nc_ids: string[] | null
-          reported_to_authority: boolean | null
-          reported_to_authority_date: string | null
-          reported_to_customer: boolean | null
-          reported_to_customer_date: string | null
-          requires_capa: boolean | null
-          responsible_owner: string | null
-          risk_after: number | null
-          risk_before: number | null
-          risk_likelihood: number | null
-          risk_severity: number | null
-          severity: string
-          status: string | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          assigned_at?: string | null
-          assigned_by?: string | null
-          assigned_department?: string | null
-          assigned_to?: string | null
-          assignment_id?: number | null
-          attachment_keys?: string[] | null
-          authority_case_number?: string | null
-          candidate_id?: string | null
-          capa_actions?: Json | null
-          capa_completed_date?: string | null
-          capa_implementation_notes?: string | null
-          capa_plan_approved_by?: string | null
-          capa_plan_approved_date?: string | null
-          closed_at?: string | null
-          closed_by?: string | null
-          closure_notes?: string | null
-          correction_by?: string | null
-          correction_date?: string | null
-          correction_text?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          customer_id?: string | null
-          description: string
-          detected_by?: string | null
-          detected_date?: string
-          doc_change?: Json | null
-          effectiveness_method?: string | null
-          effectiveness_notes?: string | null
-          effectiveness_result?: string | null
-          effectiveness_verification_date?: string | null
-          effectiveness_verified_by?: string | null
-          escalated_at?: string | null
-          escalated_to?: string | null
-          escalation_reason?: string | null
-          is_recurrence?: boolean | null
-          location?: string | null
-          nc_id?: string
-          nc_number: string
-          nc_type: string
-          planned_rca_date?: string | null
-          rca_5whys_plaintext?: string | null
-          rca_5whys_richtext?: Json | null
-          rca_category?: string | null
-          rca_completed_by?: string | null
-          rca_completed_date?: string | null
-          recurrence_of?: string | null
-          related_nc_ids?: string[] | null
-          reported_to_authority?: boolean | null
-          reported_to_authority_date?: string | null
-          reported_to_customer?: boolean | null
-          reported_to_customer_date?: string | null
-          requires_capa?: boolean | null
-          responsible_owner?: string | null
-          risk_after?: number | null
-          risk_before?: number | null
-          risk_likelihood?: number | null
-          risk_severity?: number | null
-          severity: string
-          status?: string | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          assigned_at?: string | null
-          assigned_by?: string | null
-          assigned_department?: string | null
-          assigned_to?: string | null
-          assignment_id?: number | null
-          attachment_keys?: string[] | null
-          authority_case_number?: string | null
-          candidate_id?: string | null
-          capa_actions?: Json | null
-          capa_completed_date?: string | null
-          capa_implementation_notes?: string | null
-          capa_plan_approved_by?: string | null
-          capa_plan_approved_date?: string | null
-          closed_at?: string | null
-          closed_by?: string | null
-          closure_notes?: string | null
-          correction_by?: string | null
-          correction_date?: string | null
-          correction_text?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          customer_id?: string | null
-          description?: string
-          detected_by?: string | null
-          detected_date?: string
-          doc_change?: Json | null
-          effectiveness_method?: string | null
-          effectiveness_notes?: string | null
-          effectiveness_result?: string | null
-          effectiveness_verification_date?: string | null
-          effectiveness_verified_by?: string | null
-          escalated_at?: string | null
-          escalated_to?: string | null
-          escalation_reason?: string | null
-          is_recurrence?: boolean | null
-          location?: string | null
-          nc_id?: string
-          nc_number?: string
-          nc_type?: string
-          planned_rca_date?: string | null
-          rca_5whys_plaintext?: string | null
-          rca_5whys_richtext?: Json | null
-          rca_category?: string | null
-          rca_completed_by?: string | null
-          rca_completed_date?: string | null
-          recurrence_of?: string | null
-          related_nc_ids?: string[] | null
-          reported_to_authority?: boolean | null
-          reported_to_authority_date?: string | null
-          reported_to_customer?: boolean | null
-          reported_to_customer_date?: string | null
-          requires_capa?: boolean | null
-          responsible_owner?: string | null
-          risk_after?: number | null
-          risk_before?: number | null
-          risk_likelihood?: number | null
-          risk_severity?: number | null
-          severity?: string
-          status?: string | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "nonconformities_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nonconformities_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nonconformities_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nonconformities_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nonconformities_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nonconformities_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "leads_secure"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nonconformities_recurrence_of_fkey"
-            columns: ["recurrence_of"]
-            isOneToOne: false
-            referencedRelation: "nonconformities"
-            referencedColumns: ["nc_id"]
-          },
-        ]
-      }
-      placements: {
-        Row: {
-          candidate_interest_id: string | null
-          contract_url: string | null
-          created_at: string | null
-          customer_id: string | null
-          customer_rate: number | null
-          end_date: string | null
-          hourly_rate: number | null
-          id: string
-          margin_percent: number | null
-          role: string
-          start_date: string
-          status: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          candidate_interest_id?: string | null
-          contract_url?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          customer_rate?: number | null
-          end_date?: string | null
-          hourly_rate?: number | null
-          id?: string
-          margin_percent?: number | null
-          role: string
-          start_date: string
-          status?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          candidate_interest_id?: string | null
-          contract_url?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          customer_rate?: number | null
-          end_date?: string | null
-          hourly_rate?: number | null
-          id?: string
-          margin_percent?: number | null
-          role?: string
-          start_date?: string
-          status?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "placements_candidate_interest_id_fkey"
-            columns: ["candidate_interest_id"]
-            isOneToOne: false
-            referencedRelation: "candidate_interest"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "placements_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      police_certificates: {
-        Row: {
-          candidate_id: string | null
-          created_at: string | null
-          expiry_date: string | null
-          file_key: string | null
-          id: string
-          issue_date: string
-          updated_at: string | null
-          verification_notes: string | null
-          verified: boolean | null
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          candidate_id?: string | null
-          created_at?: string | null
-          expiry_date?: string | null
-          file_key?: string | null
-          id?: string
-          issue_date: string
-          updated_at?: string | null
-          verification_notes?: string | null
-          verified?: boolean | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          candidate_id?: string | null
-          created_at?: string | null
-          expiry_date?: string | null
-          file_key?: string | null
-          id?: string
-          issue_date?: string
-          updated_at?: string | null
-          verification_notes?: string | null
-          verified?: boolean | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "police_certificates_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "police_certificates_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "police_certificates_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "police_certificates_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      raw_candidates: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          erfaring: string | null
-          id: string
-          import_id: string | null
-          import_source: string | null
-          imported_at: string | null
-          lokasjon: string | null
-          name: string
-          phone: string | null
-          prod_id: string | null
-          rolle: string | null
-          sertifikater: Json | null
-          status: string | null
-          synced_at: string | null
-          synced_to_prod: boolean | null
-          tilgjengelighet: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          erfaring?: string | null
-          id?: string
-          import_id?: string | null
-          import_source?: string | null
-          imported_at?: string | null
-          lokasjon?: string | null
-          name: string
-          phone?: string | null
-          prod_id?: string | null
-          rolle?: string | null
-          sertifikater?: Json | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tilgjengelighet?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          erfaring?: string | null
-          id?: string
-          import_id?: string | null
-          import_source?: string | null
-          imported_at?: string | null
-          lokasjon?: string | null
-          name?: string
-          phone?: string | null
-          prod_id?: string | null
-          rolle?: string | null
-          sertifikater?: Json | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tilgjengelighet?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      raw_crm_contacts: {
-        Row: {
-          company: string | null
-          created_at: string | null
-          email: string | null
-          id: string
-          import_id: string | null
-          import_source: string | null
-          imported_at: string | null
-          name: string
-          notes: string | null
-          phone: string | null
-          position: string | null
-          prod_id: string | null
-          status: string | null
-          synced_at: string | null
-          synced_to_prod: boolean | null
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          company?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          import_id?: string | null
-          import_source?: string | null
-          imported_at?: string | null
-          name: string
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          company?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          import_id?: string | null
-          import_source?: string | null
-          imported_at?: string | null
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      raw_customers: {
-        Row: {
-          adresse: string | null
-          created_at: string | null
-          epost: string | null
-          id: string
-          import_id: string | null
-          import_source: string | null
-          imported_at: string | null
-          kontaktperson: string | null
-          name: string
-          prod_id: string | null
-          status: string | null
-          synced_at: string | null
-          synced_to_prod: boolean | null
-          telefon: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          adresse?: string | null
-          created_at?: string | null
-          epost?: string | null
-          id?: string
-          import_id?: string | null
-          import_source?: string | null
-          imported_at?: string | null
-          kontaktperson?: string | null
-          name: string
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          telefon?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          adresse?: string | null
-          created_at?: string | null
-          epost?: string | null
-          id?: string
-          import_id?: string | null
-          import_source?: string | null
-          imported_at?: string | null
-          kontaktperson?: string | null
-          name?: string
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          telefon?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "raw_customers_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "active_customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_customers_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "archived_customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_customers_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      release_checklists: {
-        Row: {
-          approval_notes: string | null
-          approved_at: string | null
-          approved_by: string | null
-          approver_role: string | null
-          candidate_id: string
-          candidate_name: string
-          checklist_notes: string | null
-          contract_signed: boolean | null
-          created_at: string | null
-          customer_requirements_met: boolean | null
-          document_ids: string[] | null
-          id: string
-          id_verified: boolean | null
-          job_requirement_id: string | null
-          language_requirements_met: boolean | null
-          logistics_confirmed: boolean | null
-          medical_cert_valid: boolean | null
-          package_url: string | null
-          pdf_hash: string | null
-          pdf_url: string | null
-          prepared_at: string | null
-          prepared_by: string | null
-          references_checked: boolean | null
-          rejected_at: string | null
-          rejected_by: string | null
-          rejection_reason: string | null
-          status: string | null
-          stcw_valid: boolean | null
-          updated_at: string | null
-        }
-        Insert: {
-          approval_notes?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
-          approver_role?: string | null
-          candidate_id: string
-          candidate_name: string
-          checklist_notes?: string | null
-          contract_signed?: boolean | null
-          created_at?: string | null
-          customer_requirements_met?: boolean | null
-          document_ids?: string[] | null
-          id?: string
-          id_verified?: boolean | null
-          job_requirement_id?: string | null
-          language_requirements_met?: boolean | null
-          logistics_confirmed?: boolean | null
-          medical_cert_valid?: boolean | null
-          package_url?: string | null
-          pdf_hash?: string | null
-          pdf_url?: string | null
-          prepared_at?: string | null
-          prepared_by?: string | null
-          references_checked?: boolean | null
-          rejected_at?: string | null
-          rejected_by?: string | null
-          rejection_reason?: string | null
-          status?: string | null
-          stcw_valid?: boolean | null
-          updated_at?: string | null
-        }
-        Update: {
-          approval_notes?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
-          approver_role?: string | null
-          candidate_id?: string
-          candidate_name?: string
-          checklist_notes?: string | null
-          contract_signed?: boolean | null
-          created_at?: string | null
-          customer_requirements_met?: boolean | null
-          document_ids?: string[] | null
-          id?: string
-          id_verified?: boolean | null
-          job_requirement_id?: string | null
-          language_requirements_met?: boolean | null
-          logistics_confirmed?: boolean | null
-          medical_cert_valid?: boolean | null
-          package_url?: string | null
-          pdf_hash?: string | null
-          pdf_url?: string | null
-          prepared_at?: string | null
-          prepared_by?: string | null
-          references_checked?: boolean | null
-          rejected_at?: string | null
-          rejected_by?: string | null
-          rejection_reason?: string | null
-          status?: string | null
-          stcw_valid?: boolean | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "release_checklists_job_requirement_id_fkey"
-            columns: ["job_requirement_id"]
-            isOneToOne: false
-            referencedRelation: "job_requirements"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "release_checklists_job_requirement_id_fkey"
-            columns: ["job_requirement_id"]
-            isOneToOne: false
-            referencedRelation: "jobs_needing_candidates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      role_responsibilities: {
-        Row: {
-          created_at: string | null
-          id: string
-          iso_reference: string | null
-          responsibility: string
-          role: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          iso_reference?: string | null
-          responsibility: string
-          role: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          iso_reference?: string | null
-          responsibility?: string
-          role?: string
-        }
-        Relationships: []
-      }
-      staffing_needs: {
-        Row: {
-          id: string
-          fartoytype: string
-          stillinger: string[]
-          antall: number
-          oppstart: string | null
-          rotasjon: string | null
-          kontakt_navn: string
-          kontakt_epost: string
-          kontakt_telefon: string | null
-          bedrift: string | null
-          merknad: string | null
-          created_at: string
-          status: string
-          metadata: Json | null
-        }
-        Insert: {
-          id?: string
-          fartoytype: string
-          stillinger: string[]
-          antall: number
-          oppstart?: string | null
-          rotasjon?: string | null
-          kontakt_navn: string
-          kontakt_epost: string
-          kontakt_telefon?: string | null
-          bedrift?: string | null
-          merknad?: string | null
-          created_at?: string
-          status?: string
-          metadata?: Json | null
-        }
-        Update: {
-          id?: string
-          fartoytype?: string
-          stillinger?: string[]
-          antall?: number
-          oppstart?: string | null
-          rotasjon?: string | null
-          kontakt_navn?: string
-          kontakt_epost?: string
-          kontakt_telefon?: string | null
-          bedrift?: string | null
-          merknad?: string | null
-          status?: string
-          metadata?: Json | null
-        }
-        Relationships: []
-      }
-      sync_conflicts: {
-        Row: {
-          detected_at: string | null
-          differences: Json | null
-          id: string
-          prod_data: Json | null
-          prod_id: string | null
-          raw_data: Json | null
-          raw_id: string | null
-          resolution: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-          status: string | null
-          table_name: string
-        }
-        Insert: {
-          detected_at?: string | null
-          differences?: Json | null
-          id?: string
-          prod_data?: Json | null
-          prod_id?: string | null
-          raw_data?: Json | null
-          raw_id?: string | null
-          resolution?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          status?: string | null
-          table_name: string
-        }
-        Update: {
-          detected_at?: string | null
-          differences?: Json | null
-          id?: string
-          prod_data?: Json | null
-          prod_id?: string | null
-          raw_data?: Json | null
-          raw_id?: string | null
-          resolution?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          status?: string | null
-          table_name?: string
-        }
-        Relationships: []
-      }
-      table_name: {
-        Row: {
-          data: Json | null
-          id: number
-          inserted_at: string
-          name: string | null
-          updated_at: string
-        }
-        Insert: {
-          data?: Json | null
-          id?: number
-          inserted_at?: string
-          name?: string | null
-          updated_at?: string
-        }
-        Update: {
-          data?: Json | null
-          id?: number
-          inserted_at?: string
-          name?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      time_entries: {
-        Row: {
-          approved_at: string | null
-          approved_by: string | null
-          assignment_id: string | null
-          clerk_user_id: string
-          created_at: string | null
-          date: string
-          description: string | null
-          hours: number
-          id: string
-          rejected_reason: string | null
-          status: string | null
-          submitted_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
-          assignment_id?: string | null
-          clerk_user_id: string
-          created_at?: string | null
-          date: string
-          description?: string | null
-          hours: number
-          id?: string
-          rejected_reason?: string | null
-          status?: string | null
-          submitted_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          approved_at?: string | null
-          approved_by?: string | null
-          assignment_id?: string | null
-          clerk_user_id?: string
-          created_at?: string | null
-          date?: string
-          description?: string | null
-          hours?: number
-          id?: string
-          rejected_reason?: string | null
-          status?: string | null
-          submitted_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      user_documents: {
-        Row: {
-          clerk_user_id: string
-          expires_at: string | null
-          filename: string
-          id: string
-          name: string
-          storage_path: string | null
-          type: string
-          uploaded_at: string | null
-        }
-        Insert: {
-          clerk_user_id: string
-          expires_at?: string | null
-          filename: string
-          id?: string
-          name: string
-          storage_path?: string | null
-          type: string
-          uploaded_at?: string | null
-        }
-        Update: {
-          clerk_user_id?: string
-          expires_at?: string | null
-          filename?: string
-          id?: string
-          name?: string
-          storage_path?: string | null
-          type?: string
-          uploaded_at?: string | null
-        }
-        Relationships: []
-      }
-      user_profiles: {
-        Row: {
-          active: boolean | null
-          clerk_user_id: string | null
-          created_at: string | null
-          department: string | null
-          email: string | null
-          full_name: string | null
-          id: string
-          phone: string | null
-          position: string | null
-          role: string
-          updated_at: string | null
-        }
-        Insert: {
-          active?: boolean | null
-          clerk_user_id?: string | null
-          created_at?: string | null
-          department?: string | null
-          email?: string | null
-          full_name?: string | null
-          id: string
-          phone?: string | null
-          position?: string | null
-          role?: string
-          updated_at?: string | null
-        }
-        Update: {
-          active?: boolean | null
-          clerk_user_id?: string | null
-          created_at?: string | null
-          department?: string | null
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          phone?: string | null
-          position?: string | null
-          role?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          assigned_at: string | null
-          assigned_by: string | null
-          id: string
-          role: string
-          user_id: string | null
-        }
-        Insert: {
-          assigned_at?: string | null
-          assigned_by?: string | null
-          id?: string
-          role: string
-          user_id?: string | null
-        }
-        Update: {
-          assigned_at?: string | null
-          assigned_by?: string | null
-          id?: string
-          role?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      verification_logs: {
-        Row: {
-          action: string
-          candidate_id: string
-          confidence_score: number | null
-          created_at: string | null
-          details: Json | null
-          id: string
-          performed_by: string
-          result: string | null
-        }
-        Insert: {
-          action: string
-          candidate_id: string
-          confidence_score?: number | null
-          created_at?: string | null
-          details?: Json | null
-          id?: string
-          performed_by: string
-          result?: string | null
-        }
-        Update: {
-          action?: string
-          candidate_id?: string
-          confidence_score?: number | null
-          created_at?: string | null
-          details?: Json | null
-          id?: string
-          performed_by?: string
-          result?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "verification_logs_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "verification_logs_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "verification_logs_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "verification_logs_candidate_id_fkey"
-            columns: ["candidate_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-    }
-    Views: {
-      active_assignments: {
-        Row: {
-          archived_at: string | null
-          candidate_id: string | null
-          contract_url: string | null
-          created_at: string | null
-          customer_id: string | null
-          hourly_rate: number | null
-          hours_worked: number | null
-          id: number | null
-          invoice_number: string | null
-          invoice_status: string | null
-          location: string | null
-          period: string | null
-          role: string | null
-          status: string | null
-          tripletex_invoice_id: number | null
-        }
-        Insert: {
-          archived_at?: string | null
-          candidate_id?: string | null
-          contract_url?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          hourly_rate?: number | null
-          hours_worked?: number | null
-          id?: number | null
-          invoice_number?: string | null
-          invoice_status?: string | null
-          location?: string | null
-          period?: string | null
-          role?: string | null
-          status?: string | null
-          tripletex_invoice_id?: number | null
-        }
-        Update: {
-          archived_at?: string | null
-          candidate_id?: string | null
-          contract_url?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          hourly_rate?: number | null
-          hours_worked?: number | null
-          id?: number | null
-          invoice_number?: string | null
-          invoice_status?: string | null
-          location?: string | null
-          period?: string | null
-          role?: string | null
-          status?: string | null
-          tripletex_invoice_id?: number | null
-        }
-        Relationships: []
-      }
-      active_candidates: {
-        Row: {
-          archived_at: string | null
-          available_from: string | null
-          available_to: string | null
-          bankid_verified_at: string | null
-          certs_key: string | null
-          county: string | null
-          created_at: string | null
-          cv_key: string | null
-          deck_class: string | null
-          deck_has: string | null
-          email: string | null
-          flagged_reason: string | null
-          fylke: string | null
-          gdpr_consent: boolean | null
-          id: string | null
-          kommune: string | null
-          municipality: string | null
-          name: string | null
-          national_id_hash: string | null
-          ocr_confidence_score: number | null
-          other_comp: string | null
-          phone: string | null
-          skills: string | null
-          source_ip: string | null
-          status: string | null
-          stcw_confirm: boolean | null
-          stcw_confirmed: boolean | null
-          stcw_has: string | null
-          stcw_mod: string[] | null
-          submitted_at: string | null
-          verification_status: string | null
-          verified_at: string | null
-          verified_by: string | null
-          wants_temporary: string | null
-          work_main: string[] | null
-        }
-        Insert: {
-          archived_at?: string | null
-          available_from?: string | null
-          available_to?: string | null
-          bankid_verified_at?: string | null
-          certs_key?: string | null
-          county?: string | null
-          created_at?: string | null
-          cv_key?: string | null
-          deck_class?: string | null
-          deck_has?: string | null
-          email?: string | null
-          flagged_reason?: string | null
-          fylke?: string | null
-          gdpr_consent?: boolean | null
-          id?: string | null
-          kommune?: string | null
-          municipality?: string | null
-          name?: string | null
-          national_id_hash?: string | null
-          ocr_confidence_score?: number | null
-          other_comp?: string | null
-          phone?: string | null
-          skills?: string | null
-          source_ip?: string | null
-          status?: string | null
-          stcw_confirm?: boolean | null
-          stcw_confirmed?: boolean | null
-          stcw_has?: string | null
-          stcw_mod?: string[] | null
-          submitted_at?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Update: {
-          archived_at?: string | null
-          available_from?: string | null
-          available_to?: string | null
-          bankid_verified_at?: string | null
-          certs_key?: string | null
-          county?: string | null
-          created_at?: string | null
-          cv_key?: string | null
-          deck_class?: string | null
-          deck_has?: string | null
-          email?: string | null
-          flagged_reason?: string | null
-          fylke?: string | null
-          gdpr_consent?: boolean | null
-          id?: string | null
-          kommune?: string | null
-          municipality?: string | null
-          name?: string | null
-          national_id_hash?: string | null
-          ocr_confidence_score?: number | null
-          other_comp?: string | null
-          phone?: string | null
-          skills?: string | null
-          source_ip?: string | null
-          status?: string | null
-          stcw_confirm?: boolean | null
-          stcw_confirmed?: boolean | null
-          stcw_has?: string | null
-          stcw_mod?: string[] | null
-          submitted_at?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Relationships: []
-      }
-      active_crm_contacts: {
-        Row: {
-          archived_at: string | null
-          assigned_to: string | null
-          campaign_tag: string | null
-          company: string | null
-          contact_status: string | null
-          created_at: string | null
-          email: string | null
-          id: string | null
-          interest_level: number | null
-          last_contact_at: string | null
-          linkedin_url: string | null
-          name: string | null
-          notes: string | null
-          phone: string | null
-          position: string | null
-          source: string | null
-          status: string | null
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          linkedin_url?: string | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          linkedin_url?: string | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      active_customers: {
-        Row: {
-          archived_at: string | null
-          contact_person: string | null
-          created_at: string | null
-          email: string | null
-          id: string | null
-          location: string | null
-          name: string | null
-          org_number: string | null
-          phone: string | null
-          projects: number | null
-          status: string | null
-          tripletex_id: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          contact_person?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          location?: string | null
-          name?: string | null
-          org_number?: string | null
-          phone?: string | null
-          projects?: number | null
-          status?: string | null
-          tripletex_id?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          contact_person?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          location?: string | null
-          name?: string | null
-          org_number?: string | null
-          phone?: string | null
-          projects?: number | null
-          status?: string | null
-          tripletex_id?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      active_job_postings_with_stats: {
-        Row: {
-          application_count: number | null
-          application_deadline: string | null
-          benefits: string[] | null
+          applications_count: number | null
           category: string | null
           company_name: string | null
           contact_email: string | null
-          contact_person: string | null
           contact_phone: string | null
           created_at: string | null
-          created_by: string | null
-          customer_id: string | null
           description: string | null
-          duration_days: number | null
-          end_date: string | null
           expires_at: string | null
           fylke: string | null
-          hired_count: number | null
-          id: string | null
+          id: string
           job_type: string | null
           kommune: string | null
           location: string | null
           meta_description: string | null
           meta_title: string | null
-          pending_applications: number | null
+          metadata: Json | null
           published_at: string | null
           region: string | null
-          requirements: string[] | null
-          responsibilities: string[] | null
-          reviewed_applications: number | null
+          requirements: Json | null
+          role: string | null
+          rotation: string | null
           salary_max: number | null
           salary_min: number | null
+          salary_range: string | null
           salary_text: string | null
           short_description: string | null
           slug: string | null
-          start_date: string | null
           status: string | null
-          title: string | null
-          total_applications: number | null
+          title: string
           updated_at: string | null
-          vessel_name: string | null
-          view_count: number | null
+          vessel_type: string | null
+          views_count: number | null
+        }
+        Insert: {
+          application_deadline?: string | null
+          applications_count?: number | null
+          category?: string | null
+          company_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          expires_at?: string | null
+          fylke?: string | null
+          id?: string
+          job_type?: string | null
+          kommune?: string | null
+          location?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          metadata?: Json | null
+          published_at?: string | null
+          region?: string | null
+          requirements?: Json | null
+          role?: string | null
+          rotation?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          salary_range?: string | null
+          salary_text?: string | null
+          short_description?: string | null
+          slug?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          vessel_type?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          application_deadline?: string | null
+          applications_count?: number | null
+          category?: string | null
+          company_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          expires_at?: string | null
+          fylke?: string | null
+          id?: string
+          job_type?: string | null
+          kommune?: string | null
+          location?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          metadata?: Json | null
+          published_at?: string | null
+          region?: string | null
+          requirements?: Json | null
+          role?: string | null
+          rotation?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          salary_range?: string | null
+          salary_text?: string | null
+          short_description?: string | null
+          slug?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          vessel_type?: string | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
+      qms_capa_actions: {
+        Row: {
+          completed_at: string | null
+          completed_by: string | null
+          completion_notes: string | null
+          created_at: string | null
+          description: string
+          due_date: string | null
+          id: string
+          nonconformity_id: string
+          responsible_id: string | null
+          status: Database["public"]["Enums"]["capa_status"] | null
+          type: Database["public"]["Enums"]["capa_type"]
+          updated_at: string | null
+          verification_effective: boolean | null
+          verification_notes: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          description: string
+          due_date?: string | null
+          id?: string
+          nonconformity_id: string
+          responsible_id?: string | null
+          status?: Database["public"]["Enums"]["capa_status"] | null
+          type: Database["public"]["Enums"]["capa_type"]
+          updated_at?: string | null
+          verification_effective?: boolean | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          description?: string
+          due_date?: string | null
+          id?: string
+          nonconformity_id?: string
+          responsible_id?: string | null
+          status?: Database["public"]["Enums"]["capa_status"] | null
+          type?: Database["public"]["Enums"]["capa_type"]
+          updated_at?: string | null
+          verification_effective?: boolean | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "job_postings_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "qms_capa_actions_completed_by_fkey"
+            columns: ["completed_by"]
             isOneToOne: false
-            referencedRelation: "leads"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "job_postings_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "qms_capa_actions_nonconformity_id_fkey"
+            columns: ["nonconformity_id"]
             isOneToOne: false
-            referencedRelation: "leads_secure"
+            referencedRelation: "qms_nonconformities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_capa_actions_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_capa_actions_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      archived_assignments: {
+      qms_document_versions: {
         Row: {
-          archived_at: string | null
-          candidate_id: string | null
-          contract_url: string | null
+          change_description: string | null
+          content_html: string | null
           created_at: string | null
-          customer_id: string | null
-          hourly_rate: number | null
-          hours_worked: number | null
-          id: number | null
-          invoice_number: string | null
-          invoice_status: string | null
-          location: string | null
-          period: string | null
-          role: string | null
-          status: string | null
-          tripletex_invoice_id: number | null
+          created_by: string | null
+          document_id: string
+          file_path: string | null
+          id: string
+          version: number
         }
         Insert: {
-          archived_at?: string | null
-          candidate_id?: string | null
-          contract_url?: string | null
+          change_description?: string | null
+          content_html?: string | null
           created_at?: string | null
-          customer_id?: string | null
-          hourly_rate?: number | null
-          hours_worked?: number | null
-          id?: number | null
-          invoice_number?: string | null
-          invoice_status?: string | null
-          location?: string | null
-          period?: string | null
-          role?: string | null
-          status?: string | null
-          tripletex_invoice_id?: number | null
+          created_by?: string | null
+          document_id: string
+          file_path?: string | null
+          id?: string
+          version: number
         }
         Update: {
-          archived_at?: string | null
-          candidate_id?: string | null
-          contract_url?: string | null
+          change_description?: string | null
+          content_html?: string | null
           created_at?: string | null
-          customer_id?: string | null
-          hourly_rate?: number | null
-          hours_worked?: number | null
-          id?: number | null
-          invoice_number?: string | null
-          invoice_status?: string | null
-          location?: string | null
-          period?: string | null
-          role?: string | null
-          status?: string | null
-          tripletex_invoice_id?: number | null
-        }
-        Relationships: []
-      }
-      archived_candidates: {
-        Row: {
-          archived_at: string | null
-          available_from: string | null
-          available_to: string | null
-          bankid_verified_at: string | null
-          certs_key: string | null
-          county: string | null
-          created_at: string | null
-          cv_key: string | null
-          deck_class: string | null
-          deck_has: string | null
-          email: string | null
-          flagged_reason: string | null
-          fylke: string | null
-          gdpr_consent: boolean | null
-          id: string | null
-          kommune: string | null
-          municipality: string | null
-          name: string | null
-          national_id_hash: string | null
-          ocr_confidence_score: number | null
-          other_comp: string | null
-          phone: string | null
-          skills: string | null
-          source_ip: string | null
-          status: string | null
-          stcw_confirm: boolean | null
-          stcw_confirmed: boolean | null
-          stcw_has: string | null
-          stcw_mod: string[] | null
-          submitted_at: string | null
-          verification_status: string | null
-          verified_at: string | null
-          verified_by: string | null
-          wants_temporary: string | null
-          work_main: string[] | null
-        }
-        Insert: {
-          archived_at?: string | null
-          available_from?: string | null
-          available_to?: string | null
-          bankid_verified_at?: string | null
-          certs_key?: string | null
-          county?: string | null
-          created_at?: string | null
-          cv_key?: string | null
-          deck_class?: string | null
-          deck_has?: string | null
-          email?: string | null
-          flagged_reason?: string | null
-          fylke?: string | null
-          gdpr_consent?: boolean | null
-          id?: string | null
-          kommune?: string | null
-          municipality?: string | null
-          name?: string | null
-          national_id_hash?: string | null
-          ocr_confidence_score?: number | null
-          other_comp?: string | null
-          phone?: string | null
-          skills?: string | null
-          source_ip?: string | null
-          status?: string | null
-          stcw_confirm?: boolean | null
-          stcw_confirmed?: boolean | null
-          stcw_has?: string | null
-          stcw_mod?: string[] | null
-          submitted_at?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Update: {
-          archived_at?: string | null
-          available_from?: string | null
-          available_to?: string | null
-          bankid_verified_at?: string | null
-          certs_key?: string | null
-          county?: string | null
-          created_at?: string | null
-          cv_key?: string | null
-          deck_class?: string | null
-          deck_has?: string | null
-          email?: string | null
-          flagged_reason?: string | null
-          fylke?: string | null
-          gdpr_consent?: boolean | null
-          id?: string | null
-          kommune?: string | null
-          municipality?: string | null
-          name?: string | null
-          national_id_hash?: string | null
-          ocr_confidence_score?: number | null
-          other_comp?: string | null
-          phone?: string | null
-          skills?: string | null
-          source_ip?: string | null
-          status?: string | null
-          stcw_confirm?: boolean | null
-          stcw_confirmed?: boolean | null
-          stcw_has?: string | null
-          stcw_mod?: string[] | null
-          submitted_at?: string | null
-          verification_status?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Relationships: []
-      }
-      archived_crm_contacts: {
-        Row: {
-          archived_at: string | null
-          assigned_to: string | null
-          campaign_tag: string | null
-          company: string | null
-          contact_status: string | null
-          created_at: string | null
-          email: string | null
-          id: string | null
-          interest_level: number | null
-          last_contact_at: string | null
-          linkedin_url: string | null
-          name: string | null
-          notes: string | null
-          phone: string | null
-          position: string | null
-          source: string | null
-          status: string | null
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          linkedin_url?: string | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          linkedin_url?: string | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      archived_customers: {
-        Row: {
-          archived_at: string | null
-          contact_person: string | null
-          created_at: string | null
-          email: string | null
-          id: string | null
-          location: string | null
-          name: string | null
-          org_number: string | null
-          phone: string | null
-          projects: number | null
-          status: string | null
-          tripletex_id: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          contact_person?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          location?: string | null
-          name?: string | null
-          org_number?: string | null
-          phone?: string | null
-          projects?: number | null
-          status?: string | null
-          tripletex_id?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          contact_person?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          location?: string | null
-          name?: string | null
-          org_number?: string | null
-          phone?: string | null
-          projects?: number | null
-          status?: string | null
-          tripletex_id?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      audit_log_readable: {
-        Row: {
-          action: string | null
-          action_description: string | null
-          created_at: string | null
-          entity_id: string | null
-          entity_type: string | null
-          id: string | null
-          metadata: Json | null
-          new_values: Json | null
-          old_values: Json | null
-          user_email: string | null
-          user_name: string | null
-        }
-        Insert: {
-          action?: string | null
-          action_description?: never
-          created_at?: string | null
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string | null
-          metadata?: Json | null
-          new_values?: Json | null
-          old_values?: Json | null
-          user_email?: string | null
-          user_name?: string | null
-        }
-        Update: {
-          action?: string | null
-          action_description?: never
-          created_at?: string | null
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string | null
-          metadata?: Json | null
-          new_values?: Json | null
-          old_values?: Json | null
-          user_email?: string | null
-          user_name?: string | null
-        }
-        Relationships: []
-      }
-      best_candidate_matches: {
-        Row: {
-          assignment_created: string | null
-          assignment_id: number | null
-          assignment_role: string | null
-          blockers: string[] | null
-          can_assign: boolean | null
-          candidate_email: string | null
-          candidate_id: string | null
-          candidate_location: string | null
-          candidate_name: string | null
-          candidate_phone: string | null
-          created_at: string | null
-          id: number | null
-          matched_at: string | null
-          rank: number | null
-          reasons: string[] | null
-          score: number | null
-          warnings: string[] | null
+          created_by?: string | null
+          document_id?: string
+          file_path?: string | null
+          id?: string
+          version?: number
         }
         Relationships: [
           {
-            foreignKeyName: "candidate_matches_assignment_id_fkey"
-            columns: ["assignment_id"]
+            foreignKeyName: "qms_document_versions_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "active_assignments"
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_assignment_id_fkey"
-            columns: ["assignment_id"]
+            foreignKeyName: "qms_document_versions_document_id_fkey"
+            columns: ["document_id"]
             isOneToOne: false
-            referencedRelation: "archived_assignments"
+            referencedRelation: "qms_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qms_documents: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          archived_at: string | null
+          content_html: string | null
+          created_at: string | null
+          created_by: string | null
+          current_version: number | null
+          description: string | null
+          document_number: string
+          file_path: string | null
+          id: string
+          last_reviewed_at: string | null
+          last_reviewed_by: string | null
+          next_review_date: string | null
+          owner_id: string | null
+          status: Database["public"]["Enums"]["qms_document_status"] | null
+          title: string
+          type: Database["public"]["Enums"]["qms_document_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_at?: string | null
+          content_html?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_version?: number | null
+          description?: string | null
+          document_number: string
+          file_path?: string | null
+          id?: string
+          last_reviewed_at?: string | null
+          last_reviewed_by?: string | null
+          next_review_date?: string | null
+          owner_id?: string | null
+          status?: Database["public"]["Enums"]["qms_document_status"] | null
+          title: string
+          type: Database["public"]["Enums"]["qms_document_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          archived_at?: string | null
+          content_html?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_version?: number | null
+          description?: string | null
+          document_number?: string
+          file_path?: string | null
+          id?: string
+          last_reviewed_at?: string | null
+          last_reviewed_by?: string | null
+          next_review_date?: string | null
+          owner_id?: string | null
+          status?: Database["public"]["Enums"]["qms_document_status"] | null
+          title?: string
+          type?: Database["public"]["Enums"]["qms_document_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qms_documents_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_assignment_id_fkey"
-            columns: ["assignment_id"]
+            foreignKeyName: "qms_documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_documents_last_reviewed_by_fkey"
+            columns: ["last_reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_documents_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qms_nonconformities: {
+        Row: {
+          closed_at: string | null
+          closed_by: string | null
+          closure_notes: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string
+          due_date: string | null
+          id: string
+          immediate_action: string | null
+          immediate_action_at: string | null
+          nc_number: string
+          related_assignment_id: string | null
+          related_candidate_id: string | null
+          related_organization_id: string | null
+          responsible_id: string | null
+          root_cause: string | null
+          severity: Database["public"]["Enums"]["nc_severity"] | null
+          source: string
+          status: Database["public"]["Enums"]["nc_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          closed_at?: string | null
+          closed_by?: string | null
+          closure_notes?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description: string
+          due_date?: string | null
+          id?: string
+          immediate_action?: string | null
+          immediate_action_at?: string | null
+          nc_number: string
+          related_assignment_id?: string | null
+          related_candidate_id?: string | null
+          related_organization_id?: string | null
+          responsible_id?: string | null
+          root_cause?: string | null
+          severity?: Database["public"]["Enums"]["nc_severity"] | null
+          source: string
+          status?: Database["public"]["Enums"]["nc_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          closed_at?: string | null
+          closed_by?: string | null
+          closure_notes?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string
+          due_date?: string | null
+          id?: string
+          immediate_action?: string | null
+          immediate_action_at?: string | null
+          nc_number?: string
+          related_assignment_id?: string | null
+          related_candidate_id?: string | null
+          related_organization_id?: string | null
+          responsible_id?: string | null
+          root_cause?: string | null
+          severity?: Database["public"]["Enums"]["nc_severity"] | null
+          source?: string
+          status?: Database["public"]["Enums"]["nc_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qms_nonconformities_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_nonconformities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_nonconformities_related_assignment_id_fkey"
+            columns: ["related_assignment_id"]
             isOneToOne: false
             referencedRelation: "assignments"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "qms_nonconformities_related_candidate_id_fkey"
+            columns: ["related_candidate_id"]
             isOneToOne: false
-            referencedRelation: "active_candidates"
+            referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "qms_nonconformities_related_organization_id_fkey"
+            columns: ["related_organization_id"]
             isOneToOne: false
-            referencedRelation: "archived_candidates"
+            referencedRelation: "crm_organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
+            foreignKeyName: "qms_nonconformities_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qms_risks: {
+        Row: {
+          category: Database["public"]["Enums"]["risk_category"]
+          created_at: string | null
+          created_by: string | null
+          description: string
+          id: string
+          impact: number | null
+          likelihood: number | null
+          mitigation_strategy: string | null
+          next_review_date: string | null
+          owner_id: string | null
+          residual_impact: number | null
+          residual_likelihood: number | null
+          residual_risk_score: number | null
+          risk_number: string
+          risk_score: number | null
+          status: Database["public"]["Enums"]["risk_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["risk_category"]
+          created_at?: string | null
+          created_by?: string | null
+          description: string
+          id?: string
+          impact?: number | null
+          likelihood?: number | null
+          mitigation_strategy?: string | null
+          next_review_date?: string | null
+          owner_id?: string | null
+          residual_impact?: number | null
+          residual_likelihood?: number | null
+          residual_risk_score?: number | null
+          risk_number: string
+          risk_score?: number | null
+          status?: Database["public"]["Enums"]["risk_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["risk_category"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string
+          id?: string
+          impact?: number | null
+          likelihood?: number | null
+          mitigation_strategy?: string | null
+          next_review_date?: string | null
+          owner_id?: string | null
+          residual_impact?: number | null
+          residual_likelihood?: number | null
+          residual_risk_score?: number | null
+          risk_number?: string
+          risk_score?: number | null
+          status?: Database["public"]["Enums"]["risk_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qms_risks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qms_risks_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      request_shortlists: {
+        Row: {
+          added_at: string | null
+          added_by: string | null
+          candidate_id: string
+          candidate_response: string | null
+          candidate_response_at: string | null
+          customer_response: string | null
+          customer_response_at: string | null
+          customer_response_notes: string | null
+          id: string
+          match_details: Json | null
+          match_score: number | null
+          offer_daily_rate_nok: number | null
+          offer_notes: string | null
+          offer_sent_at: string | null
+          offer_sent_by: string | null
+          rank_position: number | null
+          request_id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          added_at?: string | null
+          added_by?: string | null
+          candidate_id: string
+          candidate_response?: string | null
+          candidate_response_at?: string | null
+          customer_response?: string | null
+          customer_response_at?: string | null
+          customer_response_notes?: string | null
+          id?: string
+          match_details?: Json | null
+          match_score?: number | null
+          offer_daily_rate_nok?: number | null
+          offer_notes?: string | null
+          offer_sent_at?: string | null
+          offer_sent_by?: string | null
+          rank_position?: number | null
+          request_id: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          added_at?: string | null
+          added_by?: string | null
+          candidate_id?: string
+          candidate_response?: string | null
+          candidate_response_at?: string | null
+          customer_response?: string | null
+          customer_response_at?: string | null
+          customer_response_notes?: string | null
+          id?: string
+          match_details?: Json | null
+          match_score?: number | null
+          offer_daily_rate_nok?: number | null
+          offer_notes?: string | null
+          offer_sent_at?: string | null
+          offer_sent_by?: string | null
+          rank_position?: number | null
+          request_id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_shortlists_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_shortlists_candidate_id_fkey"
             columns: ["candidate_id"]
             isOneToOne: false
             referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "candidate_matches_candidate_id_fkey"
-            columns: ["candidate_id"]
+            foreignKeyName: "request_shortlists_offer_sent_by_fkey"
+            columns: ["offer_sent_by"]
             isOneToOne: false
-            referencedRelation: "candidates_secure"
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_shortlists_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "customer_requests"
             referencedColumns: ["id"]
           },
         ]
       }
-      candidate_pipeline_stats: {
+      staffing_needs: {
         Row: {
-          avg_rating: number | null
-          count: number | null
-          hot_count: number | null
-          pipeline_status: string | null
-        }
-        Relationships: []
-      }
-      candidates_secure: {
-        Row: {
-          available_from: string | null
-          certs_key: string | null
-          cv_key: string | null
-          email: string | null
-          fylke: string | null
-          id: string | null
-          kommune: string | null
-          name: string | null
-          other_comp: string | null
-          phone: string | null
-          skills: string | null
-          source_ip: string | null
-          status: string | null
-          stcw_confirm: boolean | null
-          submitted_at: string | null
-          wants_temporary: string | null
-          work_main: string[] | null
-        }
-        Insert: {
-          available_from?: string | null
-          certs_key?: string | null
-          cv_key?: string | null
-          email?: never
-          fylke?: string | null
-          id?: string | null
-          kommune?: string | null
-          name?: never
-          other_comp?: string | null
-          phone?: never
-          skills?: string | null
-          source_ip?: never
-          status?: string | null
-          stcw_confirm?: boolean | null
-          submitted_at?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Update: {
-          available_from?: string | null
-          certs_key?: string | null
-          cv_key?: string | null
-          email?: never
-          fylke?: string | null
-          id?: string | null
-          kommune?: string | null
-          name?: never
-          other_comp?: string | null
-          phone?: never
-          skills?: string | null
-          source_ip?: never
-          status?: string | null
-          stcw_confirm?: boolean | null
-          submitted_at?: string | null
-          wants_temporary?: string | null
-          work_main?: string[] | null
-        }
-        Relationships: []
-      }
-      capa_kpi: {
-        Row: {
-          avg_closure_days: number | null
-          capa_planned: number | null
-          capa_planned_on_time: number | null
-          closed_ncs: number | null
-          critical_ncs: number | null
-          data_ncs: number | null
-          effective_capas: number | null
-          hse_ncs: number | null
-          ineffective_capas: number | null
-          major_ncs: number | null
-          minor_ncs: number | null
-          observations: number | null
-          open_ncs: number | null
-          quality_ncs: number | null
-          recurrences: number | null
-          total_ncs: number | null
-        }
-        Relationships: []
-      }
-      crm_audit_view: {
-        Row: {
-          action: string | null
-          action_display: string | null
-          changes: Json | null
+          antall: number | null
+          bedrift: string | null
           created_at: string | null
-          entity_display: string | null
-          entity_id: string | null
-          entity_type: string | null
-          id: string | null
+          fartoytype: string | null
+          id: string
+          kontakt_epost: string
+          kontakt_navn: string
+          kontakt_telefon: string | null
+          merknad: string | null
           metadata: Json | null
-          user_email: string | null
-          user_id: string | null
+          oppstart: string | null
+          rotasjon: string | null
+          status: string | null
+          stillinger: string | null
         }
         Insert: {
-          action?: string | null
-          action_display?: never
-          changes?: Json | null
+          antall?: number | null
+          bedrift?: string | null
           created_at?: string | null
-          entity_display?: never
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string | null
+          fartoytype?: string | null
+          id?: string
+          kontakt_epost: string
+          kontakt_navn: string
+          kontakt_telefon?: string | null
+          merknad?: string | null
           metadata?: Json | null
-          user_email?: string | null
-          user_id?: string | null
+          oppstart?: string | null
+          rotasjon?: string | null
+          status?: string | null
+          stillinger?: string | null
         }
         Update: {
-          action?: string | null
-          action_display?: never
-          changes?: Json | null
+          antall?: number | null
+          bedrift?: string | null
           created_at?: string | null
-          entity_display?: never
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string | null
+          fartoytype?: string | null
+          id?: string
+          kontakt_epost?: string
+          kontakt_navn?: string
+          kontakt_telefon?: string | null
+          merknad?: string | null
           metadata?: Json | null
-          user_email?: string | null
-          user_id?: string | null
+          oppstart?: string | null
+          rotasjon?: string | null
+          status?: string | null
+          stillinger?: string | null
         }
         Relationships: []
       }
-      crm_contacts_overdue: {
-        Row: {
-          activity_count_30d: number | null
-          address: string | null
-          archived_at: string | null
-          archived_reason: string | null
-          assigned_to: string | null
-          campaign_tag: string | null
-          company: string | null
-          contact_status: string | null
-          created_at: string | null
-          days_overdue: number | null
-          deal_value: number | null
-          email: string | null
-          follow_up_date: string | null
-          hubspot_id: string | null
-          hubspot_owner_id: string | null
-          hubspot_synced_at: string | null
-          id: string | null
-          industry: string | null
-          interest_level: number | null
-          last_contact_at: string | null
-          last_quote_sent_at: string | null
-          linkedin_url: string | null
-          location: string | null
-          manual_entry: boolean | null
-          merged_from: Json | null
-          merged_into: string | null
-          name: string | null
-          next_activity: string | null
-          notes: string | null
-          notes_updated_at: string | null
-          notes_updated_by: string | null
-          org_number: string | null
-          owner_id: string | null
-          phone: string | null
-          pinned_note: string | null
-          position: string | null
-          priority: string | null
-          probability: number | null
-          source: string | null
-          status: string | null
-          tags: string[] | null
-          title: string | null
-          updated_at: string | null
-          urgency: string | null
-          website: string | null
-        }
-        Insert: {
-          activity_count_30d?: number | null
-          address?: string | null
-          archived_at?: string | null
-          archived_reason?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          days_overdue?: never
-          deal_value?: number | null
-          email?: string | null
-          follow_up_date?: string | null
-          hubspot_id?: string | null
-          hubspot_owner_id?: string | null
-          hubspot_synced_at?: string | null
-          id?: string | null
-          industry?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          last_quote_sent_at?: string | null
-          linkedin_url?: string | null
-          location?: string | null
-          manual_entry?: boolean | null
-          merged_from?: Json | null
-          merged_into?: string | null
-          name?: string | null
-          next_activity?: string | null
-          notes?: string | null
-          notes_updated_at?: string | null
-          notes_updated_by?: string | null
-          org_number?: string | null
-          owner_id?: string | null
-          phone?: string | null
-          pinned_note?: string | null
-          position?: string | null
-          priority?: string | null
-          probability?: number | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string | null
-          updated_at?: string | null
-          urgency?: never
-          website?: string | null
-        }
-        Update: {
-          activity_count_30d?: number | null
-          address?: string | null
-          archived_at?: string | null
-          archived_reason?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          days_overdue?: never
-          deal_value?: number | null
-          email?: string | null
-          follow_up_date?: string | null
-          hubspot_id?: string | null
-          hubspot_owner_id?: string | null
-          hubspot_synced_at?: string | null
-          id?: string | null
-          industry?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          last_quote_sent_at?: string | null
-          linkedin_url?: string | null
-          location?: string | null
-          manual_entry?: boolean | null
-          merged_from?: Json | null
-          merged_into?: string | null
-          name?: string | null
-          next_activity?: string | null
-          notes?: string | null
-          notes_updated_at?: string | null
-          notes_updated_by?: string | null
-          org_number?: string | null
-          owner_id?: string | null
-          phone?: string | null
-          pinned_note?: string | null
-          position?: string | null
-          priority?: string | null
-          probability?: number | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string | null
-          updated_at?: string | null
-          urgency?: never
-          website?: string | null
-        }
-        Relationships: []
-      }
-      crm_meetings_upcoming: {
-        Row: {
-          attendees: Json | null
-          calendar_event_id: string | null
-          calendar_link: string | null
-          calendar_synced_at: string | null
-          completed_at: string | null
-          contact_id: string | null
-          created_at: string | null
-          created_by: string | null
-          date: string | null
-          description: string | null
-          duration_minutes: number | null
-          id: string | null
-          location: string | null
-          meeting_provider: string | null
-          meeting_url: string | null
-          notes: string | null
-          organizer: string | null
-          recording_url: string | null
-          status: string | null
-          time: string | null
-          timezone: string | null
-          title: string | null
-          transcript_url: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          attendees?: Json | null
-          calendar_event_id?: string | null
-          calendar_link?: string | null
-          calendar_synced_at?: string | null
-          completed_at?: string | null
-          contact_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          date?: string | null
-          description?: string | null
-          duration_minutes?: number | null
-          id?: string | null
-          location?: string | null
-          meeting_provider?: string | null
-          meeting_url?: string | null
-          notes?: string | null
-          organizer?: string | null
-          recording_url?: string | null
-          status?: string | null
-          time?: string | null
-          timezone?: string | null
-          title?: string | null
-          transcript_url?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          attendees?: Json | null
-          calendar_event_id?: string | null
-          calendar_link?: string | null
-          calendar_synced_at?: string | null
-          completed_at?: string | null
-          contact_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          date?: string | null
-          description?: string | null
-          duration_minutes?: number | null
-          id?: string | null
-          location?: string | null
-          meeting_provider?: string | null
-          meeting_url?: string | null
-          notes?: string | null
-          organizer?: string | null
-          recording_url?: string | null
-          status?: string | null
-          time?: string | null
-          timezone?: string | null
-          title?: string | null
-          transcript_url?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_meetings_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      crm_overdue_contacts: {
+      user_profiles: {
         Row: {
           archived_at: string | null
-          archived_reason: string | null
-          assigned_to: string | null
-          campaign_tag: string | null
-          company: string | null
-          contact_status: string | null
+          avatar_url: string | null
           created_at: string | null
-          days_overdue: number | null
-          deal_value: number | null
-          email: string | null
-          follow_up_date: string | null
-          hubspot_id: string | null
-          id: string | null
-          interest_level: number | null
-          last_contact_at: string | null
-          linkedin_url: string | null
-          manual_entry: boolean | null
-          merged_from: Json | null
-          name: string | null
-          next_activity: string | null
-          notes: string | null
-          owner_id: string | null
-          phone: string | null
-          position: string | null
-          priority: string | null
-          probability: number | null
-          source: string | null
-          status: string | null
-          tags: string[] | null
-          title: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          archived_at?: string | null
-          archived_reason?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          days_overdue?: never
-          deal_value?: number | null
-          email?: string | null
-          follow_up_date?: string | null
-          hubspot_id?: string | null
-          id?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          linkedin_url?: string | null
-          manual_entry?: boolean | null
-          merged_from?: Json | null
-          name?: string | null
-          next_activity?: string | null
-          notes?: string | null
-          owner_id?: string | null
-          phone?: string | null
-          position?: string | null
-          priority?: string | null
-          probability?: number | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          archived_at?: string | null
-          archived_reason?: string | null
-          assigned_to?: string | null
-          campaign_tag?: string | null
-          company?: string | null
-          contact_status?: string | null
-          created_at?: string | null
-          days_overdue?: never
-          deal_value?: number | null
-          email?: string | null
-          follow_up_date?: string | null
-          hubspot_id?: string | null
-          id?: string | null
-          interest_level?: number | null
-          last_contact_at?: string | null
-          linkedin_url?: string | null
-          manual_entry?: boolean | null
-          merged_from?: Json | null
-          name?: string | null
-          next_activity?: string | null
-          notes?: string | null
-          owner_id?: string | null
-          phone?: string | null
-          position?: string | null
-          priority?: string | null
-          probability?: number | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      crm_pipeline_summary: {
-        Row: {
-          avg_probability: number | null
-          contact_count: number | null
-          status: string | null
-          total_value: number | null
-          weighted_value: number | null
-        }
-        Relationships: []
-      }
-      crm_potential_duplicates: {
-        Row: {
-          contact1_company: string | null
-          contact1_email: string | null
-          contact1_id: string | null
-          contact1_name: string | null
-          contact2_company: string | null
-          contact2_email: string | null
-          contact2_id: string | null
-          contact2_name: string | null
-          match_type: string | null
-        }
-        Relationships: []
-      }
-      crm_tasks_active: {
-        Row: {
-          assigned_to: string | null
-          automation_rule_id: string | null
-          category: string | null
-          completed_at: string | null
-          completed_by: string | null
-          contact_id: string | null
-          created_at: string | null
-          created_by: string | null
-          deal_id: string | null
-          deleted_at: string | null
-          deleted_by: string | null
-          description: string | null
-          due_date: string | null
-          id: string | null
-          owner: string | null
-          owner_name: string | null
-          priority: string | null
-          source: string | null
-          status: string | null
-          title: string | null
-        }
-        Insert: {
-          assigned_to?: string | null
-          automation_rule_id?: string | null
-          category?: string | null
-          completed_at?: string | null
-          completed_by?: string | null
-          contact_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          deal_id?: string | null
-          deleted_at?: string | null
-          deleted_by?: string | null
-          description?: string | null
-          due_date?: string | null
-          id?: string | null
-          owner?: string | null
-          owner_name?: string | null
-          priority?: string | null
-          source?: string | null
-          status?: string | null
-          title?: string | null
-        }
-        Update: {
-          assigned_to?: string | null
-          automation_rule_id?: string | null
-          category?: string | null
-          completed_at?: string | null
-          completed_by?: string | null
-          contact_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          deal_id?: string | null
-          deleted_at?: string | null
-          deleted_by?: string | null
-          description?: string | null
-          due_date?: string | null
-          id?: string | null
-          owner?: string | null
-          owner_name?: string | null
-          priority?: string | null
-          source?: string | null
-          status?: string | null
-          title?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_deal_id_fkey"
-            columns: ["deal_id"]
-            isOneToOne: false
-            referencedRelation: "crm_deals"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      documents_expiring_soon: {
-        Row: {
-          candidate_id: string | null
-          candidate_name: string | null
-          created_at: string | null
-          days_until_expiry: number | null
-          document_type: string | null
-          expiry_date: string | null
-          file_name: string | null
-          file_url: string | null
-          id: string | null
-          is_valid: boolean | null
-          issue_date: string | null
-          notes: string | null
-          updated_at: string | null
-          uploaded_by: string | null
-          urgency_level: string | null
-          verification_method: string | null
-          verified: boolean | null
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          candidate_id?: string | null
-          candidate_name?: string | null
-          created_at?: string | null
-          days_until_expiry?: never
-          document_type?: string | null
-          expiry_date?: string | null
-          file_name?: string | null
-          file_url?: string | null
-          id?: string | null
-          is_valid?: never
-          issue_date?: string | null
-          notes?: string | null
-          updated_at?: string | null
-          uploaded_by?: string | null
-          urgency_level?: never
-          verification_method?: string | null
-          verified?: boolean | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          candidate_id?: string | null
-          candidate_name?: string | null
-          created_at?: string | null
-          days_until_expiry?: never
-          document_type?: string | null
-          expiry_date?: string | null
-          file_name?: string | null
-          file_url?: string | null
-          id?: string | null
-          is_valid?: never
-          issue_date?: string | null
-          notes?: string | null
-          updated_at?: string | null
-          uploaded_by?: string | null
-          urgency_level?: never
-          verification_method?: string | null
-          verified?: boolean | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: []
-      }
-      jobs_needing_candidates: {
-        Row: {
-          assigned_to: string | null
-          assignment_id: string | null
-          candidate_count: number | null
-          created_at: string | null
-          created_by: string | null
-          customer_name: string | null
-          customer_special_requirements: string | null
-          end_date: string | null
-          experience_level: string | null
-          id: string | null
-          language_requirements: string | null
-          location: string | null
-          period: string | null
-          required_certifications: string[] | null
-          required_skills: string[] | null
-          role: string | null
-          selected_count: number | null
-          start_date: string | null
-          status: string | null
-          updated_at: string | null
-          urgency: string | null
-        }
-        Relationships: []
-      }
-      latest_kpi_dashboard: {
-        Row: {
-          active_jobs: number | null
-          candidates_registered_this_period: number | null
-          created_at: string | null
-          csat_score: number | null
-          documents_expiring_30days: number | null
-          documents_expiring_7days: number | null
-          expired_documents_count: number | null
-          filled_jobs_this_period: number | null
-          id: string | null
-          incidents_per_100_jobs: number | null
-          nps_score: number | null
-          open_capa_actions: number | null
-          perfect_releases_count: number | null
-          releases_with_issues_count: number | null
-          releases_without_deficiencies_pct: number | null
-          snapshot_date: string | null
-          time_to_fill_median_days: number | null
-          time_to_fill_p90_days: number | null
-        }
-        Relationships: []
-      }
-      leads_secure: {
-        Row: {
-          company: string | null
-          contact: string | null
-          email: string | null
-          id: string | null
-          num_people: string | null
-          org_number: string | null
-          phone: string | null
-          start_date: string | null
-          submitted_at: string | null
-          work_location: string | null
-        }
-        Insert: {
-          company?: string | null
-          contact?: never
-          email?: never
-          id?: string | null
-          num_people?: string | null
-          org_number?: string | null
-          phone?: never
-          start_date?: string | null
-          submitted_at?: string | null
-          work_location?: string | null
-        }
-        Update: {
-          company?: string | null
-          contact?: never
-          email?: never
-          id?: string | null
-          num_people?: string | null
-          org_number?: string | null
-          phone?: never
-          start_date?: string | null
-          submitted_at?: string | null
-          work_location?: string | null
-        }
-        Relationships: []
-      }
-      my_capa_actions: {
-        Row: {
-          action_number: number | null
-          created_at: string | null
-          description: string | null
-          due_date: string | null
-          id: string | null
-          is_overdue: boolean | null
-          nc_id: string | null
-          nc_number: string | null
-          nc_title: string | null
-          responsible_user: string | null
-          severity: string | null
-          status: string | null
-          updated_at: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "capa_action_log_nc_id_fkey"
-            columns: ["nc_id"]
-            isOneToOne: false
-            referencedRelation: "nonconformities"
-            referencedColumns: ["nc_id"]
-          },
-        ]
-      }
-      pending_candidate_imports: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          erfaring: string | null
-          id: string | null
-          import_id: string | null
-          import_source: string | null
-          import_type: string | null
-          imported_at: string | null
-          lokasjon: string | null
-          name: string | null
-          phone: string | null
-          prod_id: string | null
-          rolle: string | null
-          sertifikater: Json | null
-          status: string | null
-          synced_at: string | null
-          synced_to_prod: boolean | null
-          tilgjengelighet: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          erfaring?: string | null
-          id?: string | null
-          import_id?: string | null
-          import_source?: string | null
-          import_type?: never
-          imported_at?: string | null
-          lokasjon?: string | null
-          name?: string | null
-          phone?: string | null
-          prod_id?: string | null
-          rolle?: string | null
-          sertifikater?: Json | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tilgjengelighet?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          erfaring?: string | null
-          id?: string | null
-          import_id?: string | null
-          import_source?: string | null
-          import_type?: never
-          imported_at?: string | null
-          lokasjon?: string | null
-          name?: string | null
-          phone?: string | null
-          prod_id?: string | null
-          rolle?: string | null
-          sertifikater?: Json | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tilgjengelighet?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "active_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "archived_candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "candidates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_candidates_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "candidates_secure"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      pending_crm_imports: {
-        Row: {
-          company: string | null
-          created_at: string | null
-          email: string | null
-          id: string | null
-          import_id: string | null
-          import_source: string | null
-          import_type: string | null
-          imported_at: string | null
-          name: string | null
-          notes: string | null
-          phone: string | null
-          position: string | null
-          prod_id: string | null
-          status: string | null
-          synced_at: string | null
-          synced_to_prod: boolean | null
-          tags: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          company?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          import_id?: string | null
-          import_source?: string | null
-          import_type?: never
-          imported_at?: string | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          company?: string | null
-          created_at?: string | null
-          email?: string | null
-          id?: string | null
-          import_id?: string | null
-          import_source?: string | null
-          import_type?: never
-          imported_at?: string | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          tags?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "active_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "archived_crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_contacts_overdue"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_overdue_contacts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact1_id"]
-          },
-          {
-            foreignKeyName: "raw_crm_contacts_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "crm_potential_duplicates"
-            referencedColumns: ["contact2_id"]
-          },
-        ]
-      }
-      pending_customer_imports: {
-        Row: {
-          adresse: string | null
-          created_at: string | null
-          epost: string | null
-          id: string | null
-          import_id: string | null
-          import_source: string | null
-          import_type: string | null
-          imported_at: string | null
-          kontaktperson: string | null
-          name: string | null
-          prod_id: string | null
-          status: string | null
-          synced_at: string | null
-          synced_to_prod: boolean | null
-          telefon: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          adresse?: string | null
-          created_at?: string | null
-          epost?: string | null
-          id?: string | null
-          import_id?: string | null
-          import_source?: string | null
-          import_type?: never
-          imported_at?: string | null
-          kontaktperson?: string | null
-          name?: string | null
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          telefon?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          adresse?: string | null
-          created_at?: string | null
-          epost?: string | null
-          id?: string | null
-          import_id?: string | null
-          import_source?: string | null
-          import_type?: never
-          imported_at?: string | null
-          kontaktperson?: string | null
-          name?: string | null
-          prod_id?: string | null
-          status?: string | null
-          synced_at?: string | null
-          synced_to_prod?: boolean | null
-          telefon?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "raw_customers_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "active_customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_customers_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "archived_customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "raw_customers_prod_id_fkey"
-            columns: ["prod_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      pending_email_notifications: {
-        Row: {
-          candidate_certificates: string | null
-          candidate_phone: string | null
-          candidate_region: string | null
-          email_type: string | null
-          error_message: string | null
-          id: string | null
-          metadata: Json | null
-          recipient_email: string | null
-          recipient_name: string | null
-          sent_at: string | null
-          status: string | null
-          subject: string | null
-          success: boolean | null
-        }
-        Relationships: []
-      }
-      pending_release_approvals: {
-        Row: {
-          approval_notes: string | null
-          approved_at: string | null
-          approved_by: string | null
-          approver_role: string | null
-          candidate_id: string | null
-          candidate_name: string | null
-          checklist_notes: string | null
-          contract_signed: boolean | null
-          created_at: string | null
-          customer_name: string | null
-          customer_requirements_met: boolean | null
-          document_ids: string[] | null
-          id: string | null
-          id_verified: boolean | null
-          job_requirement_id: string | null
-          language_requirements_met: boolean | null
-          logistics_confirmed: boolean | null
-          medical_cert_valid: boolean | null
-          package_url: string | null
-          pdf_hash: string | null
-          pdf_url: string | null
-          prepared_at: string | null
-          prepared_by: string | null
-          references_checked: boolean | null
-          rejected_at: string | null
-          rejected_by: string | null
-          rejection_reason: string | null
-          role: string | null
-          start_date: string | null
-          status: string | null
-          stcw_valid: boolean | null
-          updated_at: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "release_checklists_job_requirement_id_fkey"
-            columns: ["job_requirement_id"]
-            isOneToOne: false
-            referencedRelation: "job_requirements"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "release_checklists_job_requirement_id_fkey"
-            columns: ["job_requirement_id"]
-            isOneToOne: false
-            referencedRelation: "jobs_needing_candidates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      recent_sync_activity: {
-        Row: {
-          action: string | null
-          changes_made: Json | null
-          id: string | null
-          notes: string | null
-          prod_id: string | null
-          prod_name: string | null
-          raw_id: string | null
-          raw_name: string | null
-          synced_at: string | null
-          synced_by: string | null
-          table_name: string | null
-        }
-        Relationships: []
-      }
-      role_assignments: {
-        Row: {
-          assigned_at: string | null
-          assigned_by: string | null
-          assigned_by_name: string | null
-          assignment_id: string | null
-          email: string | null
-          full_name: string | null
-          role: string | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
-      user_access: {
-        Row: {
-          account_type: string | null
-          created_at: string | null
-          department: string | null
-          email: string | null
-          full_name: string | null
-          id: string | null
-          phone: string | null
-          position: string | null
-          roles: string[] | null
-          updated_at: string | null
-        }
-        Relationships: []
-      }
-      v_expiring_certificates: {
-        Row: {
-          archived_at: string | null
-          cert_class: string | null
-          cert_name: string | null
-          cert_number: string | null
-          cert_type: string | null
-          created_at: string | null
-          created_by: string | null
-          days_until_expiry: number | null
-          email: string | null
-          employee_id: string | null
-          employee_number: string | null
-          expires_at: string | null
-          expiry_status: string | null
-          external_verification_id: string | null
-          external_verified_at: string | null
-          file_key: string | null
-          first_name: string | null
-          id: string | null
-          issued_date: string | null
-          issuing_authority: string | null
-          issuing_country: string | null
-          last_name: string | null
-          updated_at: string | null
-          updated_by: string | null
-          verification_notes: string | null
-          verification_status: string | null
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "employee_certificates_employee_id_fkey"
-            columns: ["employee_id"]
-            isOneToOne: false
-            referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-    }
-    Functions: {
-      auto_assign_nc: {
-        Args: { nc_id_param: string; nc_type_param: string }
-        Returns: string
-      }
-      create_audit_log: {
-        Args: {
-          p_action: string
-          p_entity_id: string
-          p_entity_type: string
-          p_metadata?: Json
-          p_new_values?: Json
-          p_old_values?: Json
-        }
-        Returns: string
-      }
-      crm_audit_record: {
-        Args: {
-          p_action: string
-          p_changes?: Json
-          p_entity_id?: string
-          p_entity_type: string
-          p_ip_address?: unknown
-          p_metadata?: Json
-          p_user_email: string
-          p_user_id: string
-        }
-        Returns: string
-      }
-      crm_log_audit: {
-        Args: {
-          p_action: string
-          p_contact_id: string
-          p_created_by?: string
-          p_created_by_name?: string
-          p_field_changed?: string
-          p_is_sensitive?: boolean
-          p_new_value?: string
-          p_note?: string
-          p_old_value?: string
-        }
-        Returns: string
-      }
-      crm_merge_contacts: {
-        Args: {
-          p_canonical_id: string
-          p_dry_run?: boolean
-          p_merged_by: string
-          p_merged_by_name?: string
-          p_secondary_ids: string[]
-        }
-        Returns: Json
-      }
-      decrypt_pii: { Args: { ciphertext: string }; Returns: string }
-      detect_sync_conflict: {
-        Args: { p_prod_id: string; p_raw_id: string; p_table_name: string }
-        Returns: string
-      }
-      encrypt_pii: { Args: { plaintext: string }; Returns: string }
-      generate_contract_number:
-        | { Args: never; Returns: string }
-        | { Args: { p_type: string; p_year?: number }; Returns: string }
-      generate_incident_number: { Args: never; Returns: string }
-      generate_nc_number: { Args: { p_type: string }; Returns: string }
-      get_user_by_role: {
-        Args: { target_role: string }
-        Returns: {
           email: string
           full_name: string
-          user_id: string
-        }[]
-      }
-      get_user_roles: { Args: { check_user_id: string }; Returns: string[] }
-      increment_application_count: {
-        Args: { posting_id: string }
-        Returns: undefined
-      }
-      log_employee_audit: {
-        Args: {
-          p_action: string
-          p_changed_fields: string[]
-          p_entity_id: string
-          p_entity_type: string
-          p_new_values: Json
-          p_notes?: string
-          p_old_values: Json
-          p_performed_by: string
-          p_performed_by_email?: string
+          id: string
+          last_active_at: string | null
+          onboarding_completed: boolean | null
+          permissions: Json | null
+          phone: string | null
+          preferences: Json | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
         }
-        Returns: string
-      }
-      mark_raw_synced: {
-        Args: {
-          p_prod_id: string
-          p_raw_id: string
-          p_synced_by: string
-          p_table_name: string
+        Insert: {
+          archived_at?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id: string
+          last_active_at?: string | null
+          onboarding_completed?: boolean | null
+          permissions?: Json | null
+          phone?: string | null
+          preferences?: Json | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
         }
-        Returns: undefined
-      }
-      normalize_email: { Args: { email: string }; Returns: string }
-      normalize_phone: { Args: { phone: string }; Returns: string }
-      send_status_email: {
-        Args: {
-          p_email: string
-          p_name: string
-          p_status: string
-          p_type?: string
+        Update: {
+          archived_at?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          last_active_at?: string | null
+          onboarding_completed?: boolean | null
+          permissions?: Json | null
+          phone?: string | null
+          preferences?: Json | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
         }
-        Returns: string
+        Relationships: []
       }
-      user_has_role: {
-        Args: { check_role: string; check_user_id: string }
-        Returns: boolean
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      candidates_searchable_text: {
+        Args: {
+          p_cv_summary: string
+          p_first_name: string
+          p_internal_notes: string
+          p_last_name: string
+          p_primary_role: string
+          p_tags: string[]
+        }
+        Returns: unknown
+      }
+      is_staff: { Args: never; Returns: boolean }
+      log_activity:
+        | {
+            Args: {
+              p_action: string
+              p_changes?: Json
+              p_description?: string
+              p_entity_id?: string
+              p_entity_name?: string
+              p_entity_type: string
+              p_metadata?: Json
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_action: string
+              p_details?: Json
+              p_entity_id: string
+              p_entity_type: string
+            }
+            Returns: string
+          }
+      org_searchable_text: {
+        Args: { p_name: string; p_notes: string }
+        Returns: unknown
       }
     }
     Enums: {
-      [_ in never]: never
+      activity_type:
+        | "call"
+        | "email"
+        | "meeting"
+        | "note"
+        | "task"
+        | "deal_created"
+        | "deal_won"
+        | "deal_lost"
+        | "request_created"
+        | "assignment_started"
+        | "contract_signed"
+        | "invoice_sent"
+        | "invoice_paid"
+      assignment_status:
+        | "draft"
+        | "pending_compliance"
+        | "compliance_ok"
+        | "contract_drafting"
+        | "contract_sent"
+        | "contract_signed"
+        | "ready_for_start"
+        | "active"
+        | "completed"
+        | "invoiced"
+        | "paid"
+        | "cancelled"
+      availability_status:
+        | "available"
+        | "available_soon"
+        | "on_assignment"
+        | "unavailable"
+        | "inactive"
+      capa_status:
+        | "planned"
+        | "in_progress"
+        | "completed"
+        | "verified"
+        | "closed"
+      capa_type: "corrective" | "preventive"
+      certification_category:
+        | "competency"
+        | "safety"
+        | "medical"
+        | "endorsement"
+        | "special"
+        | "other"
+      compliance_status:
+        | "not_started"
+        | "documents_pending"
+        | "review_pending"
+        | "approved"
+        | "expired"
+        | "rejected"
+      contract_status:
+        | "draft"
+        | "pending_review"
+        | "ready_for_signature"
+        | "sent"
+        | "partially_signed"
+        | "signed"
+        | "cancelled"
+        | "expired"
+      contract_type:
+        | "employment_temporary"
+        | "employment_permanent"
+        | "contractor"
+        | "framework_agreement"
+        | "service_agreement"
+      deal_stage:
+        | "qualification"
+        | "needs_analysis"
+        | "proposal"
+        | "negotiation"
+        | "closed_won"
+        | "closed_lost"
+      document_type:
+        | "cv"
+        | "passport"
+        | "seabook"
+        | "certificate"
+        | "diploma"
+        | "reference"
+        | "contract"
+        | "other"
+      nc_severity: "observation" | "minor" | "major" | "critical"
+      nc_status:
+        | "open"
+        | "analysis"
+        | "action_planned"
+        | "action_implemented"
+        | "verified"
+        | "closed"
+      pipeline_stage:
+        | "lead"
+        | "contacted"
+        | "meeting_scheduled"
+        | "proposal_sent"
+        | "negotiation"
+        | "won"
+        | "lost"
+        | "churned"
+      priority_level: "low" | "medium" | "high" | "urgent"
+      qms_document_status:
+        | "draft"
+        | "pending_approval"
+        | "approved"
+        | "obsolete"
+      qms_document_type: "QH" | "PRO" | "INS" | "SKJEMA"
+      request_status:
+        | "draft"
+        | "pending_approval"
+        | "approved"
+        | "matching"
+        | "shortlisted"
+        | "offer_sent"
+        | "offer_accepted"
+        | "offer_rejected"
+        | "converted"
+        | "on_hold"
+        | "cancelled"
+        | "expired"
+      risk_category:
+        | "operational"
+        | "financial"
+        | "compliance"
+        | "strategic"
+        | "reputational"
+        | "safety"
+      risk_status:
+        | "identified"
+        | "assessed"
+        | "mitigated"
+        | "accepted"
+        | "closed"
+      timesheet_status:
+        | "draft"
+        | "submitted"
+        | "approved"
+        | "rejected"
+        | "invoiced"
+      user_role:
+        | "super_admin"
+        | "admin"
+        | "recruiter"
+        | "coordinator"
+        | "employee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -7970,14 +3401,172 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      activity_type: [
+        "call",
+        "email",
+        "meeting",
+        "note",
+        "task",
+        "deal_created",
+        "deal_won",
+        "deal_lost",
+        "request_created",
+        "assignment_started",
+        "contract_signed",
+        "invoice_sent",
+        "invoice_paid",
+      ],
+      assignment_status: [
+        "draft",
+        "pending_compliance",
+        "compliance_ok",
+        "contract_drafting",
+        "contract_sent",
+        "contract_signed",
+        "ready_for_start",
+        "active",
+        "completed",
+        "invoiced",
+        "paid",
+        "cancelled",
+      ],
+      availability_status: [
+        "available",
+        "available_soon",
+        "on_assignment",
+        "unavailable",
+        "inactive",
+      ],
+      capa_status: [
+        "planned",
+        "in_progress",
+        "completed",
+        "verified",
+        "closed",
+      ],
+      capa_type: ["corrective", "preventive"],
+      certification_category: [
+        "competency",
+        "safety",
+        "medical",
+        "endorsement",
+        "special",
+        "other",
+      ],
+      compliance_status: [
+        "not_started",
+        "documents_pending",
+        "review_pending",
+        "approved",
+        "expired",
+        "rejected",
+      ],
+      contract_status: [
+        "draft",
+        "pending_review",
+        "ready_for_signature",
+        "sent",
+        "partially_signed",
+        "signed",
+        "cancelled",
+        "expired",
+      ],
+      contract_type: [
+        "employment_temporary",
+        "employment_permanent",
+        "contractor",
+        "framework_agreement",
+        "service_agreement",
+      ],
+      deal_stage: [
+        "qualification",
+        "needs_analysis",
+        "proposal",
+        "negotiation",
+        "closed_won",
+        "closed_lost",
+      ],
+      document_type: [
+        "cv",
+        "passport",
+        "seabook",
+        "certificate",
+        "diploma",
+        "reference",
+        "contract",
+        "other",
+      ],
+      nc_severity: ["observation", "minor", "major", "critical"],
+      nc_status: [
+        "open",
+        "analysis",
+        "action_planned",
+        "action_implemented",
+        "verified",
+        "closed",
+      ],
+      pipeline_stage: [
+        "lead",
+        "contacted",
+        "meeting_scheduled",
+        "proposal_sent",
+        "negotiation",
+        "won",
+        "lost",
+        "churned",
+      ],
+      priority_level: ["low", "medium", "high", "urgent"],
+      qms_document_status: [
+        "draft",
+        "pending_approval",
+        "approved",
+        "obsolete",
+      ],
+      qms_document_type: ["QH", "PRO", "INS", "SKJEMA"],
+      request_status: [
+        "draft",
+        "pending_approval",
+        "approved",
+        "matching",
+        "shortlisted",
+        "offer_sent",
+        "offer_accepted",
+        "offer_rejected",
+        "converted",
+        "on_hold",
+        "cancelled",
+        "expired",
+      ],
+      risk_category: [
+        "operational",
+        "financial",
+        "compliance",
+        "strategic",
+        "reputational",
+        "safety",
+      ],
+      risk_status: [
+        "identified",
+        "assessed",
+        "mitigated",
+        "accepted",
+        "closed",
+      ],
+      timesheet_status: [
+        "draft",
+        "submitted",
+        "approved",
+        "rejected",
+        "invoiced",
+      ],
+      user_role: [
+        "super_admin",
+        "admin",
+        "recruiter",
+        "coordinator",
+        "employee",
+      ],
+    },
   },
 } as const
-
-
-// Convenience type aliases
-export type JobPosting = Database["public"]["Tables"]["job_postings"]["Row"];
-export type JobPostingInsert = Database["public"]["Tables"]["job_postings"]["Insert"];
-export type JobApplication = Database["public"]["Tables"]["job_applications"]["Row"];
-export type JobApplicationInsert = Database["public"]["Tables"]["job_applications"]["Insert"];
-export type Candidate = Database["public"]["Tables"]["candidates"]["Row"];
