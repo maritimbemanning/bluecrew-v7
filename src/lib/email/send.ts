@@ -462,6 +462,7 @@ export async function sendRegistrationNotification(
 
           <div style="padding: 15px 25px; background: #f8fafc; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px;">
             <span style="color: #64748b; font-size: 13px;">Registrert: ${timestamp}</span>
+            <span style="color: #94a3b8; font-size: 11px; float: right;">ID: ${data.candidateId}</span>
           </div>
         </div>
       `,
