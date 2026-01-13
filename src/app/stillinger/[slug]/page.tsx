@@ -172,7 +172,7 @@ export default async function JobDetailPage({ params }: PageProps) {
     },
     // Industry context for maritime staffing
     industry: "Maritime & Shipping",
-    occupationalCategory: categoryLabels[job.category] || job.category,
+    occupationalCategory: categoryLabel,
     // Benefits if available
     ...(job.benefits && job.benefits.length > 0 && {
       jobBenefits: job.benefits.join(", "),
@@ -256,7 +256,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                     </h1>
                     <div className="flex flex-wrap gap-2">
                       <span className="px-3 py-1 bg-gold-400/10 border border-gold-400/20 rounded-full text-gold-300 text-sm font-medium">
-                        {categoryLabels[job.category] || job.category}
+                        {categoryLabel}
                       </span>
                       <span className="px-3 py-1 bg-cream-50/5 border border-cream-50/10 rounded-full text-cream-100 text-sm">
                         {jobTypeLabels[job.job_type] || job.job_type}
@@ -425,7 +425,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                         {job.company_name || "Bluecrew AS"}
                       </p>
                       <p className="text-sm text-cream-100/60">
-                        {categoryLabels[job.category] || job.category}
+                        {categoryLabel}
                       </p>
                     </div>
                   </div>
@@ -444,7 +444,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                     <div className="flex justify-between">
                       <dt className="text-cream-100/60">Kategori</dt>
                       <dd className="font-medium text-cream-50">
-                        {categoryLabels[job.category] || job.category}
+                        {categoryLabel}
                       </dd>
                     </div>
                     <div className="flex justify-between">
