@@ -283,7 +283,8 @@ export async function POST(request: NextRequest) {
         const firstName = nameParts[0] || 'Ukjent';
         const lastName = nameParts.slice(1).join(' ') || '';
 
-        const { data: profile, error: profileError } = await supabaseAdmin
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: profile, error: profileError } = await (supabaseAdmin as any)
           .from('bluecrew_profiles')
           .insert({
             candidate_id: candidateId,
