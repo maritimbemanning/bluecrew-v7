@@ -3570,3 +3570,8 @@ export const Constants = {
     },
   },
 } as const
+
+// Helper type exports
+export type JobPosting = Database["public"]["Tables"]["job_postings"]["Row"]
+export type Candidate = Database["public"]["Tables"]["candidates"]["Row"]
+export type BluecrewProfile = Database["public"]["Tables"]["bluecrew_profiles"]["Row"]
