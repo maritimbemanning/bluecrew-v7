@@ -124,20 +124,11 @@ export function generateLonnLandingMetadata(): Metadata {
       locale: 'nb_NO',
       siteName: 'Bluecrew',
       url: 'https://bluecrew.no/lonn',
-      images: [
-        {
-          url: getOgImageUrl(IMAGE_PATHS.og.lonn),
-          width: 1200,
-          height: 630,
-          alt: `Lønn til sjøs ${year} - maritim lønnsoversikt`,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `Lønn Til Sjøs ${year}: Kaptein 1.2M, Maskinist 950k`,
       description: `Komplett lønnsoversikt for alle maritime stillinger. Se hva du kan tjene offshore, havbruk og rederi →`,
-      images: [getOgImageUrl(IMAGE_PATHS.og.lonn)],
     },
     alternates: {
       canonical: 'https://bluecrew.no/lonn',

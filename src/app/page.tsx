@@ -26,20 +26,11 @@ export const metadata: Metadata = {
     siteName: 'Bluecrew',
     locale: 'nb_NO',
     type: 'website',
-    images: [
-      {
-        url: 'https://bluecrew.no/images/og/default.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Bluecrew - Maritim bemanning til oppdrett, offshore, fiskeri og rederi',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Bemanningsbyrå og Akvaservice | Maritim Bemanning',
     description: 'Maritim bemanning med kvalitetssikrede tjenester innenfor Oppdrett, Offshore, Fiskeri og Rederi.',
-    images: ['https://bluecrew.no/images/og/default.webp'],
   },
   alternates: {
     canonical: 'https://bluecrew.no',

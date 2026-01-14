@@ -59,20 +59,11 @@ export const metadata: Metadata = {
     siteName: 'Bluecrew AS',
     locale: 'nb_NO',
     type: 'website',
-    images: [
-      {
-        url: getOgImageUrl(IMAGE_PATHS.og.default),
-        width: 1200,
-        height: 630,
-        alt: 'Bluecrew - Bemanning til havbruk og oppdrett',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Bemanning til Havbruk og Oppdrett',
     description: 'Kvalifisert mannskap til oppdrettsnæringen. Din partner i havbruk.',
-    images: [getOgImageUrl(IMAGE_PATHS.og.default)],
   },
   alternates: {
     canonical: 'https://bluecrew.no/rederi/havbruk',
