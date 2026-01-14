@@ -19,8 +19,10 @@ import Section from '@/components/ui/Section';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { getImageUrl, getOgImageUrl, IMAGE_PATHS } from '@/lib/images';
+import { getImageUrl, IMAGE_PATHS } from '@/lib/images';
 import SchemaMarkup from '@/components/seo/SchemaMarkup';
+
+const LOGO_URL = 'https://bluecrew.no/icon.png';
 
 const breadcrumbs = [
   { name: 'Hjem', url: '/' },
@@ -28,37 +30,39 @@ const breadcrumbs = [
 ];
 
 export const metadata: Metadata = {
-  title: 'Maritime karriereveier – Bli sjømann i Norge',
-  description: 'Utforsk karrieremulighetene til sjøs. Komplett guide til maritime yrker: kaptein, styrmann, maskinist, ETO, matros og kokk. Utdanning, sertifikater og lønn.',
+  title: 'Hvordan bli sjømann? Karriere til sjøs 2026 | Bluecrew',
+  description: 'Steg-for-steg karriereguide for kaptein, styrmann, maskinist, ETO, matros og kokk. Utdanning, sertifikater, fartstid og lønn – alt du trenger for å bli sjømann.',
   keywords: [
+    'hvordan bli sjømann',
     'maritim karriere',
-    'bli sjømann',
     'maritime yrker',
-    'jobb til sjøs',
-    'offshore karriere',
-    'maritim utdanning',
+    'utdanning sjømann',
+    'sertifikater sjøfolk',
+    'kaptein utdanning',
+    'styrmann utdanning',
+    'maskinist utdanning',
   ],
   openGraph: {
-    title: 'Maritime karriereveier – Bli sjømann i Norge',
-    description: 'Utforsk karrieremulighetene til sjøs. Komplett guide til maritime yrker.',
+    title: 'Hvordan bli sjømann? Karriere til sjøs 2026',
+    description: 'Komplett karriereguide for maritime yrker: utdanning, sertifikater, fartstid og lønn.',
     url: 'https://bluecrew.no/karriere',
     siteName: 'Bluecrew AS',
     locale: 'nb_NO',
     type: 'website',
     images: [
       {
-        url: getOgImageUrl(IMAGE_PATHS.og.default),
-        width: 1200,
-        height: 630,
-        alt: 'Maritime karriereveier - Bluecrew',
+        url: LOGO_URL,
+        width: 512,
+        height: 512,
+        alt: 'Bluecrew-logo',
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Maritime karriereveier – Bli sjømann i Norge',
-    description: 'Utforsk karrieremulighetene til sjøs. Komplett guide til maritime yrker.',
-    images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+    card: 'summary',
+    title: 'Hvordan bli sjømann? Karriere til sjøs 2026',
+    description: 'Guide til kaptein, styrmann, maskinist, ETO, matros og kokk – utdanning, sertifikat, lønn.',
+    images: [LOGO_URL],
   },
   alternates: {
     canonical: 'https://bluecrew.no/karriere',
@@ -198,6 +202,13 @@ export default function KarrierePage() {
             <p className="text-xl text-cream-100/80 mb-10 max-w-2xl leading-relaxed">
               Utforsk mulighetene til sjøs. Fra kadett til kaptein – vi guider deg gjennom utdanning, sertifikater og karrierevei.
             </p>
+
+            <div className="flex flex-wrap items-center gap-3 text-cream-100/80 text-sm">
+              <span className="font-semibold text-cream-50">Fagpresse:</span>
+              <Link href="https://www.kyst.no/tag/bluecrew" className="underline hover:text-gold-300" target="_blank" rel="noreferrer">
+                Les omtale på Kyst.no
+              </Link>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/meld-interesse">
@@ -362,6 +373,13 @@ export default function KarrierePage() {
                       <div className="mt-6 flex items-center justify-between text-gold-500 font-medium text-sm group-hover:gap-2 transition-all">
                         <span>Les mer</span>
                         <ArrowRight className="w-4 h-4" />
+                      </div>
+
+                      <div className="mt-4 text-sm text-navy-700 font-medium flex items-center gap-2">
+                        <Link href={`/lonn/${position.slug}`} className="underline hover:text-gold-600">
+                          Se lønn for {position.title}
+                        </Link>
+                        <ArrowRight className="w-3 h-3 text-gold-500" />
                       </div>
                     </div>
                   </Card>

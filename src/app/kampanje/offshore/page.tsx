@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { CheckCircle2 } from '@/components/icons';
+import { CheckCircle2, ChevronRight } from '@/components/icons';
 import Container from '@/components/ui/Container';
 import OffshoreForm from '@/components/kampanje/OffshoreForm';
 
@@ -123,6 +123,46 @@ export default function OffshoreCampaignPage() {
           <div>
             <OffshoreForm />
           </div>
+        </div>
+
+        {/* Role Cards Grid - First View */}
+        <div className="text-center mb-12 mt-20">
+          <h2 className="text-4xl md:text-5xl font-medium text-cream-50 mb-4">
+            Velg din <span className="italic text-gold-400">spesialitet</span>
+          </h2>
+          <p className="text-cream-100/80 text-lg max-w-2xl mx-auto">
+            Vi har behov for kvalifiserte fagfolk innen alle disse områdene. Klikk på din rolle for å søke.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
+          {[
+            { title: 'Elektriker', href: '/kampanje/elektriker', desc: 'Installasjon, vedlikehold og feilsøking' },
+            { title: 'Riggere', href: '/kampanje/riggere', desc: 'Løfteoperasjoner og dekksarbeid' },
+            { title: 'ROV-Pilot', href: '/kampanje/rov', desc: 'Fjernstyrte undervannsfartøy' },
+            { title: 'ETO', href: '/kampanje/eto', desc: 'Elektro-teknisk offiser' },
+            { title: 'Sveiser', href: '/kampanje/sveiser', desc: 'TIG, MIG/MAG, elektrode' },
+            { title: 'Mekaniker', href: '/kampanje/mekaniker', desc: 'Vedlikehold av maskiner og utstyr' },
+          ].map((role) => (
+            <Link
+              key={role.href}
+              href={role.href}
+              className="group block h-full"
+            >
+              <div className="h-full p-6 bg-navy-800/60 border border-cream-100/10 rounded-xl hover:bg-navy-700/60 hover:border-gold-400/30 hover:shadow-xl transition-all duration-300">
+                <h3 className="text-2xl font-medium text-cream-50 group-hover:text-gold-400 transition-colors mb-2">
+                  {role.title}
+                </h3>
+                <p className="text-cream-100/70 text-sm mb-4">
+                  {role.desc}
+                </p>
+                <div className="flex items-center text-gold-400 text-sm font-medium">
+                  Se oppdrag
+                  <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </Container>
     </main>

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import type { Position } from '@/types/positions';
 import { getPosition } from '@/lib/data/positions';
-import { getOgImageUrl, IMAGE_PATHS } from '@/lib/images';
+
+const LOGO_URL = 'https://bluecrew.no/icon.png';
 
 /**
  * Generate metadata for position lønn pages
@@ -27,18 +28,18 @@ export function generatePositionLonnMetadata(positionId: Position): Metadata {
       url: `https://bluecrew.no/lonn/${pos.slug}`,
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.lonn),
-          width: 1200,
-          height: 630,
-          alt: `${pos.name} lønn ${year} - lønnsoversikt`,
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: `${pos.name} Lønn ${year}: ${minK}k–${maxK > 999 ? '1.2M' : maxK + 'k'} kr`,
       description: `Gjennomsnittlig ${pos.name.toLowerCase()}-lønn: ${typicalK} 000 kr. Offshore betaler best. Se full lønnstabell →`,
-      images: [getOgImageUrl(IMAGE_PATHS.og.lonn)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: `https://bluecrew.no/lonn/${pos.slug}`,
@@ -78,18 +79,18 @@ export function generatePositionKarriereMetadata(
       url: `https://bluecrew.no/karriere/${pos.slug}`,
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.sjofolk),
-          width: 1200,
-          height: 630,
-          alt: `Bli ${pos.name} - karriereguide ${year}`,
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: `Bli ${pos.name}: Utdanning, Sertifikater & Karrierevei`,
       description: `Hvordan bli ${pos.name.toLowerCase()}? Komplett guide med utdanning, krav og lønnspotensial ${typicalK}k+ →`,
-      images: [getOgImageUrl(IMAGE_PATHS.og.sjofolk)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: `https://bluecrew.no/karriere/${pos.slug}`,
@@ -124,11 +125,20 @@ export function generateLonnLandingMetadata(): Metadata {
       locale: 'nb_NO',
       siteName: 'Bluecrew',
       url: 'https://bluecrew.no/lonn',
+      images: [
+        {
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
+        },
+      ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: `Lønn Til Sjøs ${year}: Kaptein 1.2M, Maskinist 950k`,
       description: `Komplett lønnsoversikt for alle maritime stillinger. Se hva du kan tjene offshore, havbruk og rederi →`,
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: 'https://bluecrew.no/lonn',
@@ -160,18 +170,18 @@ export function generateKarriereLandingMetadata(): Metadata {
       url: 'https://bluecrew.no/karriere',
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.sjofolk),
-          width: 1200,
-          height: 630,
-          alt: `Karriere til sjøs ${year} - maritim karriereguide`,
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: `Karriere Til Sjøs: Utdanning, Lønn & Muligheter`,
       description: `Bli kaptein, maskinist eller matros. Komplett guide med utdanning, krav og lønn opptil 1.2M kr →`,
-      images: [getOgImageUrl(IMAGE_PATHS.og.sjofolk)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: 'https://bluecrew.no/karriere',
@@ -204,19 +214,19 @@ export function generateHomeMetadata(): Metadata {
       url: 'https://bluecrew.no',
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.default),
-          width: 1200,
-          height: 630,
-          alt: 'Bluecrew - Bemanning til havbruk og maritim sektor',
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: 'Bluecrew | Bemanning til Oppdrett, Havbruk & Maritim',
       description:
         'Kvalifisert mannskap til oppdrett, havbruk og offshore. DNV-sertifisert. Levering 24t →',
-      images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: 'https://bluecrew.no',
@@ -247,18 +257,18 @@ export function generateContactMetadata(): Metadata {
       url: 'https://bluecrew.no/kontakt',
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.default),
-          width: 1200,
-          height: 630,
-          alt: 'Kontakt Bluecrew - maritim bemanning',
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: 'Kontakt Bluecrew | Bemanning på 24 Timer',
       description: 'Kvalifisert mannskap til havbruk og offshore. Svar innen 24 timer →',
-      images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: 'https://bluecrew.no/kontakt',
@@ -290,18 +300,18 @@ export function generateAboutMetadata(): Metadata {
       url: 'https://bluecrew.no/om-oss',
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.default),
-          width: 1200,
-          height: 630,
-          alt: 'Om Bluecrew - DNV-sertifisert bemanningsbyrå',
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: 'Om Bluecrew | DNV-sertifisert Maritim Bemanning',
       description: 'Godkjent bemanningsforetak for havbruk og maritim. Grunnlagt av erfarne sjøfolk →',
-      images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: 'https://bluecrew.no/om-oss',
@@ -331,18 +341,18 @@ export function generateFaqMetadata(): Metadata {
       url: 'https://bluecrew.no/faq',
       images: [
         {
-          url: getOgImageUrl(IMAGE_PATHS.og.default),
-          width: 1200,
-          height: 630,
-          alt: 'FAQ - spørsmål og svar om maritim karriere',
+          url: LOGO_URL,
+          width: 512,
+          height: 512,
+          alt: 'Bluecrew-logo',
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title: 'FAQ: Lønn, Utdanning & Karriere Til Sjøs',
       description: 'Svar på 50+ spørsmål om maritime stillinger og karriere. Finn svaret her →',
-      images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+      images: [LOGO_URL],
     },
     alternates: {
       canonical: 'https://bluecrew.no/faq',

@@ -7,7 +7,7 @@ import HeaderWrapper from "@/components/layout/HeaderWrapper";
 import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/ui/CookieConsent";
 import TrackingScripts from "@/components/analytics/TrackingScripts";
-import { getOgImageUrl, IMAGE_PATHS } from "@/lib/images";
+const LOGO_URL = "https://bluecrew.no/icon.png";
 
 export const metadata: Metadata = {
   title: {
@@ -34,18 +34,18 @@ export const metadata: Metadata = {
     siteName: "Bluecrew AS",
     images: [
       {
-        url: getOgImageUrl(IMAGE_PATHS.og.default),
-        width: 1200,
-        height: 630,
-        alt: 'Bluecrew - Effektiv bemanning til sjøs',
+        url: LOGO_URL,
+        width: 512,
+        height: 512,
+        alt: "Bluecrew-logo",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary",
     title: "Bluecrew – Bemanningsbyrå for Maritim Sektor",
     description: "Bemanningsbyrå bygget på bransjekunnskap. Kvalifiserte sjøfolk til offshore, havbruk og rederi.",
-    images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+    images: [LOGO_URL],
   },
   alternates: {
     canonical: "https://bluecrew.no",
@@ -96,8 +96,8 @@ export default function RootLayout({
     url: "https://bluecrew.no",
     telephone: "+47 77 02 90 00",
     email: "post@bluecrew.no",
-    image: getOgImageUrl(IMAGE_PATHS.og.default),
-    logo: "https://bluecrew.no/icon.png",
+    image: LOGO_URL,
+    logo: LOGO_URL,
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",

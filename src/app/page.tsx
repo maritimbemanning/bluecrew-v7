@@ -47,7 +47,7 @@ const organizationSchema = {
   alternateName: ["Bluecrew Bemanningsbyrå", "Bluecrew Vikarbyrå", "Bluecrew Maritime Staffing"],
   url: "https://bluecrew.no",
   logo: "https://bluecrew.no/icon.png",
-  image: "https://bluecrew.no/images/og/default.webp",
+  image: "https://bluecrew.no/icon.png",
   foundingDate: "2025",
   description: "Bemanningsbyrå og vikarbyrå for maritim sektor – bygget på bransjekunnskap. Din partner innenfor maritim bemanning til offshore, havbruk og rederier.",
   slogan: "Bemanningsbyrå bygget på bransjekunnskap",

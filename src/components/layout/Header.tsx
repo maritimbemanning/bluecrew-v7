@@ -14,34 +14,22 @@ const mainNavigation: DropdownNavItem[] = [
   {
     label: "Rederier og Bedrifter",
     items: [
-      { label: "Oversikt", href: "/rederi" },
+      { label: "For Kunder", href: "/rederi" },
       { label: "Våre Tjenester", href: "/tjenester" },
-      { label: "Oppdrett og Akvakultur", href: "/rederi/havbruk" },
       { label: "Bli partner", href: "/rederi/partner" },
+      { label: "Havbruk og Akvakultur", href: "/rederi/havbruk" },
+      { label: "Offshore", href: "/kampanje/offshore" },
       { label: "Kontakt oss", href: "/rederi/kontakt-oss" },
     ],
   },
   {
     label: "Sjøfolk og Arbeidstakere",
     items: [
-      { label: "Meld interesse", href: "/meld-interesse" },
       { label: "Ledige stillinger", href: "/stillinger" },
       { label: "Lønnsoversikt", href: "/lonn" },
       { label: "Karriereveiledning", href: "/karriere" },
       { label: "Turnuskalkulator", href: "/turnus" },
       { label: "Maritim ordbok", href: "/ordbok" },
-    ],
-  },
-  {
-    label: "Offshore",
-    items: [
-      { label: "Alle stillinger", href: "/kampanje/offshore" },
-      { label: "Elektriker", href: "/kampanje/elektriker" },
-      { label: "Riggere", href: "/kampanje/riggere" },
-      { label: "ROV-Pilot", href: "/kampanje/rov" },
-      { label: "ETO", href: "/kampanje/eto" },
-      { label: "Sveiser", href: "/kampanje/sveiser" },
-      { label: "Mekaniker", href: "/kampanje/mekaniker" },
     ],
   },
   {

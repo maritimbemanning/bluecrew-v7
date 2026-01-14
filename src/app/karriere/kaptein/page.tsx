@@ -25,8 +25,8 @@ import SchemaMarkup from '@/components/seo/SchemaMarkup';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export const metadata: Metadata = {
-  title: 'Bli kaptein – Utdanning, sertifikater og karrierevei',
-  description: 'Komplett guide til å bli kaptein i Norge. Lær om utdanning, STCW-sertifikater, fartstid, lønn og karrieremuligheter. Fra kadett til skipsfører.',
+  title: 'Hvordan bli kaptein 2026: Utdanning, sertifikat, lønn',
+  description: 'Steg-for-steg guide til kaptein: nautisk utdanning, STCW-sertifikater, fartstid, lønn og karrierevei fra kadett til skipsfører.',
   keywords: [
     'bli kaptein',
     'kaptein utdanning',
@@ -36,12 +36,26 @@ export const metadata: Metadata = {
     'STCW kaptein',
   ],
   openGraph: {
-    title: 'Bli kaptein – Utdanning, sertifikater og karrierevei',
-    description: 'Komplett guide til å bli kaptein i Norge. Utdanning, sertifikater og karrierevei.',
+    title: 'Hvordan bli kaptein 2026: Utdanning, sertifikat, lønn',
+    description: 'Norsk guide til kaptein: utdanning, sertifikater, fartstid og karrierevei.',
     url: 'https://bluecrew.no/karriere/kaptein',
     siteName: 'Bluecrew AS',
     locale: 'nb_NO',
     type: 'article',
+    images: [
+      {
+        url: 'https://bluecrew.no/icon.png',
+        width: 512,
+        height: 512,
+        alt: 'Bluecrew-logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Hvordan bli kaptein 2026: Utdanning, sertifikat, lønn',
+    description: 'Steg-for-steg guide til kaptein: utdanning, sertifikater, fartstid og lønn.',
+    images: ['https://bluecrew.no/icon.png'],
   },
   alternates: {
     canonical: 'https://bluecrew.no/karriere/kaptein',

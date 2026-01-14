@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Briefcase } from "@/components/icons";
 import Section from "@/components/ui/Section";
 import Container from "@/components/ui/Container";
-import { getImageUrl, getOgImageUrl, IMAGE_PATHS } from "@/lib/images";
+import { getImageUrl, IMAGE_PATHS } from "@/lib/images";
 import StillingerClient from "./StillingerClient";
 import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -61,19 +61,19 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: getOgImageUrl(IMAGE_PATHS.og.default),
-        width: 1200,
-        height: 630,
-        alt: "Ledige maritime stillinger - Bluecrew",
+        url: "https://bluecrew.no/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Bluecrew-logo",
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Ledige Maritime Stillinger | Bemanningsbyrå Bluecrew",
     description:
       "Finn din neste sjøfolk jobb via Norges maritime bemanningsbyrå.",
-    images: [getOgImageUrl(IMAGE_PATHS.og.default)],
+    images: ["https://bluecrew.no/icon.png"],
   },
   alternates: {
     canonical: "https://bluecrew.no/stillinger",
