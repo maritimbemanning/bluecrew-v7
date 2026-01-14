@@ -6,6 +6,9 @@ import { verifyCsrfToken } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email/send";
 
+// Extend timeout for file uploads (Vercel default is 10s)
+export const maxDuration = 60; // 60 seconds for large file uploads
+
 const applySchema = z.object({
   jobPostingId: z.string().uuid("Ugyldig stillingsreferanse"),
   candidateId: z.string().uuid("Du må være logget inn for å søke"),

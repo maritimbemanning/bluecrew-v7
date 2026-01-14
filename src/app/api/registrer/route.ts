@@ -5,6 +5,9 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { getUser } from "@/lib/auth/get-user";
 import { sendRegistrationNotification, sendRegistrationConfirmation } from "@/lib/email/send";
 
+// Extend timeout for file uploads (Vercel default is 10s)
+export const maxDuration = 60; // 60 seconds for large file uploads
+
 // Max file size: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -280,10 +283,10 @@ export async function POST(request: NextRequest) {
 
     debugLog(requestId, '=== REGISTRATION SUCCESS ===');
 
-    // Send email notifications (don't block on failure)
-    try {
-      // Send notification to team
-      const notificationResult = await sendRegistrationNotification({
+    // Send email notifications in parallel (non-blocking)
+    // Using Promise.allSettled to not fail on email errors
+    const emailPromises: Promise<unknown>[] = [
+      sendRegistrationNotification({
         candidateId: candidateId,
         name: user.name || 'Ukjent',
         email: user.email || '',
@@ -293,22 +296,29 @@ export async function POST(request: NextRequest) {
         cvPath: cvPath,
         certsPath: certsPaths.length > 0 ? certsPaths.join(', ') : null,
         melding: melding,
-      });
-      debugLog(requestId, 'Team notification sent:', notificationResult);
+      }),
+    ];
 
-      // Send confirmation to candidate
-      if (user.email) {
-        const confirmationResult = await sendRegistrationConfirmation({
+    if (user.email) {
+      emailPromises.push(
+        sendRegistrationConfirmation({
           name: user.name || 'Kandidat',
           email: user.email,
           rolle: rolle,
-        });
-        debugLog(requestId, 'Candidate confirmation sent:', confirmationResult);
-      }
-    } catch (emailError) {
-      // Log email errors but don't fail the registration
-      debugLog(requestId, 'EMAIL ERROR (non-blocking):', emailError);
+        })
+      );
     }
+
+    // Fire emails but don't wait - respond immediately to user
+    Promise.allSettled(emailPromises).then((results) => {
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          debugLog(requestId, `Email ${index + 1} sent successfully`);
+        } else {
+          debugLog(requestId, `Email ${index + 1} failed:`, result.reason);
+        }
+      });
+    });
 
     return NextResponse.json({
       success: true,

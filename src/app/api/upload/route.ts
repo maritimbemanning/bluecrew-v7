@@ -4,6 +4,9 @@ import { verifyCsrfToken } from "@/lib/csrf";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { getUser } from "@/lib/auth/get-user";
 
+// Extend timeout for file uploads (Vercel default is 10s)
+export const maxDuration = 60; // 60 seconds for large file uploads
+
 // Max file size: 10MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 

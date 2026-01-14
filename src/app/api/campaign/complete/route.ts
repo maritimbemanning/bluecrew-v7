@@ -2,6 +2,9 @@ import { NextResponse, NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendCampaignCompleteNotification, sendCampaignConfirmation } from "@/lib/email/send";
 
+// Extend timeout for file uploads (Vercel default is 10s)
+export const maxDuration = 60; // 60 seconds for large file uploads
+
 // Type assertion for campaign_applications table (not in generated types yet)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const campaignTable = () => (supabaseAdmin as any).from("campaign_applications");
