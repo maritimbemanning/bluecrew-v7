@@ -10,22 +10,19 @@ import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 // Session secret must be at least 32 characters
 const SESSION_SECRET = process.env.VIPPS_SESSION_SECRET;
 
-// Use a fallback for development, but throw in production
+// Get session secret - throws in production if not configured
 const getSecretForEnv = (): string => {
   if (SESSION_SECRET && SESSION_SECRET.length >= 32) {
     return SESSION_SECRET;
   }
 
   if (process.env.NODE_ENV === 'production') {
-    // In production without Vipps configured, use a generated key
-    // This allows the site to work but Vipps login won't be available
-    console.warn(
-      'WARNING: VIPPS_SESSION_SECRET not set. Vipps login disabled.'
+    throw new Error(
+      'VIPPS_SESSION_SECRET environment variable is required in production (min 32 chars)'
     );
-    return process.env.NEXTAUTH_SECRET || 'fallback-production-secret-min-32-chars-long-generated';
   }
 
-  // Development fallback - NOT secure, but allows local testing
+  // Development fallback - NOT secure, only for local testing
   console.warn(
     'WARNING: Using insecure dev session secret. Set VIPPS_SESSION_SECRET in .env.local'
   );

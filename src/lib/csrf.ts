@@ -6,10 +6,12 @@ const TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 function getCsrfSecret(): string {
   const secret = process.env.CSRF_SECRET;
   if (!secret) {
-    // IMPORTANT: In production without CSRF_SECRET, use a fallback
-    // This allows forms to work while logging the issue
-    console.error("[CSRF] CSRF_SECRET environment variable is not set! Using fallback.");
-    return "fallback-csrf-secret-please-set-env-var-in-production";
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('[CSRF] CSRF_SECRET environment variable is required in production');
+    }
+    // Development fallback - NOT secure, only for local testing
+    console.warn('[CSRF] CSRF_SECRET not set. Using insecure dev fallback.');
+    return 'dev-csrf-secret-not-secure-32-chars-min';
   }
   return secret;
 }
