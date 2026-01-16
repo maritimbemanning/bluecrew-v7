@@ -1,7 +1,6 @@
 import { vi } from 'vitest'
 
-// Mock environment variables for tests
-process.env.NODE_ENV = 'test'
+// Note: NODE_ENV is automatically set to 'test' by Vitest
 
 // Mock Next.js server components
 vi.mock('next/server', () => ({
