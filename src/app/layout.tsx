@@ -47,9 +47,9 @@ export const metadata: Metadata = {
     description: "Bemanningsbyrå bygget på bransjekunnskap. Kvalifiserte sjøfolk til offshore, havbruk og rederi.",
     images: [LOGO_URL],
   },
-  alternates: {
-    canonical: "https://bluecrew.no",
-  },
+  // NOTE: Do NOT set global canonical here - it causes ALL pages without 
+  // explicit canonical to point to homepage, destroying SEO.
+  // Each page sets its own canonical in its metadata.
   robots: {
     index: true,
     follow: true,
