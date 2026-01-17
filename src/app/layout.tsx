@@ -141,30 +141,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://plausible.io" />
         <link rel="preconnect" href="https://plausible.io" crossOrigin="anonymous" />
         
-        {/* Preload critical fonts to reduce render blocking */}
-        <link
-          rel="preload"
-          as="font"
-          type="font/woff2"
-          href="/_next/static/media/inter-latin-400-normal.woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          as="font"
-          type="font/woff2"
-          href="/_next/static/media/inter-latin-500-normal.woff2"
-          crossOrigin="anonymous"
-        />
-        
-        {/* Preload critical LCP image */}
-        <link
-          rel="preload"
-          as="image"
-          href="/images/hero/background.webp"
-          type="image/webp"
-          fetchPriority="high"
-        />
+        {/* Next.js handles font preloading automatically - manual preloads removed to avoid warnings */}
         
         {/* Plausible Analytics - lazyOnload for non-blocking */}
         <Script
