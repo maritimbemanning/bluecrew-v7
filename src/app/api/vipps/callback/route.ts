@@ -272,13 +272,50 @@ export async function GET(request: Request) {
 
       if (upsertError || !upserted) {
         debugLog(requestId, 'CANDIDATE UPSERT ERROR:', upsertError);
-        const errorDetail = upsertError?.message || upsertError?.details || 'Ukjent databasefeil';
-        throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
-      }
+        const errorCode = upsertError?.code;
+        const errorDetails = upsertError?.details || "";
 
-      debugLog(requestId, 'Candidate upserted:', { id: upserted.id, name: upserted.name || `${upserted.first_name} ${upserted.last_name}` });
-      candidateId = upserted.id;
-      candidateName = upserted.name || `${upserted.first_name || ''} ${upserted.last_name || ''}`.trim() || fullName;
+        if (errorCode === "23505" && errorDetails.includes("vipps_sub")) {
+          debugLog(requestId, "VIPPS_SUB conflict detected, fetching by vipps_sub");
+          const { data: conflictCandidate, error: conflictError } = await supabaseAdmin
+            .from("candidates")
+            .select("id, name, first_name, last_name, email")
+            .eq("vipps_sub", userInfo.sub)
+            .single() as { data: CandidateResult | null; error: unknown };
+
+          if (conflictCandidate && !conflictError) {
+            candidateId = conflictCandidate.id;
+            candidateName =
+              conflictCandidate.name ||
+              `${conflictCandidate.first_name || ""} ${conflictCandidate.last_name || ""}`.trim() ||
+              fullName;
+
+            await supabaseAdmin
+              .from("candidates")
+              .update({
+                email: userInfo.email || conflictCandidate.email,
+                phone: userInfo.phone_number || undefined,
+                vipps_verified: true,
+                vipps_verified_at: new Date().toISOString(),
+              })
+              .eq("id", conflictCandidate.id);
+
+            debugLog(requestId, "Resolved vipps_sub conflict by reusing candidate", {
+              id: candidateId,
+            });
+          } else {
+            const errorDetail = upsertError?.message || upsertError?.details || "Ukjent databasefeil";
+            throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
+          }
+        } else {
+          const errorDetail = upsertError?.message || upsertError?.details || "Ukjent databasefeil";
+          throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
+        }
+      } else {
+        debugLog(requestId, 'Candidate upserted:', { id: upserted.id, name: upserted.name || `${upserted.first_name} ${upserted.last_name}` });
+        candidateId = upserted.id;
+        candidateName = upserted.name || `${upserted.first_name || ''} ${upserted.last_name || ''}`.trim() || fullName;
+      }
     }
 
     // Create session token
