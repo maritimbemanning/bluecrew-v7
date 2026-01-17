@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
@@ -20,7 +20,6 @@ export default function VerifyClient({
   existingCvKey 
 }: VerifyClientProps) {
   const router = useRouter();
-  const docInputRef = useRef<HTMLInputElement>(null);
 
   // CV is ALWAYS from profile - no choice needed
   // Extra documents (sertifikater, søknad) are optional
@@ -220,14 +219,6 @@ export default function VerifyClient({
               <label className="block text-sm font-medium text-navy-900 mb-2">
                 Sertifikater eller ekstra dokumenter <span className="text-slate-400 font-normal">(valgfritt)</span>
               </label>
-              <input
-                type="file"
-                ref={docInputRef}
-                onChange={handleFileChange}
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                className="hidden"
-                aria-label="Last opp sertifikater eller dokumenter"
-              />
               {extraDocument ? (
                 <div className="flex items-center justify-between p-4 bg-slate-50 border-2 border-gold-500 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -247,16 +238,21 @@ export default function VerifyClient({
                   </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => docInputRef.current?.click()}
-                  className="w-full p-6 border-2 border-dashed border-slate-200 hover:border-slate-300 rounded-lg transition-colors text-center"
-                >
-                  <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                  <span className="text-sm text-slate-600">
-                    Klikk for å laste opp sertifikater, attester eller andre dokumenter
-                  </span>
-                </button>
+                <label className="relative block w-full p-6 border-2 border-dashed border-slate-200 hover:border-slate-300 rounded-lg transition-colors text-center cursor-pointer">
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    aria-label="Last opp sertifikater eller dokumenter"
+                  />
+                  <div className="flex flex-col items-center gap-2 pointer-events-none">
+                    <Upload className="w-8 h-8 text-slate-400" />
+                    <span className="text-sm text-slate-600">
+                      Klikk for å laste opp sertifikater, attester eller andre dokumenter
+                    </span>
+                  </div>
+                </label>
               )}
               <p className="text-xs text-slate-500 mt-2">
                 PDF, DOC, DOCX, JPG eller PNG. Maks 10 MB.

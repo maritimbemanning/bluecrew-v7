@@ -45,7 +45,7 @@ interface ApplicationFormProps {
 
 export default function ApplicationForm({ job, user }: ApplicationFormProps) {
   const router = useRouter();
-  const { token: csrfToken } = useCsrfToken();
+  const { token: csrfToken, refresh: refreshCsrfToken } = useCsrfToken();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -138,7 +138,8 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
   }
 
   const handleFileUpload = async (file: File) => {
-    if (!csrfToken) {
+    const token = csrfToken ?? (await refreshCsrfToken());
+    if (!token) {
       setUploadError("Sikkerhetsfeil. Vennligst last siden på nytt.");
       return;
     }
@@ -175,7 +176,7 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: {
-          "x-csrf-token": csrfToken,
+          "x-csrf-token": token,
         },
         body: formData,
       });
@@ -199,7 +200,8 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
   };
 
   const onSubmit = async (data: ApplicationFormData) => {
-    if (!csrfToken) {
+    const token = csrfToken ?? (await refreshCsrfToken());
+    if (!token) {
       setError("Sikkerhetsfeil. Vennligst last siden på nytt.");
       return;
     }
@@ -212,7 +214,7 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-csrf-token": csrfToken,
+          "x-csrf-token": token,
         },
         body: JSON.stringify({
           jobPostingId: job.id,

@@ -232,8 +232,8 @@ export async function GET(request: Request) {
         debugLog(requestId, 'Candidate updated OK');
       }
     } else {
-      // Create new candidate
-      debugLog(requestId, 'Creating new candidate...');
+      // Create or update candidate (upsert by email to avoid duplicate failures)
+      debugLog(requestId, 'Creating new candidate (upsert)...');
       
       // Split name into first_name and last_name for the new database schema
       const firstName = userInfo.given_name || userInfo.name?.split(' ')[0] || "Ukjent";
@@ -244,7 +244,7 @@ export async function GET(request: Request) {
       const newCandidate: Record<string, unknown> = {
         // Identity
         email: normalizedEmail,
-        phone: userInfo.phone_number || null,
+        phone: userInfo.phone_number || "",
         first_name: firstName,
         last_name: lastName,
         name: fullName,
@@ -260,70 +260,25 @@ export async function GET(request: Request) {
       };
       debugLog(requestId, 'New candidate data:', newCandidate);
 
-      type InsertResult = { id: string; name?: string; first_name?: string; last_name?: string };
+      type UpsertResult = { id: string; name?: string; first_name?: string; last_name?: string };
 
-      const { data: inserted, error: insertError } = await supabaseAdmin
+      const { data: upserted, error: upsertError } = await supabaseAdmin
         .from("candidates")
-        .insert(newCandidate as Database["public"]["Tables"]["candidates"]["Insert"])
+        .upsert(newCandidate as Database["public"]["Tables"]["candidates"]["Insert"], {
+          onConflict: "email",
+        })
         .select("id, name, first_name, last_name")
-        .single() as { data: InsertResult | null; error: { code?: string; message?: string; details?: string } | null };
+        .single() as { data: UpsertResult | null; error: { code?: string; message?: string; details?: string } | null };
 
-      if (insertError || !inserted) {
-        debugLog(requestId, 'CANDIDATE INSERT ERROR:', insertError);
-        console.error("Failed to create candidate:", insertError);
-        
-        // Handle duplicate email error - try to fetch the existing candidate
-        if (insertError?.code === '23505' || insertError?.message?.includes('duplicate') || insertError?.message?.includes('unique')) {
-          debugLog(requestId, 'Duplicate email detected, attempting fallback lookup...');
-          
-          // Fallback: try case-insensitive email match
-          const { data: fallbackCandidate, error: fallbackError } = await supabaseAdmin
-            .from("candidates")
-            .select("id, email, name, first_name, last_name, work_main, cv_key")
-            .ilike("email", normalizedEmail)
-            .limit(1)
-            .single() as { data: CandidateResult | null; error: unknown };
-          
-          if (fallbackCandidate && !fallbackError) {
-            debugLog(requestId, 'Fallback lookup succeeded:', { id: fallbackCandidate.id });
-            candidateId = fallbackCandidate.id;
-            candidateName = fallbackCandidate.name || `${fallbackCandidate.first_name || ''} ${fallbackCandidate.last_name || ''}`.trim() || fullName;
-            
-            // Also update their vipps_sub since they logged in with Vipps
-            const { error: updateError } = await supabaseAdmin
-              .from("candidates")
-              .update({
-                vipps_sub: userInfo.sub,
-                vipps_verified: true,
-                vipps_verified_at: new Date().toISOString(),
-                phone: userInfo.phone_number || fallbackCandidate.email,
-              })
-              .eq("id", fallbackCandidate.id);
-            
-            if (updateError) {
-              debugLog(requestId, 'Failed to update vipps_sub on fallback candidate:', updateError);
-            } else {
-              debugLog(requestId, 'Updated vipps_sub on fallback candidate');
-            }
-          } else {
-            debugLog(requestId, 'Fallback lookup also failed:', fallbackError);
-            // Don't throw - just continue with creating a new session
-            // This could happen in race conditions, redirect to login with error
-            return NextResponse.redirect(
-              `${baseUrl}/logg-inn?error=${encodeURIComponent("Det oppstod et problem. Prøv å logge inn på nytt.")}`
-            );
-          }
-        } else {
-          // Other database error
-          const errorDetail = insertError?.message || insertError?.details || 'Ukjent databasefeil';
-          debugLog(requestId, 'Database error detail:', errorDetail);
-          throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
-        }
-      } else {
-        debugLog(requestId, 'New candidate created:', { id: inserted.id, name: inserted.name || `${inserted.first_name} ${inserted.last_name}` });
-        candidateId = inserted.id;
-        candidateName = inserted.name || `${inserted.first_name || ''} ${inserted.last_name || ''}`.trim() || fullName;
+      if (upsertError || !upserted) {
+        debugLog(requestId, 'CANDIDATE UPSERT ERROR:', upsertError);
+        const errorDetail = upsertError?.message || upsertError?.details || 'Ukjent databasefeil';
+        throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
       }
+
+      debugLog(requestId, 'Candidate upserted:', { id: upserted.id, name: upserted.name || `${upserted.first_name} ${upserted.last_name}` });
+      candidateId = upserted.id;
+      candidateName = upserted.name || `${upserted.first_name || ''} ${upserted.last_name || ''}`.trim() || fullName;
     }
 
     // Create session token
@@ -338,23 +293,55 @@ export async function GET(request: Request) {
     });
     debugLog(requestId, 'Session token created');
 
-    // Keep existing Bluecrew profile in sync with Vipps contact info (do not create here)
+    // Ensure Bluecrew profile exists and sync with Vipps contact info
     const { data: bluecrewExisting } = await (supabaseAdmin as any)
       .from("bluecrew_profiles")
       .select("id")
       .eq("id", candidateId)
       .single();
 
+    const nameParts = candidateName.trim().split(" ").filter(Boolean);
+    const profileFirstName = nameParts[0] || "Ukjent";
+    const profileLastName = nameParts.slice(1).join(" ") || "";
+    const nowIso = new Date().toISOString();
+
     if (bluecrewExisting?.id) {
-      await (supabaseAdmin as any)
+      const { error: bluecrewSyncError } = await (supabaseAdmin as any)
         .from("bluecrew_profiles")
         .update({
           email: userInfo.email || null,
           phone: userInfo.phone_number || null,
-          updated_at: new Date().toISOString(),
+          updated_at: nowIso,
         })
         .eq("id", candidateId);
-      debugLog(requestId, "Bluecrew profile synced with Vipps contact info");
+      if (bluecrewSyncError) {
+        debugLog(requestId, "Bluecrew profile sync error:", bluecrewSyncError);
+      } else {
+        debugLog(requestId, "Bluecrew profile synced with Vipps contact info");
+      }
+    } else {
+      const { error: bluecrewInsertError } = await (supabaseAdmin as any)
+        .from("bluecrew_profiles")
+        .insert({
+          id: candidateId,
+          candidate_id: candidateId,
+          name: candidateName,
+          first_name: profileFirstName,
+          last_name: profileLastName,
+          email: userInfo.email || normalizedEmail,
+          phone: userInfo.phone_number || "",
+          status: "pending",
+          vipps_sub: userInfo.sub,
+          vipps_verified: true,
+          vipps_verified_at: nowIso,
+          created_at: nowIso,
+          updated_at: nowIso,
+        });
+      if (bluecrewInsertError) {
+        debugLog(requestId, "Bluecrew profile insert error:", bluecrewInsertError);
+      } else {
+        debugLog(requestId, "Bluecrew profile created from Vipps login");
+      }
     }
 
     // Determine redirect destination based on Bluecrew profile completion
