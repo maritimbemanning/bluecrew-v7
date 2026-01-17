@@ -8,10 +8,12 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
+        allow: [
+          '/',
+          '/_next/static/', // CSS, JS, fonts - REQUIRED for Google to render pages
+        ],
         disallow: [
           '/api/',
-          '/_next/',
           '/admin/',
           '/images/fullogo_transparent.png',
         ],
