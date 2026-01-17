@@ -1,7 +1,18 @@
 "use client";
 
 import { motion, useScroll, useTransform, type Variants, type HTMLMotionProps } from "framer-motion";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useRef, useState, useEffect } from "react";
+
+/**
+ * SEO-SAFE HOOK: Returns false on server, true on client
+ * This ensures content is VISIBLE in SSR HTML (for Googlebot)
+ * but animations still work for real users
+ */
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => { setIsClient(true); }, []);
+  return isClient;
+}
 
 /**
  * BLUECREW MOTION COMPONENTS
@@ -123,8 +134,7 @@ interface MotionProps extends HTMLMotionProps<"div"> {
 
 /**
  * Fade up animation - the workhorse
- * Elements fade in while sliding up from below
- * SEO: Content renders visible (opacity:1) in HTML, animation triggers on client
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function FadeUp({ 
   children, 
@@ -132,9 +142,10 @@ export function FadeUp({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial="visible" // SEO: Render visible in SSR HTML
+      initial={isClient ? "hidden" : "visible"}
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={fadeUpVariants}
@@ -149,7 +160,7 @@ export function FadeUp({
 
 /**
  * Simple fade in
- * SEO: Content renders visible in HTML
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function FadeIn({ 
   children, 
@@ -157,9 +168,10 @@ export function FadeIn({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial="visible" // SEO: Render visible in SSR HTML
+      initial={isClient ? "hidden" : "visible"}
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={fadeInVariants}
@@ -174,7 +186,7 @@ export function FadeIn({
 
 /**
  * Fade from left - subtle smoke drift
- * Perfect for alternating content sections
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function FadeLeft({ 
   children, 
@@ -182,9 +194,10 @@ export function FadeLeft({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial="hidden"
+      initial={isClient ? "hidden" : "visible"}
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={fadeLeftVariants}
@@ -199,7 +212,7 @@ export function FadeLeft({
 
 /**
  * Fade from right - subtle smoke drift
- * Perfect for alternating content sections
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function FadeRight({ 
   children, 
@@ -207,9 +220,10 @@ export function FadeRight({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial="hidden"
+      initial={isClient ? "hidden" : "visible"}
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={fadeRightVariants}
@@ -224,6 +238,7 @@ export function FadeRight({
 
 /**
  * Scale up - good for cards, images
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function ScaleUp({ 
   children, 
@@ -231,9 +246,10 @@ export function ScaleUp({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial="hidden"
+      initial={isClient ? "hidden" : "visible"}
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={scaleUpVariants}
@@ -248,16 +264,17 @@ export function ScaleUp({
 
 /**
  * Stagger container - wraps children that animate sequentially
- * Use with StaggerItem children
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function StaggerContainer({ 
   children, 
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial="hidden"
+      initial={isClient ? "hidden" : "visible"}
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={staggerContainerVariants}
@@ -271,6 +288,7 @@ export function StaggerContainer({
 
 /**
  * Stagger item - use inside StaggerContainer
+ * Note: Inherits initial from parent StaggerContainer
  */
 export function StaggerItem({ 
   children, 
@@ -290,6 +308,7 @@ export function StaggerItem({
 
 /**
  * Hero text animation - staggered words/lines
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function HeroText({ 
   children, 
@@ -297,9 +316,10 @@ export function HeroText({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={isClient ? { opacity: 0, y: 40 } : { opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ 
         duration: 0.8, 
@@ -316,8 +336,7 @@ export function HeroText({
 
 /**
  * Scroll fade - Greenhouse style
- * Opacity progressively increases 0-100% as element enters viewport
- * Smooth continuous fade tied to scroll position
+ * SEO-SAFE: Uses CSS fallback for initial visibility
  */
 export function ScrollFade({ 
   children, 
@@ -325,6 +344,7 @@ export function ScrollFade({
   ...props 
 }: Omit<MotionProps, 'delay'>) {
   const ref = useRef<HTMLDivElement>(null);
+  const isClient = useIsClient();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -336,7 +356,7 @@ export function ScrollFade({
   return (
     <motion.div
       ref={ref}
-      style={{ opacity, y }}
+      style={isClient ? { opacity, y } : { opacity: 1, y: 0 }}
       className={className}
       {...props}
     >
@@ -369,6 +389,7 @@ export function HoverScale({
 
 /**
  * Slide in from left
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function SlideInLeft({ 
   children, 
@@ -376,9 +397,10 @@ export function SlideInLeft({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial={{ opacity: 0, x: -50 }}
+      initial={isClient ? { opacity: 0, x: -50 } : { opacity: 1, x: 0 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ 
@@ -396,6 +418,7 @@ export function SlideInLeft({
 
 /**
  * Slide in from right
+ * SEO-SAFE: Visible on server, animates on client
  */
 export function SlideInRight({ 
   children, 
@@ -403,9 +426,10 @@ export function SlideInRight({
   className = "",
   ...props 
 }: MotionProps) {
+  const isClient = useIsClient();
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50 }}
+      initial={isClient ? { opacity: 0, x: 50 } : { opacity: 1, x: 0 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ 
