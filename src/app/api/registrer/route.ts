@@ -326,7 +326,7 @@ export async function POST(request: NextRequest) {
 
     debugLog(requestId, "Upserting bluecrew profile:", bluecrewProfileData);
 
-    const { error: bluecrewUpsertError } = await supabaseAdmin
+    const { error: bluecrewUpsertError } = await (supabaseAdmin as any)
       .from("bluecrew_profiles")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .upsert(bluecrewProfileData as any, { onConflict: "id" });
