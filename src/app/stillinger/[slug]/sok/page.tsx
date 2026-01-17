@@ -81,7 +81,7 @@ export default async function ApplicationPage({ params }: PageProps) {
   let existingCvKey: string | null = null;
   if (user?.candidateId) {
     const supabase = await createClient();
-    const { data: profile } = await supabase
+    const { data: profile } = await (supabase as any)
       .from("bluecrew_profiles")
       .select("cv_key")
       .eq("id", user.candidateId)
