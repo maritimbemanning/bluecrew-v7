@@ -124,6 +124,7 @@ interface MotionProps extends HTMLMotionProps<"div"> {
 /**
  * Fade up animation - the workhorse
  * Elements fade in while sliding up from below
+ * SEO: Content renders visible (opacity:1) in HTML, animation triggers on client
  */
 export function FadeUp({ 
   children, 
@@ -133,7 +134,7 @@ export function FadeUp({
 }: MotionProps) {
   return (
     <motion.div
-      initial="hidden"
+      initial="visible" // SEO: Render visible in SSR HTML
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={fadeUpVariants}
@@ -148,6 +149,7 @@ export function FadeUp({
 
 /**
  * Simple fade in
+ * SEO: Content renders visible in HTML
  */
 export function FadeIn({ 
   children, 
@@ -157,7 +159,7 @@ export function FadeIn({
 }: MotionProps) {
   return (
     <motion.div
-      initial="hidden"
+      initial="visible" // SEO: Render visible in SSR HTML
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={fadeInVariants}
