@@ -262,26 +262,36 @@ export async function GET(request: Request) {
 
       type UpsertResult = { id: string; name?: string; first_name?: string; last_name?: string };
 
-      const { data: upserted, error: upsertError } = await supabaseAdmin
+      const { data: inserted, error: insertError } = await supabaseAdmin
         .from("candidates")
-        .upsert(newCandidate as Database["public"]["Tables"]["candidates"]["Insert"], {
-          onConflict: "email",
-        })
+        .insert(newCandidate as Database["public"]["Tables"]["candidates"]["Insert"])
         .select("id, name, first_name, last_name")
         .single() as { data: UpsertResult | null; error: { code?: string; message?: string; details?: string } | null };
 
-      if (upsertError || !upserted) {
-        debugLog(requestId, 'CANDIDATE UPSERT ERROR:', upsertError);
-        const errorCode = upsertError?.code;
-        const errorDetails = upsertError?.details || "";
+      if (insertError || !inserted) {
+        debugLog(requestId, 'CANDIDATE INSERT ERROR:', insertError);
+        const errorCode = insertError?.code;
+        const errorDetails = insertError?.details || "";
 
-        if (errorCode === "23505" && errorDetails.includes("vipps_sub")) {
-          debugLog(requestId, "VIPPS_SUB conflict detected, fetching by vipps_sub");
-          const { data: conflictCandidate, error: conflictError } = await supabaseAdmin
+        if (errorCode === "23505") {
+          debugLog(requestId, "Unique conflict detected, attempting lookup");
+
+          const { data: bySub, error: bySubError } = await supabaseAdmin
             .from("candidates")
             .select("id, name, first_name, last_name, email")
             .eq("vipps_sub", userInfo.sub)
             .single() as { data: CandidateResult | null; error: unknown };
+
+          const { data: byEmail, error: byEmailError } = bySub?.id
+            ? { data: null, error: null }
+            : await supabaseAdmin
+                .from("candidates")
+                .select("id, name, first_name, last_name, email")
+                .ilike("email", normalizedEmail)
+                .single() as { data: CandidateResult | null; error: unknown };
+
+          const conflictCandidate = bySub?.id ? bySub : byEmail;
+          const conflictError = bySub?.id ? bySubError : byEmailError;
 
           if (conflictCandidate && !conflictError) {
             candidateId = conflictCandidate.id;
@@ -295,26 +305,27 @@ export async function GET(request: Request) {
               .update({
                 email: userInfo.email || conflictCandidate.email,
                 phone: userInfo.phone_number || undefined,
+                vipps_sub: userInfo.sub,
                 vipps_verified: true,
                 vipps_verified_at: new Date().toISOString(),
               })
               .eq("id", conflictCandidate.id);
 
-            debugLog(requestId, "Resolved vipps_sub conflict by reusing candidate", {
+            debugLog(requestId, "Resolved unique conflict by reusing candidate", {
               id: candidateId,
             });
           } else {
-            const errorDetail = upsertError?.message || upsertError?.details || "Ukjent databasefeil";
+            const errorDetail = insertError?.message || insertError?.details || "Ukjent databasefeil";
             throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
           }
         } else {
-          const errorDetail = upsertError?.message || upsertError?.details || "Ukjent databasefeil";
+          const errorDetail = insertError?.message || insertError?.details || "Ukjent databasefeil";
           throw new Error(`Kunne ikke opprette brukerkonto: ${errorDetail}`);
         }
       } else {
-        debugLog(requestId, 'Candidate upserted:', { id: upserted.id, name: upserted.name || `${upserted.first_name} ${upserted.last_name}` });
-        candidateId = upserted.id;
-        candidateName = upserted.name || `${upserted.first_name || ''} ${upserted.last_name || ''}`.trim() || fullName;
+        debugLog(requestId, 'Candidate created:', { id: inserted.id, name: inserted.name || `${inserted.first_name} ${inserted.last_name}` });
+        candidateId = inserted.id;
+        candidateName = inserted.name || `${inserted.first_name || ''} ${inserted.last_name || ''}`.trim() || fullName;
       }
     }
 
