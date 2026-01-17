@@ -108,12 +108,11 @@ export async function POST(request: NextRequest) {
     const { jobPostingId, candidateId, coverLetter, certificatesKey } = validation.data;
     debugLog(requestId, 'Parsed data:', { jobPostingId, candidateId, certificatesKey });
 
-    // 5. Fetch candidate info from database (required - must be logged in)
-    debugLog(requestId, 'Fetching candidate info:', candidateId);
-    // Note: Using * to avoid TypeScript issues with outdated types
-    const { data: candidate, error: candidateError } = await supabaseAdmin
-      .from("candidates")
-      .select("*")
+    // 5. Fetch Bluecrew profile info (source of truth)
+    debugLog(requestId, 'Fetching Bluecrew profile info:', candidateId);
+    const { data: candidate, error: candidateError } = await (supabaseAdmin as any)
+      .from("bluecrew_profiles")
+      .select("id, first_name, last_name, email, phone, cv_key, vipps_sub, vipps_verified, vipps_verified_at")
       .eq("id", candidateId)
       .single();
 
@@ -128,9 +127,7 @@ export async function POST(request: NextRequest) {
     // Use first_name/last_name if available, fallback to name column
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const c = candidate as any;
-    const candidateName = (c.first_name && c.last_name 
-      ? `${c.first_name} ${c.last_name}` 
-      : candidate.name) || 'Ukjent';
+    const candidateName = `${c.first_name || ''} ${c.last_name || ''}`.trim() || 'Ukjent';
     const candidateEmail = candidate.email;
     const candidatePhone = candidate.phone;
     debugLog(requestId, 'Candidate found:', { id: candidate.id, name: candidateName, email: candidateEmail });

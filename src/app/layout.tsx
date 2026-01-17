@@ -6,7 +6,6 @@ import "./globals.css";
 import HeaderWrapper from "@/components/layout/HeaderWrapper";
 import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/ui/CookieConsent";
-import TrackingScripts from "@/components/analytics/TrackingScripts";
 const LOGO_URL = "https://bluecrew.no/icon.png";
 
 export const metadata: Metadata = {
@@ -151,7 +150,7 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
         
-        {/* GTM and Meta Pixel are loaded conditionally via TrackingScripts component */}
+        {/* Tracking scripts removed */}
         
         {/* WebSite Schema for Google Sitelinks - lazyOnload as not render-critical */}
         <Script
@@ -187,7 +186,6 @@ export default function RootLayout({
         </div>
         <Footer />
         <CookieConsent />
-        <TrackingScripts />
         <Analytics />
         <SpeedInsights />
       </body>

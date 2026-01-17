@@ -77,16 +77,16 @@ export default async function ApplicationPage({ params }: PageProps) {
   // Get optional user info (Vipps verified)
   const user = await getUser();
 
-  // Fetch candidate CV if user is logged in
+  // Fetch Bluecrew profile CV if user is logged in
   let existingCvKey: string | null = null;
   if (user?.candidateId) {
     const supabase = await createClient();
-    const { data: candidate } = await supabase
-      .from("candidates")
+    const { data: profile } = await supabase
+      .from("bluecrew_profiles")
       .select("cv_key")
       .eq("id", user.candidateId)
       .single();
-    existingCvKey = candidate?.cv_key || null;
+    existingCvKey = profile?.cv_key || null;
   }
 
   // Transform user data for form

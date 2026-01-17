@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { KanbanJobCard, SegmentTabs, type KanbanJob, type Segment } from "@/components/jobs";
+
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  return isClient;
+}
 
 // Hardcoded open positions for the campaign
 const kanbanJobs: KanbanJob[] = [
@@ -30,6 +38,7 @@ const kanbanJobs: KanbanJob[] = [
 
 export default function StillingerClient() {
   const [activeSegment, setActiveSegment] = useState<Segment>("offshore");
+  const isClient = useIsClient();
 
   const filteredJobs = kanbanJobs
     .filter((job) => job.segment === activeSegment)
@@ -59,7 +68,7 @@ export default function StillingerClient() {
       <AnimatePresence mode="wait">
         <motion.div
           key={activeSegment}
-          initial={{ opacity: 0, y: 20 }}
+          initial={isClient ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}

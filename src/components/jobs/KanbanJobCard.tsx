@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -15,17 +16,24 @@ interface KanbanJobCardProps {
   job: KanbanJob;
 }
 
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  return isClient;
+}
+
 export default function KanbanJobCard({ job }: KanbanJobCardProps) {
+  const isClient = useIsClient();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={isClient ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: job.order * 0.1 }}
     >
-      <Link
-        href={`/stillinger/sok?stilling=${encodeURIComponent(job.title)}&segment=${job.segment}`}
-        className="block group"
-      >
+      <Link href="/registrer?returnTo=%2Fstillinger" className="block group">
         <div
           className="bg-linear-to-br from-navy-900 via-navy-800 to-navy-900/90
                       rounded-2xl p-8 min-h-[280px]

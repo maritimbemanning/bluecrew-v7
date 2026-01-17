@@ -18,7 +18,12 @@ const REGISTRATION_RATE_LIMIT = {
 };
 
 // Allowed file types
-const ALLOWED_TYPES = [
+const CV_ALLOWED_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const CERT_ALLOWED_TYPES = [
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -26,23 +31,41 @@ const ALLOWED_TYPES = [
   "image/png",
 ];
 
+const CV_EXTENSIONS = [".pdf", ".doc", ".docx"];
+const CERT_EXTENSIONS = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
+
+function isAllowedUpload(file: File, allowedTypes: string[], allowedExts: string[]): boolean {
+  const ext = "." + (file.name.split(".").pop() || "").toLowerCase();
+  if (allowedTypes.includes(file.type)) return true;
+  if (!file.type || file.type === "application/octet-stream") {
+    return allowedExts.includes(ext);
+  }
+  return false;
+}
+
 function debugLog(requestId: string, step: string, data?: unknown) {
   if (process.env.NODE_ENV !== 'production') {
     console.log(`[REGISTRER:${requestId}] ${step}`, data ? JSON.stringify(data, null, 2) : '');
   }
 }
 
-// Helper: Parse experience string like "3-5 år" to average years
-function parseExperienceToYears(erfaring: string): number {
-  if (!erfaring) return 0;
+function parseExperienceToYears(erfaring: string): number | null {
+  if (!erfaring) return null;
   const lower = erfaring.toLowerCase();
-  if (lower.includes('nyutdannet') || lower.includes('under 1')) return 0;
-  if (lower.includes('1-3')) return 2;
-  if (lower.includes('3-5')) return 4;
-  if (lower.includes('5-10')) return 7;
-  if (lower.includes('over 10') || lower.includes('10+')) return 12;
+  if (lower.includes("nyutdannet") || lower.includes("under 1")) return 0;
+  if (lower.includes("1-3")) return 2;
+  if (lower.includes("3-5")) return 4;
+  if (lower.includes("5-10")) return 7;
+  if (lower.includes("over 10") || lower.includes("10+")) return 12;
   const match = erfaring.match(/(\d+)/);
-  return match ? parseInt(match[1], 10) : 0;
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function buildAdditionalNotes(erfaring: string, melding: string): string | null {
+  const notes: string[] = [];
+  if (erfaring) notes.push(`Erfaring: ${erfaring}`);
+  if (melding) notes.push(`Melding: ${melding}`);
+  return notes.length > 0 ? notes.join("\n") : null;
 }
 
 export async function POST(request: NextRequest) {
@@ -123,6 +146,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (onskerMidlertidig !== "true" && onskerMidlertidig !== "false") {
+      return NextResponse.json(
+        { error: "Du må velge om du ønsker midlertidig ansettelse." },
+        { status: 400 }
+      );
+    }
+
     if (!stcwConsent || !gdprConsent) {
       return NextResponse.json(
         { error: "Du må godta vilkårene for å fortsette" },
@@ -153,7 +183,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (!ALLOWED_TYPES.includes(cvFile.type)) {
+      if (!isAllowedUpload(cvFile, CV_ALLOWED_TYPES, CV_EXTENSIONS)) {
         return NextResponse.json(
           { error: "Ugyldig filtype for CV. Tillatte typer: PDF, Word" },
           { status: 400 }
@@ -199,7 +229,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        if (!ALLOWED_TYPES.includes(certFile.type)) {
+        if (!isAllowedUpload(certFile, CERT_ALLOWED_TYPES, CERT_EXTENSIONS)) {
           return NextResponse.json(
             { error: `Ugyldig filtype for "${certFile.name}". Tillatte typer: PDF, Word, JPG, PNG` },
             { status: 400 }
@@ -234,49 +264,77 @@ export async function POST(request: NextRequest) {
       debugLog(requestId, 'All certificates uploaded:', certsPaths);
     }
 
-    // Build update object with CORRECT column names from candidates table
     const now = new Date().toISOString();
-    const updateData: Record<string, unknown> = {
-      status: 'active',
-      pipeline_stage: 'registrert', // Move past 'ny' stage
-      // Consent tracking
+    const experienceYears = parseExperienceToYears(erfaring);
+    const notes = buildAdditionalNotes(erfaring, melding);
+
+    // Legacy candidates (GDPR/phase-out)
+    const legacyUpdateData: Record<string, unknown> = {
+      status: "active",
+      pipeline_stage: "registrert",
+      primary_role: rolle,
+      experience_years: experienceYears,
+      availability_date: tilgjengeligFra || null,
       gdpr_consent: gdprConsent,
       gdpr_consent_date: gdprConsent ? now : null,
       stcw_consent: stcwConsent,
       stcw_consent_date: stcwConsent ? now : null,
+      cv_key: cvPath || null,
+      internal_notes: notes,
     };
 
-    // rolle -> primary_role (NOT 'role')
-    if (rolle) {
-      updateData.primary_role = rolle;
-    }
+    debugLog(requestId, "Updating legacy candidate:", legacyUpdateData);
 
-    // erfaring -> experience_years (parse to integer)
-    if (erfaring) {
-      updateData.experience_years = parseExperienceToYears(erfaring);
-    }
-    
-    // Store additional notes if provided
-    if (melding) {
-      updateData.internal_notes = `Melding ved registrering: ${melding}`;
-    }
-
-    // Optional fields
-    if (tilgjengeligFra) updateData.availability_date = tilgjengeligFra;
-    if (cvPath) updateData.cv_key = cvPath;
-
-    debugLog(requestId, 'Updating candidate:', updateData);
-
-    const { error: updateError } = await supabaseAdmin
+    const { error: legacyUpdateError } = await supabaseAdmin
       .from("candidates")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update(updateData as any)
+      .update(legacyUpdateData as any)
       .eq("id", candidateId);
 
-    if (updateError) {
-      debugLog(requestId, 'DATABASE UPDATE ERROR:', updateError);
+    if (legacyUpdateError) {
+      debugLog(requestId, "LEGACY UPDATE ERROR:", legacyUpdateError);
       return NextResponse.json(
         { error: "Kunne ikke lagre profilen. Prøv igjen." },
+        { status: 500 }
+      );
+    }
+
+    // New main table: bluecrew_profiles
+    const nameParts = (user.name || "").trim().split(" ").filter(Boolean);
+    const firstName = nameParts[0] || "Ukjent";
+    const lastName = nameParts.slice(1).join(" ") || "Ukjent";
+
+    const bluecrewProfileData: Record<string, unknown> = {
+      id: candidateId,
+      candidate_id: candidateId,
+      first_name: firstName,
+      last_name: lastName,
+      email: user.email || "",
+      phone: user.phone || "",
+      primary_role: rolle,
+      secondary_roles: [],
+      experience_years: experienceYears ?? 0,
+      cv_key: cvPath || "",
+      gdpr_consent: gdprConsent,
+      gdpr_consent_date: gdprConsent ? now : null,
+      stcw_consent: stcwConsent,
+      stcw_consent_date: stcwConsent ? now : null,
+      status: "active",
+      verified_at: now,
+      updated_at: now,
+    };
+
+    debugLog(requestId, "Upserting bluecrew profile:", bluecrewProfileData);
+
+    const { error: bluecrewUpsertError } = await supabaseAdmin
+      .from("bluecrew_profiles")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .upsert(bluecrewProfileData as any, { onConflict: "id" });
+
+    if (bluecrewUpsertError) {
+      debugLog(requestId, "BLUECREW PROFILE UPSERT ERROR:", bluecrewUpsertError);
+      return NextResponse.json(
+        { error: "Kunne ikke lagre Bluecrew-profilen. Prøv igjen." },
         { status: 500 }
       );
     }

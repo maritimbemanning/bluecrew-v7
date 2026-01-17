@@ -45,7 +45,7 @@ export default async function RegistrerPage({ searchParams }: PageProps) {
 
   // Must be logged in via Vipps
   if (!user) {
-    redirect('/logg-inn?returnTo=/registrer');
+    redirect('/api/vipps/start?returnTo=/registrer');
   }
 
   // Get returnTo from query params (preserved from campaign flow)

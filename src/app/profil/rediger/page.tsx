@@ -21,31 +21,31 @@ export default async function RedigerProfilPage() {
   const user = await getUser();
 
   if (!user) {
-    redirect('/logg-inn?returnTo=/profil/rediger');
+    redirect('/api/vipps/start?returnTo=/profil/rediger');
   }
 
-  // Fetch current profile
-  // NOTE: Using supabaseAdmin because RLS doesn't allow anon/authenticated to read candidates
-  type CandidateEditProfile = {
+  // Fetch current Bluecrew profile
+  type BluecrewEditProfile = {
     id: string;
-    name: string | null;
+    first_name: string;
+    last_name: string;
     email: string;
-    phone: string | null;
-    primary_role: string | null;
-    cv_key: string | null;
+    phone: string;
+    primary_role: string;
+    cv_key: string;
   };
 
-  const { data: rawData } = await supabaseAdmin
-    .from('candidates')
-    .select('id, name, email, phone, primary_role, cv_key')
+  const { data: rawData } = await (supabaseAdmin as any)
+    .from('bluecrew_profiles')
+    .select('id, first_name, last_name, email, phone, primary_role, cv_key')
     .eq('id', user.candidateId)
     .single();
 
-  const data = rawData as CandidateEditProfile | null;
+  const data = rawData as BluecrewEditProfile | null;
 
   if (!data) {
-    // Redirect to logout which will clear session properly via Route Handler
-    redirect('/logg-ut?error=Kunne ikke finne din profil. Vennligst logg inn på nytt.');
+    // Profile not found yet - complete registration
+    redirect('/registrer');
   }
 
   // Check if profile is complete - must have primary_role AND cv_key
@@ -112,7 +112,7 @@ export default async function RedigerProfilPage() {
               <dl className="space-y-3">
                 <div>
                   <dt className="text-xs text-cream-100/50">Navn</dt>
-                  <dd className="text-cream-50">{data.name}</dd>
+                  <dd className="text-cream-50">{`${data.first_name} ${data.last_name}`.trim()}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-cream-100/50">E-post</dt>

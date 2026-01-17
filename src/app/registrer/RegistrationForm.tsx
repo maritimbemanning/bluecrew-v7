@@ -158,6 +158,15 @@ export default function RegistrationForm({
     },
   });
 
+  const isAllowedFile = (file: File, allowedTypes: string[], allowedExts: string[]) => {
+    const ext = `.${file.name.split('.').pop()?.toLowerCase()}`;
+    if (allowedTypes.includes(file.type)) return true;
+    if (!file.type || file.type === 'application/octet-stream') {
+      return allowedExts.includes(ext);
+    }
+    return false;
+  };
+
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFile: (file: File | null) => void
@@ -169,11 +178,10 @@ export default function RegistrationForm({
         'application/pdf',
         'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'image/jpeg',
-        'image/png',
       ];
-      if (!allowedTypes.includes(file.type)) {
-        setErrorMessage('Ugyldig filtype. Kun PDF, Word og bilder er tillatt.');
+      const allowedExts = ['.pdf', '.doc', '.docx'];
+      if (!isAllowedFile(file, allowedTypes, allowedExts)) {
+        setErrorMessage('Ugyldig filtype. Kun PDF og Word er tillatt for CV.');
         return;
       }
       // Validate file size (10MB max)
@@ -196,11 +204,12 @@ export default function RegistrationForm({
         'image/jpeg',
         'image/png',
       ];
+      const allowedExts = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
       
       const newFiles: File[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (!allowedTypes.includes(file.type)) {
+        if (!isAllowedFile(file, allowedTypes, allowedExts)) {
           setErrorMessage(`Ugyldig filtype for "${file.name}". Kun PDF, Word og bilder er tillatt.`);
           return;
         }
@@ -278,6 +287,12 @@ export default function RegistrationForm({
           router.push(returnTo);
         }, 2000);
       } else {
+        if (response.status === 401 || response.status === 403) {
+          // Not logged in or needs Vipps auth -> send to Vipps flow
+          const vippsReturn = `/registrer?returnTo=${encodeURIComponent(returnTo)}`;
+          router.push(`/api/vipps/start?returnTo=${encodeURIComponent(vippsReturn)}`);
+          return;
+        }
         setErrorMessage(result.error || 'Noe gikk galt. Prøv igjen senere.');
         setSubmitStatus('error');
       }
@@ -443,14 +458,6 @@ export default function RegistrationForm({
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Last opp CV <span className="text-red-500">*</span>
           </label>
-          <input
-            type="file"
-            ref={cvInputRef}
-            onChange={(e) => handleFileChange(e, setCvFile)}
-            accept=".pdf,.doc,.docx"
-            className="hidden"
-            aria-label="Last opp CV"
-          />
           {cvFile ? (
             <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex items-center gap-2">
@@ -469,18 +476,23 @@ export default function RegistrationForm({
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => cvInputRef.current?.click()}
-              className="w-full p-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky hover:bg-slate-50 transition-colors"
-            >
-              <div className="flex flex-col items-center gap-2">
+            <label className="relative block w-full p-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky hover:bg-slate-50 transition-colors cursor-pointer">
+              <input
+                id="cv-upload"
+                type="file"
+                ref={cvInputRef}
+                onChange={(e) => handleFileChange(e, setCvFile)}
+                accept=".pdf,.doc,.docx"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                aria-label="Last opp CV"
+              />
+              <div className="flex flex-col items-center gap-2 pointer-events-none">
                 <Upload className="w-6 h-6 text-slate-400" />
                 <span className="text-sm text-slate-600">
                   Klikk for å laste opp CV (PDF eller Word)
                 </span>
               </div>
-            </button>
+            </label>
           )}
         </div>
 
@@ -489,16 +501,6 @@ export default function RegistrationForm({
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Last opp sertifikater (valgfritt) - du kan legge til flere filer
           </label>
-          <input
-            type="file"
-            ref={certsInputRef}
-            onChange={handleCertsFileChange}
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-            multiple
-            className="hidden"
-            aria-label="Last opp sertifikater"
-          />
-          
           {/* List of uploaded certificate files */}
           {certsFiles.length > 0 && (
             <div className="space-y-2 mb-3">
@@ -524,12 +526,17 @@ export default function RegistrationForm({
           )}
           
           {/* Add more files button */}
-          <button
-            type="button"
-            onClick={() => certsInputRef.current?.click()}
-            className="w-full p-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky hover:bg-slate-50 transition-colors"
-          >
-            <div className="flex flex-col items-center gap-2">
+          <label className="relative block w-full p-4 border-2 border-dashed border-slate-300 rounded-lg hover:border-sky hover:bg-slate-50 transition-colors cursor-pointer">
+            <input
+              type="file"
+              ref={certsInputRef}
+              onChange={handleCertsFileChange}
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              multiple
+              className="absolute inset-0 opacity-0 cursor-pointer"
+              aria-label="Last opp sertifikater"
+            />
+            <div className="flex flex-col items-center gap-2 pointer-events-none">
               <Upload className="w-6 h-6 text-slate-400" />
               <span className="text-sm text-slate-600">
                 {certsFiles.length > 0 
@@ -537,7 +544,7 @@ export default function RegistrationForm({
                   : 'Klikk for å laste opp sertifikater (PDF, Word eller bilde)'}
               </span>
             </div>
-          </button>
+          </label>
         </div>
 
         {/* Melding/Fritekst */}

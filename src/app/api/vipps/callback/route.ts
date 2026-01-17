@@ -149,7 +149,7 @@ export async function GET(request: Request) {
       first_name?: string;
       last_name?: string;
       email: string;
-      primary_role?: string | null;
+      work_main?: string[] | null;
       cv_key?: string | null;
     };
 
@@ -176,7 +176,7 @@ export async function GET(request: Request) {
     debugLog(requestId, 'Looking up candidate by vipps_sub:', userInfo.sub);
     let { data: existingCandidates, error: lookupError } = await supabaseAdmin
       .from("candidates")
-      .select("id, email, name, first_name, last_name, primary_role, cv_key")
+      .select("id, email, name, first_name, last_name, work_main, cv_key")
       .eq("vipps_sub", userInfo.sub)
       .limit(1) as { data: CandidateResult[] | null; error: unknown };
 
@@ -185,7 +185,7 @@ export async function GET(request: Request) {
       debugLog(requestId, 'Not found by vipps_sub, trying email:', normalizedEmail);
       const emailResult = await supabaseAdmin
         .from("candidates")
-        .select("id, email, name, first_name, last_name, primary_role, cv_key")
+        .select("id, email, name, first_name, last_name, work_main, cv_key")
         .ilike("email", normalizedEmail)
         .limit(1) as { data: CandidateResult[] | null; error: unknown };
 
@@ -279,7 +279,7 @@ export async function GET(request: Request) {
           // Fallback: try case-insensitive email match
           const { data: fallbackCandidate, error: fallbackError } = await supabaseAdmin
             .from("candidates")
-            .select("id, email, name, first_name, last_name, primary_role, cv_key")
+            .select("id, email, name, first_name, last_name, work_main, cv_key")
             .ilike("email", normalizedEmail)
             .limit(1)
             .single() as { data: CandidateResult | null; error: unknown };
@@ -338,12 +338,34 @@ export async function GET(request: Request) {
     });
     debugLog(requestId, 'Session token created');
 
-    // Determine redirect destination based on profile completion
-    // Profile is considered complete if primary_role is filled in AND cv_key exists
-    // New users or users without complete profile go to /registrer
-    // Returning users with complete profile go to original destination or /profil
-    const hasRole = existingCandidate?.primary_role != null && existingCandidate.primary_role.trim() !== '';
-    const hasCv = existingCandidate?.cv_key != null && existingCandidate.cv_key.trim() !== '';
+    // Keep existing Bluecrew profile in sync with Vipps contact info (do not create here)
+    const { data: bluecrewExisting } = await (supabaseAdmin as any)
+      .from("bluecrew_profiles")
+      .select("id")
+      .eq("id", candidateId)
+      .single();
+
+    if (bluecrewExisting?.id) {
+      await (supabaseAdmin as any)
+        .from("bluecrew_profiles")
+        .update({
+          email: userInfo.email || null,
+          phone: userInfo.phone_number || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", candidateId);
+      debugLog(requestId, "Bluecrew profile synced with Vipps contact info");
+    }
+
+    // Determine redirect destination based on Bluecrew profile completion
+    const { data: bluecrewProfile } = await (supabaseAdmin as any)
+      .from("bluecrew_profiles")
+      .select("primary_role, cv_key")
+      .eq("id", candidateId)
+      .single();
+
+    const hasRole = typeof bluecrewProfile?.primary_role === "string" && bluecrewProfile.primary_role.trim() !== "";
+    const hasCv = typeof bluecrewProfile?.cv_key === "string" && bluecrewProfile.cv_key.trim() !== "";
     const isProfileComplete = hasRole && hasCv;
     let redirectUrl: string;
 

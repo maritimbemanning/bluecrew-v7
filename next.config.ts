@@ -99,11 +99,11 @@ const nextConfig: NextConfig = {
         value: [
           "default-src 'self'",
           // 'unsafe-inline' 'unsafe-eval' required for Next.js to work properly
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://connect.facebook.net",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io",
           "style-src 'self' 'unsafe-inline'", // Required for Next.js CSS-in-JS
           "img-src 'self' data: https: blob:",
           "font-src 'self' data:",
-          "connect-src 'self' https://*.supabase.co https://plausible.io wss://*.supabase.co https://www.google.com https://www.facebook.com",
+          "connect-src 'self' https://*.supabase.co https://plausible.io wss://*.supabase.co https://www.google.com",
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",

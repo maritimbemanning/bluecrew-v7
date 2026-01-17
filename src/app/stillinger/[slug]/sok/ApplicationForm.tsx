@@ -56,6 +56,14 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   
   const certInputRef = useRef<HTMLInputElement>(null);
+  const isAllowedFile = (file: File, allowedTypes: string[], allowedExts: string[]) => {
+    const ext = `.${file.name.split('.').pop()?.toLowerCase()}`;
+    if (allowedTypes.includes(file.type)) return true;
+    if (!file.type || file.type === "application/octet-stream") {
+      return allowedExts.includes(ext);
+    }
+    return false;
+  };
 
   const {
     register,
@@ -87,7 +95,7 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
           Du må ha en komplett Bluecrew-profil for å søke på stillinger.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href={`/logg-inn?returnTo=/stillinger/${job.slug}/sok`}>
+          <Link href={`/api/vipps/start?returnTo=/stillinger/${job.slug}/sok`}>
             <Button variant="primary" size="lg">
               <LogIn className="w-5 h-5 mr-2" />
               Logg inn med Vipps
@@ -150,7 +158,8 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
       "image/png",
     ];
     
-    if (!allowedTypes.includes(file.type)) {
+    const allowedExts = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
+    if (!isAllowedFile(file, allowedTypes, allowedExts)) {
       setUploadError("Ugyldig filtype. Tillatte typer: PDF, Word, JPG, PNG");
       return;
     }
@@ -334,18 +343,6 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
           </div>
         )}
 
-        <input
-          ref={certInputRef}
-          type="file"
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-          className="hidden"
-          aria-label="Last opp sertifikater"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleFileUpload(file);
-          }}
-        />
-        
         {certFile ? (
           <div className="border border-green-200 bg-green-50 rounded-xl p-4">
             <div className="flex items-center justify-between">
@@ -367,13 +364,20 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
             </div>
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => certInputRef.current?.click()}
-            disabled={isUploadingCert}
-            className="w-full border-2 border-dashed border-slate-300 hover:border-gold-400 rounded-xl p-4 transition-colors group"
-          >
-            <div className="flex flex-col items-center gap-2">
+          <label className="relative w-full border-2 border-dashed border-slate-300 hover:border-gold-400 rounded-xl p-4 transition-colors group cursor-pointer">
+            <input
+              ref={certInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              className="absolute inset-0 opacity-0 cursor-pointer"
+              aria-label="Last opp sertifikater"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+              disabled={isUploadingCert}
+            />
+            <div className="flex flex-col items-center gap-2 pointer-events-none">
               {isUploadingCert ? (
                 <Loader2 className="w-6 h-6 text-gold-500 animate-spin" />
               ) : (
@@ -386,7 +390,7 @@ export default function ApplicationForm({ job, user }: ApplicationFormProps) {
                 <p className="text-xs text-slate-500">PDF, Word eller bilde (maks 10MB)</p>
               </div>
             </div>
-          </button>
+          </label>
         )}
       </div>
 

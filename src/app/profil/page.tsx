@@ -22,43 +22,39 @@ export default async function ProfilPage() {
 
   // Middleware should handle this, but double-check
   if (!user) {
-    redirect('/logg-inn?returnTo=/profil');
+    redirect('/api/vipps/start?returnTo=/profil');
   }
 
-  // Fetch full candidate profile from database
-  // NOTE: Using supabaseAdmin because RLS doesn't allow anon/authenticated to read candidates
-  type CandidateProfile = {
+  // Fetch Bluecrew profile (new source of truth)
+  type BluecrewProfile = {
     id: string;
-    name: string | null;
-    first_name: string | null;
-    last_name: string | null;
+    first_name: string;
+    last_name: string;
     email: string;
-    phone: string | null;
+    phone: string;
     status: string | null;
     created_at: string;
-    primary_role: string | null;
-    cv_key: string | null;
+    primary_role: string;
+    cv_key: string;
   };
 
-  const { data } = await supabaseAdmin
-    .from('candidates')
-    .select('id, name, first_name, last_name, email, phone, status, created_at, primary_role, cv_key')
+  const { data } = await (supabaseAdmin as any)
+    .from('bluecrew_profiles')
+    .select('id, first_name, last_name, email, phone, status, created_at, primary_role, cv_key')
     .eq('id', user.candidateId)
     .limit(1);
 
-  const rawCandidate = (data as CandidateProfile[] | null)?.[0];
+  const rawCandidate = (data as BluecrewProfile[] | null)?.[0];
 
   if (!rawCandidate) {
-    // Candidate not found - redirect to logout which will clear session
-    redirect('/logg-ut?error=Kunne ikke finne din profil. Vennligst logg inn på nytt.');
+    // Profile not found yet - complete registration
+    redirect('/registrer');
   }
 
   // Normalize candidate data
   const candidate = {
     ...rawCandidate,
-    name: rawCandidate.first_name && rawCandidate.last_name 
-      ? `${rawCandidate.first_name} ${rawCandidate.last_name}`
-      : rawCandidate.name || 'Ukjent',
+    name: `${rawCandidate.first_name} ${rawCandidate.last_name}`.trim(),
     role: rawCandidate.primary_role,
   };
 

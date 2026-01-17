@@ -155,7 +155,7 @@ export default async function MineSoknaderPage() {
   const user = await getUser();
 
   if (!user || !user.email) {
-    redirect("/logg-inn?redirect=/mine-soknader");
+    redirect("/api/vipps/start?returnTo=/mine-soknader");
   }
 
   const [applications, campaignApplications] = await Promise.all([
@@ -254,7 +254,7 @@ export default async function MineSoknaderPage() {
                           <div className="flex flex-col md:flex-row md:items-center gap-4">
                             {/* Campaign icon */}
                             <div className="shrink-0">
-                              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
+                              <div className="w-14 h-14 rounded-xl bg-linear-to-br from-gold-400 to-gold-600 flex items-center justify-center">
                                 <FileText className="w-7 h-7 text-navy-900" />
                               </div>
                             </div>
@@ -339,7 +339,7 @@ export default async function MineSoknaderPage() {
                           <div className="flex flex-col md:flex-row md:items-center gap-4">
                             {/* Company icon */}
                             <div className="shrink-0">
-                              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gold-400 to-navy-600 flex items-center justify-center">
+                              <div className="w-14 h-14 rounded-xl bg-linear-to-br from-gold-400 to-navy-600 flex items-center justify-center">
                                 <Building2 className="w-7 h-7 text-cream-50" />
                               </div>
                             </div>

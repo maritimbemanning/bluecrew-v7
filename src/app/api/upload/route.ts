@@ -27,6 +27,15 @@ const ALLOWED_TYPES = [
 
 const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
 
+function isAllowedUpload(file: File): boolean {
+  const ext = "." + (file.name.split(".").pop() || "").toLowerCase();
+  if (ALLOWED_TYPES.includes(file.type)) return true;
+  if (!file.type || file.type === "application/octet-stream") {
+    return ALLOWED_EXTENSIONS.includes(ext);
+  }
+  return false;
+}
+
 function debugLog(requestId: string, step: string, data?: unknown) {
   console.log(`[UPLOAD:${requestId}] ${step}`, data ? JSON.stringify(data, null, 2) : '');
 }
@@ -121,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (!isAllowedUpload(file)) {
       debugLog(requestId, 'INVALID FILE TYPE:', file.type);
       return NextResponse.json(
         { error: "Ugyldig filtype. Tillatte typer: PDF, Word, JPG, PNG" },
