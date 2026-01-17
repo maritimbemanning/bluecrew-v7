@@ -63,6 +63,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/crew/zeonaqua",
     // Campaign pages (high conversion)
     "/kampanje/offshore",
+    "/kampanje/elektriker",
+    "/kampanje/eto",
+    "/kampanje/mekaniker",
+    "/kampanje/riggere",
+    "/kampanje/rov",
+    "/kampanje/sveiser",
     // Legal (note: /slett-data excluded - marked as noindex)
     "/personvern",
     "/vilkar",
@@ -77,6 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "hvordan-jeg-ble-maskinist",
     "kvinne-i-maritim-sektor",
     "offshore-vs-havbruk-min-erfaring",
+    "tore-nymo",
   ];
 
   // Fetch active job postings
