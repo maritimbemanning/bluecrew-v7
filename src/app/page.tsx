@@ -1,19 +1,13 @@
 import type { Metadata } from 'next';
-import dynamic from "next/dynamic";
 import SchemaMarkup from "@/components/seo/SchemaMarkup";
 import HeroSection from "@/components/sections/HeroSection";
 import TrustBar from "@/components/sections/TrustBar";
 import SectionDivider from "@/components/sections/SectionDivider";
 import WhyBluecrewSection from "@/components/sections/WhyBluecrewSection";
+import AktueltSection from "@/components/sections/AktueltSection";
+import TeamGrid from "@/components/sections/TeamGrid";
 
-// Lazy load below-the-fold sections to reduce initial JS bundle
-const AktueltSection = dynamic(() => import("@/components/sections/AktueltSection"), {
-  loading: () => <div className="py-16 md:py-20 bg-navy-900 min-h-[400px]" />,
-});
-
-const TeamGrid = dynamic(() => import("@/components/sections/TeamGrid"), {
-  loading: () => <div className="py-12 bg-white" />,
-});
+// NOTE: Do NOT use dynamic() for SEO-critical content - Googlebot won't wait for lazy loading
 
 export const metadata: Metadata = {
   title: 'Bemanningsbyrå | Maritim Bemanning for Oppdrett, Offshore og Shipping',

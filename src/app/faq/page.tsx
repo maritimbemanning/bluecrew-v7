@@ -1,21 +1,14 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import SchemaMarkup from '@/components/seo/SchemaMarkup';
 import { getOgImageUrl, IMAGE_PATHS } from '@/lib/images';
+import FAQClient from './FAQClient';
+
+// NOTE: Do NOT use dynamic() for FAQ content - it must be server-rendered for SEO
 
 const breadcrumbs = [
   { name: 'Hjem', url: '/' },
   { name: 'FAQ', url: '/faq' },
 ];
-
-// Lazy load the interactive client component
-const FAQClient = dynamic(() => import('./FAQClient'), {
-  loading: () => (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse text-slate-400">Laster...</div>
-    </div>
-  ),
-});
 
 export const metadata: Metadata = {
   title: 'Ofte stilte spørsmål (FAQ)',
